@@ -5,7 +5,8 @@ let Schema = mongoose.Schema;
 let ArchivoSchema = Schema(
     {
         nombre: {type: String, required: true},
-        alumno: {type: Schema.Types.ObjectId, ref: 'Alumno', required: true}
+        profesor: {type: Schema.Types.ObjectId, ref: 'Profesor'},
+        alumno: {type: Schema.Types.ObjectId, ref: 'Alumno'}
     }
 );
 
