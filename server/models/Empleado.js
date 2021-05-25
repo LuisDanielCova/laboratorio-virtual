@@ -2,15 +2,17 @@ let mongoose = require('mongoose');
 
 let Schema = mongoose.Schema;
 
-let AlumnoSchema = Schema(
+let EmpleadoSchema = (
     {
         persona: {type: Schema.Types.ObjectId, ref: 'Persona', required: true},
-        notas: [{type: Number}],
+        cargo: {type: String, required: true},
     }
 );
 
-AlumnoSchema
+EmpleadoSchema
     .virtual('url')
     .get(function(){
         return `/cuenta/${this._id}`;
-    })
+    });
+
+module.exports = mongoose.model('Profesor', EmpleadoSchema);

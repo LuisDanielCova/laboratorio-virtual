@@ -11,8 +11,8 @@ let ArchivoSchema = Schema(
 
 ArchivoSchema
     .virtual('url')
-    .get(() => {
-        `archivo/${this.id}`
+    .get(function(){
+        return `/archivo/${this.id}`;
     });
 
 module.exports = mongoose.model('Archivo', ArchivoSchema);
