@@ -13,6 +13,10 @@ mongoose.connect(
         useNewUrlParser: true, useUnifiedTopology: true
     });
 
+app.get('/', async(req, res) => {
+    res.send('Index');
+});
+
 app.listen(3001, ()=>{
     console.log(`Servidor en ejecucion en el puerto 3001`);
 });

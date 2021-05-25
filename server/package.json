@@ -4,7 +4,8 @@
   "description": "Servidor del laboratorio virtual para la UGMA",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "devStart": "nodemon index.js"
   },
   "author": "Luis Cova",
   "license": "ISC",
@@ -12,6 +13,7 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-validator": "^6.11.1",
     "mongoose": "^5.12.11",
     "nodemon": "^2.0.7"
   }

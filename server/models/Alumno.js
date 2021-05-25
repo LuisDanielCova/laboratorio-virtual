@@ -4,10 +4,31 @@ let Schema = mongoose.Schema;
 
 let AlumnoSchema = Schema(
     {
-        persona: {type: Schema.Types.ObjectId, ref: 'Persona', required: true},
+        _id: {type: Number, required: true, min: 8},  //Cedula
+        nombre: {type: String, required: true, minLength: 3},
+        apellido: {type: String, required: true, minLength: 3},
+        fecha_nac: {type: Date, required: true},
+        telefono: {type: String},
+        correo: {type: String, required: true},
+        usuario: {type: String, required: true},
+        contrasena: {type: String, required: true},
         notas: [{type: Number}],
     }
 );
+
+AlumnoSchema
+    .virtual('nombre_completo')
+    .get(function(){
+        return `${this.apellido}, ${this.nombre}`
+    });
+
+AlumnoSchema
+    .virtual('fecha_nac_formato')
+    .get(function(){
+        return this.date_of_birth 
+        ? this.date_of_birth.toISOString().slice(0, 10)  
+        : '';
+    });
 
 AlumnoSchema
     .virtual('url')
