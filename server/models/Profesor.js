@@ -4,7 +4,7 @@ let Schema = mongoose.Schema;
 
 let ProfesorSchema = Schema(
     {
-        _id: {type: Number, required: true, min: 8},  //Cedula
+        cedula: {type: Number, required: true, min: 8},  //Cedula
         nombre: {type: String, required: true, minLength: 3},
         apellido: {type: String, required: true, minLength: 3},
         fecha_nac: {type: Date, required: true},

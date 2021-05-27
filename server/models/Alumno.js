@@ -4,7 +4,7 @@ let Schema = mongoose.Schema;
 
 let AlumnoSchema = Schema(
     {
-        _id: {type: Number, required: true, min: 8},  //Cedula
+        cedula: {type: Number, required: true, min: 8},  //Cedula
         nombre: {type: String, required: true, minLength: 3},
         apellido: {type: String, required: true, minLength: 3},
         fecha_nac: {type: Date, required: true},
@@ -35,3 +35,5 @@ AlumnoSchema
     .get(function(){
         return `/cuenta/${this._id}`;
     })
+
+module.exports = mongoose.model('Alumno', AlumnoSchema);
