@@ -8,18 +8,20 @@ function Read() {
   let history = useHistory();
 
   const borrarAlumno = (id) => {
-    Axios.delete(`${process.env.REACT_APP_SERVER_URL}/delete/${id}`).then(
-      () => {
-        alert(`Alumno Borrado`);
-        history.go(0);
-      }
-    );
+    Axios.delete(
+      `${process.env.REACT_APP_SERVER_URL}/usuarios/alumno/borrar/${id}`
+    ).then(() => {
+      alert(`Alumno Borrado`);
+      history.go(0);
+    });
   };
 
   useEffect(() => {
-    Axios.get(`${process.env.REACT_APP_SERVER_URL}/read`).then((response) => {
-      setListaAlumnos(response.data);
-    });
+    Axios.get(`${process.env.REACT_APP_SERVER_URL}/usuarios/alumnos`).then(
+      (response) => {
+        setListaAlumnos(response.data);
+      }
+    );
   }, []);
 
   return (

@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import App from "./App";
-import FormaAlumno from "./components/EsqueletoForma";
-import Read from "./components/EsqueletoLeer";
+import FormaAlumno from "./components/FormaAlumno";
+import Read from "./components/ReadAlumno";
 
 const Routes = () => {
   return (
