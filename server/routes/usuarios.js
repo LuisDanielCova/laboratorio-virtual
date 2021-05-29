@@ -2,8 +2,8 @@ let express = require("express");
 let router = express.Router();
 
 // Modulos de los controladores
-let alumno_controller = require("../controllers/alumnoController");
-let profesor_controller = require("../controllers/profesorController");
+const alumno_controller = require("../controllers/alumnoController");
+const profesor_controller = require("../controllers/profesorController");
 
 // RUTAS DE LOS ALUMNOS //
 
@@ -34,5 +34,7 @@ router.put(
 );
 
 router.delete("/profesor/borrar/:id", profesor_controller.borrar_profesor);
+
+router.put("/profesor/pruebaloca/:d", profesor_controller.pruebaloca);
 
 module.exports = router;

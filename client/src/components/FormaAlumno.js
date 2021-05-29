@@ -27,7 +27,7 @@ function FormaAlumno() {
       );
       if (response.data.statusCode === 200) {
         alert("Usuario agregado!");
-        history.push("/read");
+        history.push("/read/alumnos");
       } else {
         setErrors(response.data.errors_array.errors);
       }
@@ -44,7 +44,7 @@ function FormaAlumno() {
       );
       if (response.data.statusCode === 200) {
         alert("Usuario actualizado!");
-        history.push("/read");
+        history.push("/read/alumnos");
       } else {
         setErrors(response.data.errors_array.errors);
       }
@@ -268,10 +268,13 @@ function FormaAlumno() {
       </button>
       <ul>
         <li>
-          <a href="/forma">Forma</a>
+          <a href="/">Pagina Principal</a>
         </li>
         <li>
-          <a href="/read">Leer</a>
+          <a href="/forma/alumno">Forma</a>
+        </li>
+        <li>
+          <a href="/read/alumnos">Leer</a>
         </li>
       </ul>
     </div>

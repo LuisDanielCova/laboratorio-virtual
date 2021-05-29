@@ -5,7 +5,7 @@ let Schema = mongoose.Schema;
 let ArchivoSchema = Schema({
   nombre: { type: String, required: true },
   profesor: { type: Schema.Types.ObjectId, ref: "Profesor" },
-  profesor: { type: Schema.Types.ObjectId, ref: "Alumno" },
+  alumno: { type: Schema.Types.ObjectId, ref: "Alumno" },
 });
 
 ArchivoSchema.virtual("url").get(function () {

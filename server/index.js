@@ -11,6 +11,8 @@ let routerUsuarios = require("./routes/usuarios");
 app.use(express.json());
 app.use(cors());
 
+app.locals._id = "stufflmao";
+
 const mongoDB = `${process.env.DB_URL}`;
 mongoose.connect(mongoDB, {
   useNewUrlParser: true,

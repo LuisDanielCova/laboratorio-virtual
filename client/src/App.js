@@ -3,13 +3,23 @@ import React from "react";
 function App() {
   return (
     <div className="App">
-      <h1>Pruebas a la base de datos: Alumnos</h1>
+      <h1>Pruebas a la base de datos</h1>
+      <h2>Alumnos</h2>
       <ul>
         <li>
-          <a href="/forma">Forma</a>
+          <a href="/forma/alumno">Forma</a>
         </li>
         <li>
-          <a href="/read">Leer</a>
+          <a href="/read/alumnos">Leer</a>
+        </li>
+      </ul>
+      <h2>Profesores</h2>
+      <ul>
+        <li>
+          <a href="/forma/profesor">Forma</a>
+        </li>
+        <li>
+          <a href="/read/profesores">Leer</a>
         </li>
       </ul>
     </div>

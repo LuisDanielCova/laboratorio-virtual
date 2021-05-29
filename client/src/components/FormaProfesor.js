@@ -28,9 +28,10 @@ function FormaProfesor() {
       );
       if (response.data.statusCode === 200) {
         alert("Usuario agregado!");
-        history.push("/read");
+        history.push("/read/profesores");
       } else {
         setErrors(response.data.errors_array.errors);
+        console.log(errors);
       }
     } catch (err) {
       console.log(err);
@@ -45,10 +46,23 @@ function FormaProfesor() {
       );
       if (response.data.statusCode === 200) {
         alert("Usuario actualizado!");
-        history.push("/read");
+        history.push("/read/profesores");
       } else {
         setErrors(response.data.errors_array.errors);
       }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const pruebaLoca = async (profesor) => {
+    try {
+      console.log(`sending lmao`);
+      let response = await Axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/usuarios/profesor/pruebaloca/${id}`,
+        profesor
+      );
+      console.log(response);
     } catch (err) {
       console.log(err);
     }
@@ -59,7 +73,7 @@ function FormaProfesor() {
       Axios.get(
         `${process.env.REACT_APP_SERVER_URL}/usuarios/profesor/actualizar/${id}`
       ).then((response) => {
-        setProfesor(response.data);
+        setProfesor({ ...response.data, contrasena: "" });
       });
     }
   }, [id]);
@@ -238,15 +252,40 @@ function FormaProfesor() {
         type="password"
         name="contrasena"
         id="contrasena"
+        value={profesor.contrasena}
         onChange={(event) => {
           setProfesor({ ...profesor, contrasena: event.target.value });
         }}
-        value={profesor.contrasena}
       />
       {errors.length > 0 && (
         <ul className="error-list">
           {errors
             .filter((error) => error.param === "contrasena")
+            .map((error, key) => {
+              return (
+                <li key={key} className="error-msg">
+                  {error.msg}
+                </li>
+              );
+            })}
+        </ul>
+      )}
+      <select
+        name="cargo"
+        id="cargo"
+        value={profesor.cargo}
+        onChange={(event) => {
+          setProfesor({ ...profesor, cargo: event.target.value });
+        }}
+      >
+        <option value="">-- Seleccione un Cargo --</option>
+        <option value="Profesor">Profesor</option>
+        <option value="Coordinador">Coordinador</option>
+      </select>
+      {errors.length > 0 && (
+        <ul className="error-list">
+          {errors
+            .filter((error) => error.param === "cargo")
             .map((error, key) => {
               return (
                 <li key={key} className="error-msg">
@@ -269,10 +308,13 @@ function FormaProfesor() {
       </button>
       <ul>
         <li>
-          <a href="/forma">Forma</a>
+          <a href="/">Pagina Principal</a>
         </li>
         <li>
-          <a href="/read">Leer</a>
+          <a href="/forma/profesor">Forma</a>
+        </li>
+        <li>
+          <a href="/read/profesores">Leer</a>
         </li>
       </ul>
     </div>

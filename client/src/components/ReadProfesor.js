@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import Axios from "axios";
 
-function ReadAlumno() {
-  const [listaAlumnos, setListaAlumnos] = useState([]);
+function ReadProfesor() {
+  const [listaProfesores, setListaProfesores] = useState([]);
 
   let history = useHistory();
 
   const borrarAlumno = (id) => {
     Axios.delete(
-      `${process.env.REACT_APP_SERVER_URL}/usuarios/alumno/borrar/${id}`
+      `${process.env.REACT_APP_SERVER_URL}/usuarios/profesor/borrar/${id}`
     ).then(() => {
       alert(`Alumno Borrado`);
       history.go(0);
@@ -17,17 +17,17 @@ function ReadAlumno() {
   };
 
   useEffect(() => {
-    Axios.get(`${process.env.REACT_APP_SERVER_URL}/usuarios/alumnos`).then(
+    Axios.get(`${process.env.REACT_APP_SERVER_URL}/usuarios/profesores`).then(
       (response) => {
-        setListaAlumnos(response.data);
+        setListaProfesores(response.data);
       }
     );
   }, []);
 
   return (
-    <div className="alumnos">
+    <div className="profesores">
       <h1>Lista de Alumnos</h1>
-      {listaAlumnos.map((val, key) => {
+      {listaProfesores.map((val, key) => {
         return (
           <div className="lista" key={key}>
             <h4>Nombre: </h4>
@@ -39,7 +39,7 @@ function ReadAlumno() {
             <button
               className="updatebtn"
               onClick={() => {
-                history.push(`/forma/alumno/${val._id}`);
+                history.push(`/forma/profesor/${val._id}`);
               }}
             >
               Update
@@ -60,14 +60,14 @@ function ReadAlumno() {
           <a href="/">Pagina Principal</a>
         </li>
         <li>
-          <a href="/forma/alumno">Forma</a>
+          <a href="/forma/profesor">Forma</a>
         </li>
         <li>
-          <a href="/read/alumnos">Leer</a>
+          <a href="/read/profesores">Leer</a>
         </li>
       </ul>
     </div>
   );
 }
 
-export default ReadAlumno;
+export default ReadProfesor;

@@ -7,7 +7,7 @@ let MateriaSchema = Schema({
   descripcion: { type: String, required: true },
   seccion: { type: String, required: true },
   profesor: { type: Schema.Types.ObjectId, ref: "Profesor", required: true },
-  profesors: [{ type: Schema.Types.ObjectId, ref: "Alumno" }],
+  alumnos: [{ type: Schema.Types.ObjectId, ref: "Alumno" }],
 });
 
 MateriaSchema.virtual("url").get(function () {
