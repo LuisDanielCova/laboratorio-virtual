@@ -25,7 +25,7 @@ const profesorSchema = {
         return Profesor.find({ cedula: value })
           .limit(1)
           .then((profesor) => {
-            if (profesor[0]._id != current_id) {
+            if (profesor.length > 0 && profesor[0]._id != current_id) {
               return Promise.reject("La cedula ya esta en uso");
             }
           });
@@ -92,7 +92,7 @@ const profesorSchema = {
     custom: {
       options: (value) => {
         return Profesor.find({ correo: value }).then((profesor) => {
-          if (profesor[0]._id != current_id) {
+          if (profesor.length > 0 && profesor[0]._id != current_id) {
             return Promise.reject("El correo ya esta en uso");
           }
         });
@@ -111,7 +111,7 @@ const profesorSchema = {
     custom: {
       options: (value) => {
         return Profesor.find({ usuario: value }).then((profesor) => {
-          if (profesor[0]._id != current_id) {
+          if (profesor.length > 0 && profesor[0]._id != current_id) {
             return Promise.reject("El usuario ya esta en uso");
           }
         });

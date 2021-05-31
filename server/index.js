@@ -6,7 +6,8 @@ const app = express();
 const cors = require("cors");
 const { DateTime } = require("luxon");
 
-let routerUsuarios = require("./routes/usuarios");
+const routerUsuarios = require("./routes/usuarios");
+const routerMaterias = require("./routes/materias");
 
 app.use(express.json());
 app.use(cors());
@@ -20,6 +21,7 @@ mongoose.connect(mongoDB, {
 });
 
 app.use("/usuarios", routerUsuarios);
+app.use("/materias", routerMaterias);
 
 // Atrapar el error y mandarlo al manejador de errores
 app.use(function (req, res, next) {

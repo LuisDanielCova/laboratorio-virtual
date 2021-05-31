@@ -24,7 +24,7 @@ const alumnoSchema = {
     custom: {
       options: (value) => {
         return Alumno.find({ cedula: value }).then((alumno) => {
-          if (alumno[0]._id != current_id) {
+          if (alumno.length > 0 && alumno[0]._id != current_id) {
             return Promise.reject("La cedula ya esta en uso");
           }
         });
@@ -91,7 +91,7 @@ const alumnoSchema = {
     custom: {
       options: (value) => {
         return Alumno.find({ correo: value }).then((alumno) => {
-          if (alumno[0]._id != current_id) {
+          if (alumno.length > 0 && alumno[0]._id != current_id) {
             return Promise.reject("El correo ya esta en uso");
           }
         });
@@ -110,7 +110,7 @@ const alumnoSchema = {
     custom: {
       options: (value) => {
         return Alumno.find({ usuario: value }).then((alumno) => {
-          if (alumno[0]._id != current_id) {
+          if (alumno.length > 0 && alumno[0]._id != current_id) {
             console.log(app.locals._id);
             return Promise.reject(`El usuario ya esta en uso`);
           }

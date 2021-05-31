@@ -22,6 +22,15 @@ function App() {
           <a href="/read/profesores">Leer</a>
         </li>
       </ul>
+      <h2>Materias</h2>
+      <ul>
+        <li>
+          <a href="/materias/crear">Forma</a>
+        </li>
+        <li>
+          <a href="/materias/leer">Leer</a>
+        </li>
+      </ul>
     </div>
   );
 }
