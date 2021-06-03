@@ -1,5 +1,12 @@
 let Actividad = require("../models/Actividad");
+const FileModel = require("../models/Archivo");
 const { checkSchema, validationResult } = require("express-validator");
+const multer = require("multer");
+const uuid = require("uuid").v4;
+const fs = require("fs");
+const { promisify } = require("util");
+const pipeline = promisify(require("stream").pipeline);
+const upload = multer();
 
 let current_id = "";
 
@@ -21,7 +28,22 @@ exports.conseguir_lista = (req, res, next) => {
 // CREAR UNA ACTIVIDAD
 
 exports.crear_actividad = [
+  upload.single("file"),
   async (req, res, next) => {
+    const { file } = req;
+    if (file.detectedFileExtension != ".zip") {
+      next(new Error("Invalid file type"));
+    }
+    const fileName = `${uuid()}-${file.originalName}`;
+    await pipeline(
+      file.stream,
+      fs.createWriteStream(`${__dirname}/../public/files/${fileName}`)
+    );
+    const fileDB = new FileModel({
+      nombre: fileName,
+    });
+    await fileDB.save();
+    // Brother
     const actividad = new Actividad({
       nombre: req.body.nombre,
       descripcion: req.body.descripcion,
@@ -31,7 +53,7 @@ exports.crear_actividad = [
     });
     try {
       await actividad.save();
-      res.status(200).json({ mensaje: "actiidad creada" });
+      res.status(200).json({ mensaje: "actividad creada" });
     } catch (err) {
       res.status(400);
       next(err);

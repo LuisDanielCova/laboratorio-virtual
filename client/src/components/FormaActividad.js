@@ -16,6 +16,7 @@ function FormaActividad() {
     fecha_entrega: "",
     nota: 0,
     materia: "",
+    file: "",
   });
 
   useEffect(() => {
@@ -42,9 +43,17 @@ function FormaActividad() {
 
   const agregarActividad = async (actividad) => {
     try {
+      const data = new FormData();
+      data.append("nombre", actividad.nombre);
+      data.append("descripcion", actividad.descripcion);
+      data.append("fecha_entrega", actividad.fecha_entrega);
+      data.append("nota", actividad.nota);
+      data.append("materia", actividad.materia);
+      data.append("file", actividad.file);
+
       let response = await Axios.post(
         `${process.env.REACT_APP_SERVER_URL}/materias/actividades/crear`,
-        actividad
+        data
       );
       if (response.status === 200) {
         alert(`Actividad Agregada`);
@@ -213,6 +222,18 @@ function FormaActividad() {
                 })}
             </ul>
           )}
+          <div>
+            <label htmlFor="file">File:</label>
+            <input
+              type="file"
+              id="file"
+              onChange={(e) => {
+                const archivo = e.target.files[0];
+                setActividad({ ...actividad, file: archivo });
+              }}
+              accept=".zip"
+            />
+          </div>
         </div>
         <button
           onClick={() => {

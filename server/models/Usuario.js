@@ -2,7 +2,7 @@ let mongoose = require("mongoose");
 
 let Schema = mongoose.Schema;
 
-let ProfesorSchema = Schema({
+let UsuarioSchema = Schema({
   cedula: { type: Number, required: true, min: 8 },
   nombre: { type: String, required: true, minLength: 3 },
   apellido: { type: String, required: true, minLength: 3 },
@@ -19,18 +19,4 @@ let ProfesorSchema = Schema({
   },
 });
 
-ProfesorSchema.virtual("nombre_completo").get(function () {
-  return `${this.apellido}, ${this.nombre}`;
-});
-
-ProfesorSchema.virtual("fecha_nac_formato").get(function () {
-  return this.date_of_birth
-    ? this.date_of_birth.toISOString().slice(0, 10)
-    : "";
-});
-
-ProfesorSchema.virtual("url").get(function () {
-  return `/cuenta/${this._id}`;
-});
-
-module.exports = mongoose.model("Profesor", ProfesorSchema);
+module.exports = mongoose.model("Usuario", UsuarioSchema);

@@ -1,13 +1,12 @@
-let Alumno = require("../models/Alumno");
-const { validationResult, checkSchema } = require("express-validator");
+let Usuario = require("../models/Usuario");
+const { checkSchema, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 
-// CURRENT SESSION ID
 let current_id = "";
 
 // SCHEMA
 
-const alumnoSchema = {
+const usuarioSchema = {
   cedula: {
     trim: true,
     notEmpty: {
@@ -23,11 +22,13 @@ const alumnoSchema = {
     },
     custom: {
       options: (value) => {
-        return Alumno.find({ cedula: value }).then((alumno) => {
-          if (alumno.length > 0 && alumno[0]._id != current_id) {
-            return Promise.reject("La cedula ya esta en uso");
-          }
-        });
+        return Usuario.find({ cedula: value })
+          .limit(1)
+          .then((usuario) => {
+            if (usuario.length > 0 && usuario[0]._id != current_id) {
+              return Promise.reject("La cedula ya esta en uso");
+            }
+          });
       },
     },
     escape: true,
@@ -90,8 +91,8 @@ const alumnoSchema = {
     },
     custom: {
       options: (value) => {
-        return Alumno.find({ correo: value }).then((alumno) => {
-          if (alumno.length > 0 && alumno[0]._id != current_id) {
+        return Usuario.find({ correo: value }).then((usuario) => {
+          if (usuario.length > 0 && usuario[0]._id != current_id) {
             return Promise.reject("El correo ya esta en uso");
           }
         });
@@ -109,10 +110,9 @@ const alumnoSchema = {
     },
     custom: {
       options: (value) => {
-        return Alumno.find({ usuario: value }).then((alumno) => {
-          if (alumno.length > 0 && alumno[0]._id != current_id) {
-            console.log(app.locals._id);
-            return Promise.reject(`El usuario ya esta en uso`);
+        return Usuario.find({ usuario: value }).then((usuario) => {
+          if (usuario.length > 0 && usuario[0]._id != current_id) {
+            return Promise.reject("El usuario ya esta en uso");
           }
         });
       },
@@ -134,80 +134,43 @@ const alumnoSchema = {
     },
     escape: true,
   },
+  cargo: {
+    trim: true,
+    notEmpty: {
+      errorMessage: "Seleccione un cargo",
+      bail: true,
+    },
+    isIn: {
+      options: [["Estudiante", "Profesor", "Coordinador"]],
+      errorMessage:
+        "Solo puede escoger 'Estudiante', 'Profesor' o 'Coordinador'",
+    },
+    escape: true,
+  },
 };
 
-// Enviar una lista con todos los alumnos de la base de datos al frontend
+// Mostrar todos los usuarios
 exports.conseguir_lista = (req, res, next) => {
-  Alumno.find()
+  Usuario.find()
     .sort([["apellido", "ascending"]])
-    .exec((err, lista_alumnos) => {
+    .exec((err, lista_usuarios) => {
       if (err) {
         return next(err);
       }
-      res.send(lista_alumnos);
+      res.status(200).send(lista_usuarios);
     });
 };
 
-// Crea un alumno, validando y sanitizando los campos necesarios
-exports.crear_alumno = [
+// Crear usuario
+
+exports.crear_usuario = [
   //Validar y limpiar los campos
-  checkSchema(alumnoSchema),
+  checkSchema(usuarioSchema),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.json({
-        statusCode: 400,
-        message: "data is invalid",
-        errors_array: errors,
-      });
-    } else {
-      let hash = bcrypt.hashSync(req.body.contrasena, 10);
-      const alumno = new Alumno({
-        cedula: req.body.cedula,
-        nombre: req.body.nombre,
-        apellido: req.body.apellido,
-        fecha_nac: req.body.fecha_nac,
-        telefono: req.body.telefono,
-        correo: req.body.correo,
-        usuario: req.body.usuario,
-        contrasena: hash,
-      });
-
-      try {
-        await alumno.save();
-        res.json({ statusCode: 200 });
-      } catch (err) {
-        next(err);
-      }
-    }
-  },
-];
-
-// Conseguir un alumno para actualizarlo
-exports.actualizar_alumno_get = async (req, res, next) => {
-  await Alumno.findById(req.params.id, (err, results) => {
-    if (err) {
-      return next(err);
-    }
-    res.send(results);
-  });
-};
-
-// Actualizar un alumno, validando y sanitizando los datos necesarios
-exports.actualizar_alumno_put = [
-  // Asignar el id del alumno al id actual
-  (req, res, next) => {
-    current_id = req.params.id;
-    next();
-  },
-  // Validar los campos
-  checkSchema(alumnoSchema),
-  async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.json({
-        statusCode: 400,
-        message: "data is invalid",
+      res.status(206).json({
+        message: "Datos invalidos",
         errors_array: errors,
       });
     } else {
@@ -215,7 +178,7 @@ exports.actualizar_alumno_put = [
         req.body.contrasena,
         process.env.PASSWORD_SALT
       );
-      const alumno = new Alumno({
+      const usuario = new Usuario({
         cedula: req.body.cedula,
         nombre: req.body.nombre,
         apellido: req.body.apellido,
@@ -224,21 +187,73 @@ exports.actualizar_alumno_put = [
         correo: req.body.correo,
         usuario: req.body.usuario,
         contrasena: hash,
+        cargo: req.body.cargo,
+      });
+
+      try {
+        await usuario.save();
+        res.status(200).json({ message: "Usuario creado" });
+      } catch (err) {
+        next(err);
+      }
+    }
+  },
+];
+
+// Enviar la informacion de un usuario para actualizarlo
+exports.actualizar_usuario_get = async (req, res, next) => {
+  await Usuario.findById(req.params.id, (err, results) => {
+    if (err) {
+      return next(err);
+    }
+    res.send(results);
+  });
+};
+
+// Actualizar un usuario
+exports.actualizar_usuario_put = [
+  // Validar los campos
+  (req, res, next) => {
+    current_id = req.params.id;
+    next();
+  },
+  checkSchema(usuarioSchema),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(206).json({
+        message: "Datos invalidos",
+        errors_array: errors,
+      });
+    } else {
+      let hash = bcrypt.hashSync(
+        req.body.contrasena,
+        process.env.PASSWORD_SALT
+      );
+      const usuario = new Usuario({
+        cedula: req.body.cedula,
+        nombre: req.body.nombre,
+        apellido: req.body.apellido,
+        fecha_nac: req.body.fecha_nac,
+        telefono: req.body.telefono,
+        correo: req.body.correo,
+        usuario: req.body.usuario,
+        contrasena: hash,
+        cargo: req.body.cargo,
         _id: req.params.id,
       });
 
       try {
-        await Alumno.findByIdAndUpdate(
+        await Usuario.findByIdAndUpdate(
           req.params.id,
-          alumno,
+          usuario,
           {},
           function (err) {
             if (err) {
               return next(err);
             }
-            res.json({
-              statusCode: 200,
-              message: "alumno actualizado",
+            res.status(200).json({
+              message: "Usuario actualizado",
             });
           }
         );
@@ -249,12 +264,25 @@ exports.actualizar_alumno_put = [
   },
 ];
 
-// Borrar un alumno
-exports.borrar_alumno = async (req, res, next) => {
-  await Alumno.findByIdAndRemove(req.params.id, (err) => {
+// Borrar un usuario
+exports.borrar_usuario = async (req, res, next) => {
+  await Usuario.findByIdAndRemove(req.params.id, (err) => {
     if (err) {
       return next(err);
     }
+    res.status(200).json({ message: "Usuario borrado" });
   });
-  res.send(`Borrado`);
 };
+
+// Actualizar todos los campos que se manden
+// exports.pruebaloca = async (req, res, next) => {
+//   console.log(`doings shit`);
+//   console.log(req.app.locals._id);
+//   const entries = Object.keys(req.body);
+//   const updates = {};
+//   for (let i = 0; i < entries.length; i++) {
+//     updates[entries[i]] = Object.values(req.body)[i];
+//   }
+//   this.actual_user = req.params.id;
+//   res.json(updates);
+// };

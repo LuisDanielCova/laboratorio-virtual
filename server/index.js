@@ -1,25 +1,46 @@
+// Declaracion de variables
 require("dotenv").config();
-
 const express = require("express");
+const path = require("path");
+const session = require("express-session");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
 const app = express();
 const cors = require("cors");
-const { DateTime } = require("luxon");
-
+const cookieParser = require("cookie-parser");
 const routerUsuarios = require("./routes/usuarios");
 const routerMaterias = require("./routes/materias");
 
-app.use(express.json());
-app.use(cors());
-
-app.locals._id = "stufflmao";
-
+// Database Connection
 const mongoDB = `${process.env.DB_URL}`;
 mongoose.connect(mongoDB, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: process.env.CLIENT_SERVER_URL,
+    credentials: true,
+  })
+);
+app.use(
+  session({
+    secret: "XDDDDD",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(cookieParser("XDDDDD"));
+app.use(passport.initialize());
+app.use(passport.session());
+require("./passportConfig")(passport);
+
+// Rutas
 app.use("/usuarios", routerUsuarios);
 app.use("/materias", routerMaterias);
 

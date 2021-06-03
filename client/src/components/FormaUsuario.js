@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { useParams, useHistory } from "react-router-dom";
 
-function FormaProfesor() {
+function FormaUsuario() {
   let { id } = useParams();
   let history = useHistory();
 
   const [errors, setErrors] = useState([]);
 
-  const [profesor, setProfesor] = useState({
+  const [usuario, setUsuario] = useState({
     cedula: "",
     nombre: "",
     apellido: "",
@@ -20,15 +20,15 @@ function FormaProfesor() {
     cargo: "",
   });
 
-  const agregarProfesor = async (profesor) => {
+  const agregarUsuario = async (usuario) => {
     try {
       let response = await Axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/usuarios/profesor/crear`,
-        profesor
+        `${process.env.REACT_APP_SERVER_URL}/usuarios/crear`,
+        usuario
       );
-      if (response.data.statusCode === 200) {
+      if (response.status === 200) {
         alert("Usuario agregado!");
-        history.push("/read/profesores");
+        history.push("/usuarios/");
       } else {
         setErrors(response.data.errors_array.errors);
         console.log(errors);
@@ -38,15 +38,15 @@ function FormaProfesor() {
     }
   };
 
-  const actualizarProfesor = async (profesor) => {
+  const actualizarUsuario = async (usuario) => {
     try {
       let response = await Axios.put(
-        `${process.env.REACT_APP_SERVER_URL}/usuarios/profesor/actualizar/${id}`,
-        profesor
+        `${process.env.REACT_APP_SERVER_URL}/usuarios/actualizar/${id}`,
+        usuario
       );
-      if (response.data.statusCode === 200) {
+      if (response.status === 200) {
         alert("Usuario actualizado!");
-        history.push("/read/profesores");
+        history.push("/usuarios/");
       } else {
         setErrors(response.data.errors_array.errors);
       }
@@ -58,27 +58,25 @@ function FormaProfesor() {
   useEffect(() => {
     if (id) {
       Axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/usuarios/profesor/actualizar/${id}`
+        `${process.env.REACT_APP_SERVER_URL}/usuarios/actualizar/${id}`
       ).then((response) => {
-        setProfesor({ ...response.data, contrasena: "" });
+        setUsuario({ ...response.data, contrasena: "" });
       });
     }
   }, [id]);
 
-  useEffect(() => {}, [errors]);
-
   return (
-    <div className="formaProfesor">
-      <h1>Agregar Profesor</h1>
+    <div className="formaUsuario">
+      <h1>Agregar Usuario</h1>
       <label htmlFor="cedula">Cedula:</label>
       <input
         type="text"
         id="cedula"
         name="cedula"
         onChange={(event) => {
-          setProfesor({ ...profesor, cedula: event.target.value });
+          setUsuario({ ...usuario, cedula: event.target.value });
         }}
-        value={profesor.cedula}
+        value={usuario.cedula}
       />
       {errors.length > 0 && (
         <ul className="error-list">
@@ -99,9 +97,9 @@ function FormaProfesor() {
         id="nombre"
         name="nombre"
         onChange={(event) => {
-          setProfesor({ ...profesor, nombre: event.target.value });
+          setUsuario({ ...usuario, nombre: event.target.value });
         }}
-        value={profesor.nombre}
+        value={usuario.nombre}
       />
       {errors.length > 0 && (
         <ul className="error-list">
@@ -122,9 +120,9 @@ function FormaProfesor() {
         id="apellido"
         name="apellido"
         onChange={(event) => {
-          setProfesor({ ...profesor, apellido: event.target.value });
+          setUsuario({ ...usuario, apellido: event.target.value });
         }}
-        value={profesor.apellido}
+        value={usuario.apellido}
       />
       {errors.length > 0 && (
         <ul className="error-list">
@@ -145,12 +143,12 @@ function FormaProfesor() {
         name="fecha-nac"
         id="fecha-nac"
         onChange={(event) => {
-          setProfesor({
-            ...profesor,
+          setUsuario({
+            ...usuario,
             fecha_nac: event.target.value,
           });
         }}
-        value={profesor.fecha_nac.slice(0, 10)}
+        value={usuario.fecha_nac.slice(0, 10)}
       />
       {errors.length > 0 && (
         <ul className="error-list">
@@ -171,9 +169,9 @@ function FormaProfesor() {
         id="telefono"
         name="telefono"
         onChange={(event) => {
-          setProfesor({ ...profesor, telefono: event.target.value });
+          setUsuario({ ...usuario, telefono: event.target.value });
         }}
-        value={profesor.telefono}
+        value={usuario.telefono}
       />
       {errors.length > 0 && (
         <ul className="error-list">
@@ -194,9 +192,9 @@ function FormaProfesor() {
         name="correo"
         id="correo"
         onChange={(event) => {
-          setProfesor({ ...profesor, correo: event.target.value });
+          setUsuario({ ...usuario, correo: event.target.value });
         }}
-        value={profesor.correo}
+        value={usuario.correo}
       />
       {errors.length > 0 && (
         <ul className="error-list">
@@ -217,9 +215,9 @@ function FormaProfesor() {
         id="usuario"
         name="usuario"
         onChange={(event) => {
-          setProfesor({ ...profesor, usuario: event.target.value });
+          setUsuario({ ...usuario, usuario: event.target.value });
         }}
-        value={profesor.usuario}
+        value={usuario.usuario}
       />
       {errors.length > 0 && (
         <ul className="error-list">
@@ -239,9 +237,9 @@ function FormaProfesor() {
         type="password"
         name="contrasena"
         id="contrasena"
-        value={profesor.contrasena}
+        value={usuario.contrasena}
         onChange={(event) => {
-          setProfesor({ ...profesor, contrasena: event.target.value });
+          setUsuario({ ...usuario, contrasena: event.target.value });
         }}
       />
       {errors.length > 0 && (
@@ -260,12 +258,13 @@ function FormaProfesor() {
       <select
         name="cargo"
         id="cargo"
-        value={profesor.cargo}
+        value={usuario.cargo}
         onChange={(event) => {
-          setProfesor({ ...profesor, cargo: event.target.value });
+          setUsuario({ ...usuario, cargo: event.target.value });
         }}
       >
         <option value="">-- Seleccione un Cargo --</option>
+        <option value="Estudiante">Estudiante</option>
         <option value="Profesor">Profesor</option>
         <option value="Coordinador">Coordinador</option>
       </select>
@@ -285,9 +284,9 @@ function FormaProfesor() {
       <button
         onClick={() => {
           if (id === undefined) {
-            agregarProfesor(profesor);
+            agregarUsuario(usuario);
           } else {
-            actualizarProfesor(profesor);
+            actualizarUsuario(usuario);
           }
         }}
       >
@@ -298,14 +297,14 @@ function FormaProfesor() {
           <a href="/">Pagina Principal</a>
         </li>
         <li>
-          <a href="/forma/profesor">Forma</a>
+          <a href="/usuarios/crear">Forma</a>
         </li>
         <li>
-          <a href="/read/profesores">Leer</a>
+          <a href="/usuarios/">Leer</a>
         </li>
       </ul>
     </div>
   );
 }
 
-export default FormaProfesor;
+export default FormaUsuario;

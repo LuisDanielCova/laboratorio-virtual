@@ -9,6 +9,9 @@ import ReadProfesor from "./components/ReadProfesor";
 import LeerMateria from "./components/LeerMateria";
 import FormaActividad from "./components/FormaActividad";
 import LeerActividad from "./components/LeerActividad";
+import Login from "./components/Login";
+import FormaUsuario from "./components/FormaUsuario";
+import LeerUsuario from "./components/LeerUsuario";
 
 const Routes = () => {
   return (
@@ -27,6 +30,10 @@ const Routes = () => {
         <Route exact path="/actividades/crear" component={FormaActividad} />
         <Route exact path="/actividades/crear/:id" component={FormaActividad} />
         <Route exact path="/actividades/leer" component={LeerActividad} />
+        <Route exact path="/usuarios/crear" component={FormaUsuario} />
+        <Route exact path="/usuarios/crear/:id" component={FormaUsuario} />
+        <Route exact path="/usuarios/" component={LeerUsuario} />
+        <Route exact path="/login" component={Login} />
       </Switch>
     </BrowserRouter>
   );

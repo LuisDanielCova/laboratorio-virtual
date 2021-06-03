@@ -1,25 +1,51 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 function App() {
+  let history = useHistory();
+
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    async function fetchData() {
+      let response = await axios({
+        method: "GET",
+        withCredentials: true,
+        url: "http://localhost:3001/usuarios/sesion",
+      });
+      setData(response.data);
+      console.log(response);
+    }
+    fetchData();
+  }, []);
+
+  const logout = async () => {
+    let response = await axios.post(`http://localhost:3001/usuarios/logout`);
+    console.log(response);
+    alert(`Loggind out, brother`);
+    history.go(0);
+  };
+
   return (
     <div className="App">
       <h1>Pruebas a la base de datos</h1>
-      <h2>Alumnos</h2>
+      <h2>Usuarios</h2>
+      {data ? <h1>Bienvenido de vuelta, {data.username}</h1> : null}
       <ul>
         <li>
-          <a href="/forma/alumno">Forma</a>
+          <a href="/usuarios/crear">Forma</a>
         </li>
         <li>
-          <a href="/read/alumnos">Leer</a>
-        </li>
-      </ul>
-      <h2>Profesores</h2>
-      <ul>
-        <li>
-          <a href="/forma/profesor">Forma</a>
+          <a href="/usuarios/">Leer</a>
         </li>
         <li>
-          <a href="/read/profesores">Leer</a>
+          <a href="/login">Login</a>
+        </li>
+        <li>
+          <a href="#" onClick={logout}>
+            Logout
+          </a>
         </li>
       </ul>
       <h2>Materias</h2>
@@ -29,6 +55,15 @@ function App() {
         </li>
         <li>
           <a href="/materias/leer">Leer</a>
+        </li>
+      </ul>
+      <h2>Actividades</h2>
+      <ul>
+        <li>
+          <a href="/actividades/crear">Forma</a>
+        </li>
+        <li>
+          <a href="/actividades/leer">Leer</a>
         </li>
       </ul>
     </div>

@@ -37,6 +37,13 @@ function LeerActividad() {
     }
   };
 
+  const descargarArchivo = async (nombre) => {
+    let response = await Axios.get(
+      `${process.env.REACT_APP_SERVER_URL}/materias/actividades/archivos/descargar/${nombre}`
+    );
+    window.open(response.config.url);
+  };
+
   return (
     <div className="alumnos">
       <h1>Lista de Materias</h1>
@@ -49,6 +56,15 @@ function LeerActividad() {
             <p>{val.materia.nombre}</p>
             <h4> Nota: </h4>
             <p>{val.nota}</p>
+            <button
+              onClick={() => {
+                descargarArchivo(
+                  `b27313f2-a5f6-4530-9eef-6b4ab04ba257-test.zip`
+                );
+              }}
+            >
+              Descargar Archivo
+            </button>
             <button
               className="updatebtn"
               onClick={() => {
