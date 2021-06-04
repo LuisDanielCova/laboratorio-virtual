@@ -11,12 +11,13 @@ import LeerUsuario from "./components/LeerUsuario";
 import Inicio from "./components/inicio/Inicio";
 import RegistroUsuario from "./components/users/RegistroUsuario";
 import Contacto from "./components/inicio/Contacto";
+import Sidebar from "./components/complements/Sidebar";
 
 const Routes = () => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route exact path="/" component={Inicio} />
+        <Route exact path="/" component={App} />
         <Route exact path="/materias/crear" component={FormaMateria} />
         <Route exact path="/materias/crear/:id" component={FormaMateria} />
         <Route exact path="/materias/leer" component={LeerMateria} />
@@ -29,6 +30,7 @@ const Routes = () => {
         <Route exact path="/registro/" component={RegistroUsuario} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/contacto" component={Contacto} />
+        <Route exact path="/sidebar" component={Sidebar} />
       </Switch>
     </BrowserRouter>
   );

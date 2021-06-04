@@ -55,10 +55,10 @@ function Navbar(props) {
                   class="dropdown-menu"
                   aria-labelledby="navbarDropdownMenuLink"
                 >
-                  <a class="dropdown-item" href="/usuarios/crear">
+                  <a class="dropdown-item" href="/registro">
                     Registro de Estudiante
                   </a>
-                  <a class="dropdown-item" href="/usuarios/recuperar">
+                  <a class="dropdown-item" href="/recuperar">
                     Recuperar Contraseña
                   </a>
                 </nav>
