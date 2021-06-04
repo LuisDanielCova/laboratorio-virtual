@@ -1,6 +1,6 @@
 import React from "react";
-import Navbar from "./complements/Navbar";
-import Footer from "./complements/Footer";
+import Navbar from "../complements/Navbar";
+import Footer from "../complements/Footer";
 
 function Inicio() {
   return (

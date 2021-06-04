@@ -71,10 +71,9 @@ function Login() {
               Login
             </button>
           </div>
-          <br />
-          <div className="container-fluid ">
+          <div className="container-fluid mt-3">
             <span className="col-md-12">
-              ¿Aun no te has registrado?
+              ¿Aun no te has registrado?&nbsp;
               <a className="link-warning" href="/usuarios/crear">
                 ¡Haz Click Aqui!
               </a>

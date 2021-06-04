@@ -8,7 +8,9 @@ import LeerActividad from "./components/LeerActividad";
 import Login from "./components/users/Login";
 import FormaUsuario from "./components/users/FormaUsuario";
 import LeerUsuario from "./components/LeerUsuario";
-import Inicio from "./components/Inicio";
+import Inicio from "./components/inicio/Inicio";
+import RegistroUsuario from "./components/users/RegistroUsuario";
+import Contacto from "./components/inicio/Contacto";
 
 const Routes = () => {
   return (
@@ -24,7 +26,9 @@ const Routes = () => {
         <Route exact path="/usuarios/crear" component={FormaUsuario} />
         <Route exact path="/usuarios/crear/:id" component={FormaUsuario} />
         <Route exact path="/usuarios/" component={LeerUsuario} />
+        <Route exact path="/registro/" component={RegistroUsuario} />
         <Route exact path="/login" component={Login} />
+        <Route exact path="/contacto" component={Contacto} />
       </Switch>
     </BrowserRouter>
   );
