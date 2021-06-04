@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import Navbar from "./components/complements/Navbar";
 
 function App() {
   let history = useHistory();
@@ -28,7 +29,8 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="">
+      <Navbar />
       <h1>Pruebas a la base de datos</h1>
       <h2>Usuarios</h2>
       {data ? <h1>Bienvenido de vuelta, {data.username}</h1> : null}
@@ -43,9 +45,9 @@ function App() {
           <a href="/login">Login</a>
         </li>
         <li>
-          <a href="#" onClick={logout}>
+          <button onClick={logout} className="btn btn-primary">
             Logout
-          </a>
+          </button>
         </li>
       </ul>
       <h2>Materias</h2>

@@ -66,7 +66,7 @@ function FormaUsuario() {
   }, [id]);
 
   return (
-    <div className="formaUsuario">
+    <div className="container">
       <h1>Agregar Usuario</h1>
       <label htmlFor="cedula">Cedula:</label>
       <input
@@ -282,6 +282,7 @@ function FormaUsuario() {
         </ul>
       )}
       <button
+        className="btn btn-primary"
         onClick={() => {
           if (id === undefined) {
             agregarUsuario(usuario);
