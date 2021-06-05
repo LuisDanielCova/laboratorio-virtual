@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 //import { useHistory } from "react-router-dom";
 //import Navbar from "./components/complements/Navbar";
 import Sidebar from "./components/complements/Sidebar";
-import Dashboard from "./components/users/Dashboard";
+import CrearMateria from "./components/materias/CrearMateria";
 
 export const UserContext = React.createContext();
 
@@ -13,7 +13,7 @@ function App() {
       <UserContext.Provider value={"Estudiante"}>
         <div className="row flex-nowrap gx-0">
           <Sidebar />
-          <Dashboard />
+          <CrearMateria />
         </div>
       </UserContext.Provider>
     </div>
