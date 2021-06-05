@@ -143,7 +143,7 @@ function Sidebar() {
         </li>
       );
     }
-  }, []);
+  }, [user]);
 
   return (
     <div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
@@ -166,9 +166,9 @@ function Sidebar() {
           id="menu"
         >
           <li className="nav-item">
-            <a href="#" className="nav-link link-warning align-middle px-0">
+            <a href="/" className="nav-link link-warning align-middle px-0">
               <i className="fs-4 bi-house"></i>{" "}
-              <span className="ms-1 d-none d-sm-inline">Home</span>
+              <span className="ms-1 d-none d-sm-inline">Inicio</span>
             </a>
           </li>
           {liMaterias}
@@ -196,7 +196,7 @@ function Sidebar() {
         <hr />
         <div className="dropdown pb-4">
           <a
-            href="#"
+            href="/"
             className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
             id="dropdownUser1"
             data-bs-toggle="dropdown"
@@ -239,15 +239,14 @@ function Sidebar() {
 
 export default Sidebar;
 
-{
-  /*
+/*
   
   Agregar esto entre elementos en el componente que llame al Sidebar
   
   <div class="container-fluid">
     <div class="row flex-nowrap">
       <Sidebar/>
+      <otro elemento/> <-- Este elemento debe estar en un div con la clase "col"
     </div>
   </div>;
  */
-}

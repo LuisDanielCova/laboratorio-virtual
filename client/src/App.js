@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 //import { useHistory } from "react-router-dom";
 //import Navbar from "./components/complements/Navbar";
 import Sidebar from "./components/complements/Sidebar";
+import Dashboard from "./components/users/Dashboard";
 
 export const UserContext = React.createContext();
 
@@ -10,7 +11,10 @@ function App() {
   return (
     <div>
       <UserContext.Provider value={"Estudiante"}>
-        <Sidebar />
+        <div className="row flex-nowrap gx-0">
+          <Sidebar />
+          <Dashboard />
+        </div>
       </UserContext.Provider>
     </div>
   );
