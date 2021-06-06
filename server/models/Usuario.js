@@ -14,7 +14,7 @@ let UsuarioSchema = Schema({
   cargo: {
     type: String,
     required: true,
-    enum: ["Estudiante", "Profesor", "Coordinador"],
+    enum: ["Estudiante", "Profesor", "Administrador"],
     default: "Estudiante",
   },
 });

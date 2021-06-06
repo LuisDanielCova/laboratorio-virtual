@@ -3,17 +3,19 @@ import React, { useState, useEffect } from "react";
 //import { useHistory } from "react-router-dom";
 //import Navbar from "./components/complements/Navbar";
 import Sidebar from "./components/complements/Sidebar";
-import Dashboard from "./components/users/Dashboard";
+import LeerMaterias from "./components/materias/LeerMaterias";
 
 export const UserContext = React.createContext();
 
 function App() {
   return (
     <div>
-      <UserContext.Provider value={"Estudiante"}>
-        <div className="row flex-nowrap gx-0">
-          <Sidebar />
-          <Dashboard />
+      <UserContext.Provider value={"Administrador"}>
+        <div className="container-fluid p-0">
+          <div className="row flex-nowrap gx-0">
+            <Sidebar />
+            <LeerMaterias />
+          </div>
         </div>
       </UserContext.Provider>
     </div>

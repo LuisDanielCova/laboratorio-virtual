@@ -143,7 +143,7 @@ const usuarioSchema = {
     isIn: {
       options: [["Estudiante", "Profesor", "Coordinador"]],
       errorMessage:
-        "Solo puede escoger 'Estudiante', 'Profesor' o 'Coordinador'",
+        "Solo puede escoger 'Estudiante', 'Profesor' o 'Administrador'",
     },
     escape: true,
   },
