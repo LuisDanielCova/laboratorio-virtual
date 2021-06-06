@@ -8,7 +8,7 @@ function Sidebar() {
   const [liUsuarios, setLiUsuarios] = useState();
 
   useEffect(() => {
-    if (user === "Admin") {
+    if (user === "Administrador") {
       setLiMaterias(
         <li>
           <a

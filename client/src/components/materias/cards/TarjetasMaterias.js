@@ -12,10 +12,10 @@ function TarjetasMaterias(props) {
         setButton(
           <div className="col">
             <button className="btn btn-warning col-xl-5 me-2">
-              <i class="bi bi-pencil"></i> Actualizar
+              <i className="bi bi-pencil"></i> Actualizar
             </button>
             <button className="btn btn-danger col-xl-4">
-              <i class="bi bi-dash-circle"></i> Borrar
+              <i className="bi bi-dash-circle"></i> Borrar
             </button>
           </div>
         );
@@ -58,11 +58,11 @@ function TarjetasMaterias(props) {
         <p>Error, cargue la pagina nuevamente</p>;
         break;
     }
-  }, [user]);
+  }, [user, props]);
 
   return (
     <div className="col-lg-4 col-md-6 col-sm-12 my-2">
-      <div className="card border-dark bg-light">
+      <div className="card border-dark bg-light shadow">
         <h5 className="card-header bg-warning">{props.materia.nombre}</h5>
         <div className="card-body ">
           <h5 className="card-title">Profesor: {props.materia.profesor}</h5>

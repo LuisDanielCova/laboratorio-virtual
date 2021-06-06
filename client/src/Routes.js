@@ -8,7 +8,7 @@ import LeerActividad from "./components/LeerActividad";
 import Login from "./components/users/Login";
 import FormaUsuario from "./components/users/FormaUsuario";
 import LeerUsuario from "./components/LeerUsuario";
-import Inicio from "./components/inicio/Inicio";
+//import Inicio from "./components/inicio/Inicio";
 import RegistroUsuario from "./components/users/RegistroUsuario";
 import Contacto from "./components/inicio/Contacto";
 import Sidebar from "./components/complements/Sidebar";
