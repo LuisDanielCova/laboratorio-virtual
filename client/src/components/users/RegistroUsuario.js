@@ -11,12 +11,12 @@ function RegistroUsuario() {
           <h3 className="fw-bold col-md-12">Registro de Usuario</h3>
           <form action="">
             <div className="container-fluid ps-0 my-3 row">
-              <div className="col-md-1">
+              <div className="col-lg-1">
                 <label htmlFor="cedula" className="form-label mt-2">
                   Cedula:
                 </label>
               </div>
-              <div className="col-md-11">
+              <div className="col-lg-11">
                 <input
                   type="text"
                   id="cedula"
@@ -28,7 +28,7 @@ function RegistroUsuario() {
               </div>
             </div>
             <div className="container-fluid ps-0 my-3 row">
-              <div className="col-lg-1">
+              <div className="col-xl-1">
                 <label htmlFor="nombre" className="form-label mt-2">
                   Nombre:
                 </label>
@@ -90,7 +90,7 @@ function RegistroUsuario() {
               </div>
             </div>
             <div className="container-fluid ps-0 my-3 row">
-              <div className="col-md-1">
+              <div className="col-lg-1">
                 <label htmlFor="correo" className="form-label mt-2">
                   Correo:
                 </label>

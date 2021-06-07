@@ -8,7 +8,7 @@ let ActividadSchema = Schema({
   fecha_entrega: { type: Date, required: true },
   nota: { type: Number, required: true },
   materia: { type: Schema.Types.ObjectId, ref: "Materia", required: true },
-  archivos: [{ type: Schema.Types.ObjectId, ref: "Archivo" }],
+  archivosProfesor: { type: Schema.Types.ObjectId, ref: "ArchivoProfesor" },
 });
 
 ActividadSchema.virtual("url").get(function () {

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 //import { useHistory } from "react-router-dom";
 //import Navbar from "./components/complements/Navbar";
 import Sidebar from "./components/complements/Sidebar";
-import DetallesMateria from "./components/materias/DetallesMateria";
+import DetallesActividad from "./components/actividades/DetallesActividad";
 
 export const UserContext = React.createContext();
 
@@ -14,7 +14,7 @@ function App() {
         <div className="container-fluid p-0">
           <div className="row flex-nowrap gx-0">
             <Sidebar />
-            <DetallesMateria />
+            <DetallesActividad />
           </div>
         </div>
       </UserContext.Provider>

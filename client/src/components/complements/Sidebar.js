@@ -177,7 +177,7 @@ function Sidebar() {
               href={`/notas/${user}`} ///// CAMBIAR A ID DE USUARIO
               className="nav-link px-0 align-middle link-warning"
             >
-              <i className="fs-4 bi bi-journals"></i>{" "}
+              <i className="fs-4 bi bi-award"></i>{" "}
               <span className="ms-1 d-none d-sm-inline">Notas</span>
             </a>
           </li>

@@ -1,6 +1,5 @@
 import React from "react";
 import TarjetasActividades from "./cards/TarjetasActividades";
-import TarjetasMaterias from "./cards/TarjetasMaterias";
 
 function DetallesMateria() {
   const materia = {
