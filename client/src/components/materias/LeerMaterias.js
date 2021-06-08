@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import TarjetasMaterias from "./cards/TarjetasMaterias";
+import TarjetasMaterias from "../cards/TarjetasMaterias";
 import { UserContext } from "../../App";
 
 function LeerMaterias() {

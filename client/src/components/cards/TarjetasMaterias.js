@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { UserContext } from "../../../App";
+import { UserContext } from "../../App";
 import ReactTooltip from "react-tooltip";
 
 function TarjetasMaterias(props) {

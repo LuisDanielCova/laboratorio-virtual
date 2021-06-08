@@ -60,7 +60,7 @@ function DetallesUsuario() {
                   {usuario.cargo}
                 </p>
               </div>
-              <card className="card px-3 py-2 mt-1">
+              <div className="card px-3 py-2 mt-1">
                 <h4 className="fw-bold">Acciones:</h4>
                 <button className="btn btn-warning">
                   <i className="bi bi-pencil"></i> Editar
@@ -68,7 +68,7 @@ function DetallesUsuario() {
                 <button className="btn btn-danger mt-1">
                   <i className="bi bi-dash-circle"></i> Borrar
                 </button>
-              </card>
+              </div>
             </div>
           </div>
         </div>

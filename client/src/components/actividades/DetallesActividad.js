@@ -1,9 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../App";
+import TarjetasArchivoProfesor from "../cards/TajetasArchivoProfesor";
+import TarjetasArchivoProfesorEditar from "../cards/TarjetasArchivoProfesorEditar";
+import TarjetasArchivosEstudiantesEditar from "../cards/TarjetasArchivosEstudiantesEditar";
+import TarjetasArchivosEstudiantesSubir from "../cards/TarjetasArchivosEstudiantesSubir";
+import TarjetasMostrarArchivosEstudiantes from "../cards/TarjetasMostrarArchivosEstudiantes";
 
 function DetallesActividad() {
   const user = useContext(UserContext);
   const [estado, setEstado] = useState();
+  const [acciones, setAcciones] = useState("");
   const [archivoProfesor, setArchivoProfesor] = useState();
   const [archivosEstudiantes, setArchivosEstudiantes] = useState([]);
 
@@ -39,21 +45,21 @@ function DetallesActividad() {
 
   useEffect(() => {
     if (actividad.archivo !== undefined) {
-      setArchivoProfesor(
-        <div>
-          <h5 className="card-text">Archivos de la Actividad:</h5>
-          <button className="col btn btn-warning me-1 mb-1">
-            <i className="col bi bi-file-earmark"></i>{" "}
-            {actividad.archivo.nombre}
-          </button>
-        </div>
-      );
+      if (user === "Estudiante" || user === "Administrador") {
+        setArchivoProfesor(
+          <TarjetasArchivoProfesor archivo={actividad.archivo} />
+        );
+      } else if (user === "Profesor") {
+        setArchivoProfesor(
+          <TarjetasArchivoProfesorEditar archivo={actividad.archivo} />
+        );
+      }
     } else {
       setArchivoProfesor(
         <p className="card-text">El profesor no ha subido un archivo</p>
       );
     }
-  }, []);
+  }, [actividad.archivo, user]);
 
   useEffect(() => {
     switch (user) {
@@ -67,22 +73,9 @@ function DetallesActividad() {
       case "Profesor":
         if (archivosEstudiantes.length > 0) {
           setEstado(
-            <div>
-              <div className="alert alert-warning card-text">
-                A continuacion se muestran los archivos de los alumnos:
-              </div>
-              {archivosEstudiantes.map((val, key) => {
-                return (
-                  <button key={key} className="col btn btn-warning me-1">
-                    <i className="col bi bi-file-earmark"></i> {val.nombre}
-                    <p className="card-text">
-                      <i className="bi bi-person"></i>
-                      {val.alumno}
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
+            <TarjetasMostrarArchivosEstudiantes
+              archivosEstudiantes={archivosEstudiantes}
+            />
           );
         } else {
           setEstado(
@@ -91,43 +84,29 @@ function DetallesActividad() {
             </span>
           );
         }
+        setAcciones(
+          <div className="card p-2 mt-1">
+            <h4 className="fw-bold">Acciones:</h4>
+            <button className="btn btn-warning">
+              <i className="bi bi-pencil"></i> Editar
+            </button>
+            <button className="btn btn-danger mt-1">
+              <i className="bi bi-dash-circle"></i> Borrar
+            </button>
+          </div>
+        );
         break;
       case "Estudiante":
         const archivoEntregado = archivosEstudiantes.find(
           (archivo) => archivo.alumno === user
         );
         if (archivoEntregado === undefined) {
-          setEstado(
-            <div>
-              <div className="alert alert-danger card-text">
-                ¡Falta por Entregar!{" "}
-              </div>
-              <label htmlFor="archivo" className="form-label">
-                Subir Archivo:
-              </label>
-              <input
-                type="file"
-                name="archivo"
-                id="archivo"
-                className="form-control"
-                multiple
-              />
-            </div>
-          );
+          setEstado(<TarjetasArchivosEstudiantesSubir />);
         } else {
           setEstado(
-            <div>
-              <div className="alert alert-warning card-text">¡Entregado!</div>
-              <h5 className="card-text">Tus Archivos:</h5>
-              <button className="col btn btn-warning me-1">
-                <i className="col bi bi-file-earmark"></i>{" "}
-                {archivoEntregado.nombre}
-                <p className="card-text">
-                  <i className="bi bi-person"></i>
-                  {archivoEntregado.alumno}
-                </p>
-              </button>
-            </div>
+            <TarjetasArchivosEstudiantesEditar
+              archivoEntregado={archivoEntregado}
+            />
           );
         }
         break;
@@ -169,6 +148,7 @@ function DetallesActividad() {
                   <i className="bi bi-star"></i> {actividad.nota} / 20
                 </p>
               </div>
+              {acciones}
             </div>
           </div>
         </div>
