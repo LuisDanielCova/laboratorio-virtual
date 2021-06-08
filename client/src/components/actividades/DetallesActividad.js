@@ -27,10 +27,12 @@ function DetallesActividad() {
       {
         nombre: "vaina.zip",
         alumno: "alumno1",
+        url: "http://localhost:3001/vaina2.zip",
       },
       {
         nombre: "vaina2.zip",
         alumno: "Estudiante",
+        url: "http://localhost:3001/vaina2.zip",
       },
     ]);
   }, []);
@@ -38,17 +40,20 @@ function DetallesActividad() {
   useEffect(() => {
     if (actividad.archivo !== undefined) {
       setArchivoProfesor(
-        <p className="card-text">
-          Archivo: {actividad.archivo.nombre} -{" "}
-          <a href={actividad.archivo.url}>Link</a>
-        </p>
+        <div>
+          <h5 className="card-text">Archivos de la Actividad:</h5>
+          <button className="col btn btn-warning me-1 mb-1">
+            <i className="col bi bi-file-earmark"></i>{" "}
+            {actividad.archivo.nombre}
+          </button>
+        </div>
       );
     } else {
       setArchivoProfesor(
         <p className="card-text">El profesor no ha subido un archivo</p>
       );
     }
-  }, [actividad.archivo]);
+  }, []);
 
   useEffect(() => {
     switch (user) {
@@ -68,9 +73,13 @@ function DetallesActividad() {
               </div>
               {archivosEstudiantes.map((val, key) => {
                 return (
-                  <p key={key} className="card-text">
-                    {val.alumno} - {val.nombre}
-                  </p>
+                  <button key={key} className="col btn btn-warning me-1">
+                    <i className="col bi bi-file-earmark"></i> {val.nombre}
+                    <p className="card-text">
+                      <i className="bi bi-person"></i>
+                      {val.alumno}
+                    </p>
+                  </button>
                 );
               })}
             </div>
@@ -109,7 +118,15 @@ function DetallesActividad() {
           setEstado(
             <div>
               <div className="alert alert-warning card-text">¡Entregado!</div>
-              <p className="card-text">{archivoEntregado.nombre}</p>
+              <h5 className="card-text">Tus Archivos:</h5>
+              <button className="col btn btn-warning me-1">
+                <i className="col bi bi-file-earmark"></i>{" "}
+                {archivoEntregado.nombre}
+                <p className="card-text">
+                  <i className="bi bi-person"></i>
+                  {archivoEntregado.alumno}
+                </p>
+              </button>
             </div>
           );
         }
