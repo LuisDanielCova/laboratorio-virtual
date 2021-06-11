@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../App";
-import TarjetasArchivoProfesor from "../cards/TajetasArchivoProfesor";
+import TarjetasArchivoProfesor from "../cards/TarjetasArchivoProfesor";
 import TarjetasArchivoProfesorEditar from "../cards/TarjetasArchivoProfesorEditar";
 import TarjetasArchivosEstudiantesEditar from "../cards/TarjetasArchivosEstudiantesEditar";
 import TarjetasArchivosEstudiantesSubir from "../cards/TarjetasArchivosEstudiantesSubir";
@@ -46,13 +46,11 @@ function DetallesActividad() {
   useEffect(() => {
     if (actividad.archivo !== undefined) {
       if (user === "Estudiante" || user === "Administrador") {
-        setArchivoProfesor(
-          <TarjetasArchivoProfesor archivo={actividad.archivo} />
-        );
+        setArchivoProfesor();
+        <TarjetasArchivoProfesor archivo={actividad.archivo} />;
       } else if (user === "Profesor") {
-        setArchivoProfesor(
-          <TarjetasArchivoProfesorEditar archivo={actividad.archivo} />
-        );
+        setArchivoProfesor();
+        <TarjetasArchivoProfesorEditar archivo={actividad.archivo} />;
       }
     } else {
       setArchivoProfesor(
@@ -73,9 +71,18 @@ function DetallesActividad() {
       case "Profesor":
         if (archivosEstudiantes.length > 0) {
           setEstado(
-            <TarjetasMostrarArchivosEstudiantes
-              archivosEstudiantes={archivosEstudiantes}
-            />
+            <div>
+              <div className="alert alert-warning card-text">
+                A continuacion se muestran los archivos de los alumnos:
+              </div>
+              <div className="row">
+                {archivosEstudiantes.map((val, key) => {
+                  return (
+                    <TarjetasMostrarArchivosEstudiantes val={val} key={key} />
+                  );
+                })}
+              </div>
+            </div>
           );
         } else {
           setEstado(

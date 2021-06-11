@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { useParams, useHistory } from "react-router-dom";
+import FormError from "./errors/FormError";
 
 function FormaAlumno() {
   let { id } = useParams();
@@ -78,19 +79,7 @@ function FormaAlumno() {
         }}
         value={alumno.cedula}
       />
-      {errors.length > 0 && (
-        <ul className="error-list">
-          {errors
-            .filter((error) => error.param === "cedula")
-            .map((error, key) => {
-              return (
-                <li key={key} className="error-msg">
-                  {error.msg}
-                </li>
-              );
-            })}
-        </ul>
-      )}
+      <FormError errors={errors} campo={"cedula"} />
       <label htmlFor="nombre">Nombre:</label>
       <input
         type="text"

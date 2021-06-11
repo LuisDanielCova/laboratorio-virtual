@@ -1,5 +1,5 @@
 let Actividad = require("../models/Actividad");
-const FileModel = require("../models/Archivo");
+const FileModel = require("../models/ArchivoEstudiante");
 const { checkSchema, validationResult } = require("express-validator");
 const multer = require("multer");
 const uuid = require("uuid").v4;

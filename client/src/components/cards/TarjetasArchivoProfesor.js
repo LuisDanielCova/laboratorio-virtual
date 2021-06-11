@@ -1,6 +1,6 @@
 import React from "react";
 
-const TajetasArchivoProfesor = ({ archivo }) => {
+const TarjetasArchivoProfesor = ({ archivo }) => {
   return (
     <div>
       <h5 className="card-text">Archivos de la Actividad:</h5>
@@ -16,4 +16,4 @@ const TajetasArchivoProfesor = ({ archivo }) => {
   );
 };
 
-export default TajetasArchivoProfesor;
+export default TarjetasArchivoProfesor;

@@ -12,7 +12,7 @@ const materia_controller = require("../controllers/materiaController");
 const actividad_controller = require("../controllers/actividadController");
 
 // Modelo del archivo
-const FileModel = require("../models/Archivo");
+const FileModel = require("../models/ArchivoEstudiante");
 
 // RUTAS DE LAS MATERIAS //
 
