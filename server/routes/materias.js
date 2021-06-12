@@ -12,7 +12,11 @@ const materia_controller = require("../controllers/materiaController");
 const actividad_controller = require("../controllers/actividadController");
 
 // Modelo del archivo
-const FileModel = require("../models/ArchivoEstudiante");
+const FileModel = require("../models/Archivo");
+
+// Modelo de las nota
+const notaController = require("../controllers/notaController");
+router.post("/nota/crear", notaController.crear_nota);
 
 // RUTAS DE LAS MATERIAS //
 
