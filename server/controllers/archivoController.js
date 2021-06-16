@@ -6,10 +6,27 @@ const pipeline = promisify(require("stream").pipeline);
 const FileModel = require("../models/Archivo");
 const upload = multer();
 
+exports.mostrar_archivos = async (req, res, next) => {
+  FileModel.find({ actividad: req.params.idActividad })
+    .populate({
+      path: "actividad",
+      select: "nombre",
+      populate: {
+        path: "materia",
+        select: "nombre",
+      },
+    })
+    .exec((err, archivos) => {
+      if (err) return next(err);
+      res.status(200).json({ archivos });
+    });
+};
+
 exports.subir_archivo = async (req, res, next) => {
   const {
     file,
-    body: { actividad, usuario },
+    body: { usuario },
+    params: { idActividad },
   } = req;
 
   if (file.detectedFileExtension != ".zip") {
@@ -26,7 +43,7 @@ exports.subir_archivo = async (req, res, next) => {
   const fileDB = new FileModel({
     nombre: fileName,
     usuario: usuario,
-    actividad: actividad,
+    actividad: idActividad,
   });
 
   await fileDB.save();

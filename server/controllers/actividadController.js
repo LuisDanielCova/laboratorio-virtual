@@ -11,7 +11,7 @@ const upload = multer();
 
 // MOSTRAR TODAS LAS ACTIVIDADES
 exports.conseguir_lista = async (req, res, next) => {
-  Actividad.find({ materia: req.params.id })
+  Actividad.find({ materia: req.params.idMateria })
     .populate("materia")
     .sort([["fecha_entrega", "asc"]])
     .exec((err, lista_actividades) => {
@@ -30,6 +30,10 @@ exports.mostrar_actividad = async (req, res, next) => {
       .exec();
     if (actividad === null) {
       let err = new Error("La actividad no existe");
+      err.status = 404;
+      return next(err);
+    } else if (actividad.materia._id !== req.params.idMateria) {
+      let err = new Error("La actividad no corresponde a esta materia");
       err.status = 404;
       return next(err);
     }

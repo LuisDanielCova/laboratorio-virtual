@@ -17,6 +17,11 @@ router.get("/actualizar/:id", usuarioController.actualizar_usuario_get);
 
 router.put("/actualizar/:id", usuarioController.actualizar_usuario_put);
 
+router.put(
+  "/actualizar_contrasena/:id",
+  usuarioController.actualizar_contrasena
+);
+
 router.delete("/borrar/:id", usuarioController.borrar_usuario);
 
 // Inicio y cierre de sesion

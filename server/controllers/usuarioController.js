@@ -160,7 +160,7 @@ exports.crear_usuario = [
         errors_array: errors,
       });
     } else {
-      let hash = bcrypt.hashSync(
+      const hash = bcrypt.hashSync(
         req.body.contrasena,
         process.env.PASSWORD_SALT
       );
@@ -192,12 +192,12 @@ exports.actualizar_usuario_get = async (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.send(results);
+    res.status(200).json({ results });
   });
 };
 
 // Actualizar un usuario
-// Un usuario puede actualizar: su correo, su contrasena y sus datos pesonales
+// Un usuario puede actualizar: su correo y sus datos pesonales
 // Un usuario no puede actualizar: su usuario y su cargo
 exports.actualizar_usuario_put = [
   body("cedula")
@@ -269,16 +269,6 @@ exports.actualizar_usuario_put = [
       }
     })
     .escape(),
-  body("contrasena")
-    .trim()
-    .notEmpty()
-    .withMessage("La contraseña no puede estar vacia")
-    .bail()
-    .isStrongPassword()
-    .withMessage(
-      "La contraseña debe contener al menos: 8 caracteres, 1 letra minuscula, 1 letra mayuscula, 1 numero y un caracter especial"
-    )
-    .escape(),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -288,10 +278,6 @@ exports.actualizar_usuario_put = [
       });
     } else {
       try {
-        let hash = bcrypt.hashSync(
-          req.body.contrasena,
-          process.env.PASSWORD_SALT
-        );
         await Usuario.findByIdAndUpdate(
           req.params.id,
           {
@@ -302,7 +288,6 @@ exports.actualizar_usuario_put = [
               fecha_nac: req.body.fecha_nac,
               telefono: req.body.telefono,
               correo: req.body.correo,
-              contrasena: hash,
             },
           },
           function (err) {
@@ -317,6 +302,76 @@ exports.actualizar_usuario_put = [
       } catch (err) {
         next(err);
       }
+    }
+  },
+];
+
+// Actualiza la contrasena de un usuario
+// Solo la actualiza si es diferente a la anterior
+exports.actualizar_contrasena = [
+  body("contrasena")
+    .trim()
+    .notEmpty()
+    .withMessage("La contraseña no puede estar vacia")
+    .bail()
+    .isStrongPassword()
+    .withMessage(
+      "La contraseña debe contener al menos: 8 caracteres, 1 letra minuscula, 1 letra mayuscula, 1 numero y un caracter especial"
+    )
+    .escape(),
+  body("nuevaContrasena")
+    .trim()
+    .notEmpty()
+    .withMessage("La contraseña no puede estar vacia")
+    .bail()
+    .isStrongPassword()
+    .withMessage(
+      "La contraseña debe contener al menos: 8 caracteres, 1 letra minuscula, 1 letra mayuscula, 1 numero y un caracter especial"
+    )
+    .escape(),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(206).json({ mensaje: "Datos invalidos", errors });
+    } else {
+      const { contrasena, contrasenaNueva } = req;
+      const usuario = await Usuario.findById(req.params.id, (err, usuario) => {
+        if (err) return next(err);
+      });
+      if (!usuario) {
+        let err = new Error("El usuario no existe");
+        err.status = 404;
+        return next(err);
+      }
+      bcrypt.compare(contrasena, usuario.contrasena, (err, resultado) => {
+        if (err) return next(err);
+        if (resultado === true) {
+          if (contrasena === contrasenaNueva) {
+            res.status(206).json({
+              mensaje: "La contrasena nueva debe ser diferente a la anterior",
+            });
+          } else {
+            const hash = bcrypt.hashSync(
+              contrasenaNueva,
+              process.env.PASSWORD_SALT
+            );
+            Usuario.findByIdAndUpdate(
+              usuario._id,
+              {
+                $set: {
+                  contrasena: hash,
+                },
+              },
+              (err) => {
+                if (err) return next(err);
+                res.status(200).json({ mensaje: "Contrasena cambiada" });
+              }
+            );
+          }
+        } else {
+          res.status(206).json({ mensaje: "La contrasena no es correcta" });
+        }
+      });
     }
   },
 ];

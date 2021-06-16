@@ -11,6 +11,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routerUsuarios = require("./routes/usuarios");
 const routerMaterias = require("./routes/materias");
+const routerNotas = require("./routes/notas");
 
 // Database Connection
 const mongoDB = `${process.env.DB_URL}`;
@@ -43,6 +44,7 @@ require("./passportConfig")(passport);
 // Rutas
 app.use("/usuarios", routerUsuarios);
 app.use("/materias", routerMaterias);
+app.use("/notas", routerNotas);
 
 // Atrapar el error y mandarlo al manejador de errores
 app.use(function (req, res, next) {

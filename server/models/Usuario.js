@@ -6,7 +6,7 @@ let UsuarioSchema = Schema({
   cedula: { type: Number, required: true, min: 8 },
   nombre: { type: String, required: true, minLength: 3 },
   apellido: { type: String, required: true, minLength: 3 },
-  fecha_nac: { type: Date, required: true },
+  fechaNac: { type: Date, required: true },
   telefono: { type: String },
   correo: { type: String, required: true },
   usuario: { type: String, required: true },
