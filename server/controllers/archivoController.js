@@ -16,6 +16,7 @@ exports.mostrar_archivos = async (req, res, next) => {
         select: "nombre",
       },
     })
+    .populate("usuario", "nombre apellido cedula cargo")
     .exec((err, archivos) => {
       if (err) return next(err);
       res.status(200).json({ archivos });

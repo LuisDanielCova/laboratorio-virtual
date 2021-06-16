@@ -28,7 +28,10 @@ exports.mostrar_materia = async (req, res, next) => {
         path: "profesor",
         select: ["nombre", "apellido", "correo"],
       })
-      .populate({ path: "estudiantes", select: ["nombre, apellido, cedula"] })
+      .populate({
+        path: "estudiantes",
+        select: ["nombre", "apellido", "cedula"],
+      })
       .exec();
     if (materia === null) {
       let err = new Error("No existe la materia");

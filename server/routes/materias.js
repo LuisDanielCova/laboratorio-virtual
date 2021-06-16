@@ -49,21 +49,21 @@ router.delete("/actividades/borrar/:id", actividadController.borrar_actividad);
 
 // RUTAS DE LOS ARCHIVOS
 router.get(
-  "/actividades/:idActividad/archivos",
+  "/:idMateria/actividades/:idActividad/archivos",
   archivoController.mostrar_archivos
 );
 
 router.post(
-  "/actividades/:idActividad/archivos/subir",
+  "/:idMateria/actividades/:idActividad/archivos/subir",
   upload.single("file"),
   archivoController.subir_archivo
 );
 
 router.get(
-  "/actividades/:idActividad/archivos/descargar/:name",
+  ":/idMateria/actividades/:idActividad/archivos/descargar/:name",
   archivoController.descargar_archivo
 );
 
-router.delete("/actividades/:idActividad/archivos/borrar/:name");
+router.delete("/:idMateria/actividades/:idActividad/archivos/borrar/:name");
 
 module.exports = router;

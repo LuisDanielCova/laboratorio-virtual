@@ -32,12 +32,13 @@ exports.mostrar_actividad = async (req, res, next) => {
       let err = new Error("La actividad no existe");
       err.status = 404;
       return next(err);
-    } else if (actividad.materia._id !== req.params.idMateria) {
+    } else if (actividad.materia._id != req.params.idMateria) {
       let err = new Error("La actividad no corresponde a esta materia");
       err.status = 404;
       return next(err);
+    } else {
+      res.status(200).json({ actividad });
     }
-    res.status(200).json({ actividad });
   } catch (err) {
     if (err) return next(err);
   }
