@@ -3,13 +3,13 @@ const uuid = require("uuid").v4;
 const fs = require("fs");
 const { promisify } = require("util");
 const pipeline = promisify(require("stream").pipeline);
-const FileModelEstudiante = require("../models/Archivo");
+const FileModel = require("../models/Archivo");
 const upload = multer();
 
-exports.subir_archivo_profesor = async (req, res, next) => {
+exports.subir_archivo = async (req, res, next) => {
   const {
     file,
-    body: { nombre },
+    body: { actividad, usuario },
   } = req;
 
   if (file.detectedFileExtension != ".zip") {
@@ -23,41 +23,15 @@ exports.subir_archivo_profesor = async (req, res, next) => {
     fs.createWriteStream(`${__dirname}/../public/files/${fileName}`)
   );
 
-  const fileDB = new FileModelProfesor({
+  const fileDB = new FileModel({
     nombre: fileName,
-    url: `${__dirname}/../public/files/${fileName}`,
+    usuario: usuario,
+    actividad: actividad,
   });
 
   await fileDB.save();
 
-  res.status(200).send(`File uploaded as ${fileName}`);
-};
-
-exports.subir_archivo_estudiante = async (req, res, next) => {
-  const {
-    file,
-    body: { nombre },
-  } = req;
-
-  if (file.detectedFileExtension != ".zip") {
-    next(new Error("Invalid file type"));
-  }
-
-  const fileName = `${uuid()}-${file.originalName}`;
-
-  await pipeline(
-    file.stream,
-    fs.createWriteStream(`${__dirname}/../public/files/${fileName}`)
-  );
-
-  const fileDB = new FileModelEstudiante({
-    nombre: fileName,
-    url: `${__dirname}/../public/files/${fileName}`,
-  });
-
-  await fileDB.save();
-
-  res.status(200).send(`File uploaded as ${fileName}`);
+  res.status(200).send(`Se subio el archivo como ${fileName}`);
 };
 
 exports.descargar_archivo = async (req, res, next) => {
@@ -72,13 +46,28 @@ exports.descargar_archivo = async (req, res, next) => {
       res.status(204).json({ message: "No such file" });
     } else {
       const fileS = fs.createReadStream(file);
-      res.download(file, (err) => {
+      // Antes era file xd
+      res.download(fileS, (err) => {
         if (err) {
           res
-            .status(500)
-            .send({ message: "File cannot be downloaded: " + err });
+            .status(204)
+            .send({ message: "El archivo no puede ser descargado: " + err });
         }
       });
+    }
+  });
+};
+
+exports.borrar_archivo = async (req, res, next) => {
+  const filePath = `${__dirname}/../public/files/${req.params.nombre}`;
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      res
+        .status(206)
+        .json({ mensaje: "Error al borrar el archivo, intente nuevamente" });
+      next(err);
+    } else {
+      res.status(200).json({ mensaje: "Archivo borrado correctamente" });
     }
   });
 };

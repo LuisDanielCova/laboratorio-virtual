@@ -1,55 +1,15 @@
 let Materia = require("../models/Materia");
-const { checkSchema, validationResult } = require("express-validator");
-
-let current_id = "";
-
-// SCHEMA
-const materiaSchema = {
-  nombre: {
-    trim: true,
-    notEmpty: {
-      errorMessage: "El nombre no puede estar vacio",
-    },
-    isLength: {
-      errorMessage: "El nombre debe tener al menos 3 letras",
-      options: { min: 3 },
-    },
-    escape: true,
-  },
-  descripcion: {
-    trim: true,
-    notEmpty: {
-      errorMessage: "La descripcion no puede estar vacia",
-    },
-    escape: true,
-  },
-  seccion: {
-    trim: true,
-    notEmpty: {
-      errorMessage: "La seccion no puede estar vacia",
-    },
-    isAlphanumeric: {
-      locale: "es-ES",
-      ignore: " -",
-      errorMessage:
-        "La seccion solo puede contener letras, numeros y caracteres especiales '-' y ' '",
-    },
-    escape: true,
-  },
-  profesor: {
-    trim: true,
-    notEmpty: {
-      errorMessage: "Seleccione un profesor",
-    },
-    escape: true,
-  },
-};
+const { validationResult, body } = require("express-validator");
 
 // Mostrar todas las materias
 
 exports.conseguir_lista = (req, res, next) => {
   Materia.find()
-    .populate("profesor")
+    .populate({
+      path: "profesor",
+      select: ["nombre", "apellido", "correo"],
+    })
+    .populate({ path: "estudiantes", select: ["nombre", "apellido", "cedula"] })
     .sort([["nombre", "ascending"]])
     .exec((err, lista_materias) => {
       if (err) {
@@ -59,16 +19,76 @@ exports.conseguir_lista = (req, res, next) => {
     });
 };
 
+// Mostrar una materia
+
+exports.mostrar_materia = async (req, res, next) => {
+  try {
+    const materia = await Materia.findById(req.params.id)
+      .populate({
+        path: "profesor",
+        select: ["nombre", "apellido", "correo"],
+      })
+      .populate({ path: "estudiantes", select: ["nombre, apellido, cedula"] })
+      .exec();
+    if (materia === null) {
+      let err = new Error("No existe la materia");
+      err.status = 404;
+      return next(err);
+    }
+    res.status(200).json({ materia });
+  } catch (err) {
+    if (err) return next(err);
+  }
+};
+
 // Crear una materia
 
 exports.crear_materia = [
   // Validar los datos
-  checkSchema(materiaSchema),
+  body("nombre")
+    .trim()
+    .notEmpty()
+    .withMessage("El nombre no puede estar vacio")
+    .bail()
+    .isLength({ min: 3 })
+    .withMessage("El nombre debe tener minimo 3 caracteres")
+    .bail()
+    .isAlphanumeric({ ignore: " -" })
+    .withMessage(
+      "El nombre solo puede tener numeros, letras y los caracteres especiales: '-' y ' '"
+    )
+    .custom(async (value) => {
+      const materia = await Materia.findOne({ nombre: value }).limit(1);
+      if (materia.length > 0) {
+        return Promise.reject("El nombre de la materia ya esta en uso");
+      }
+    })
+    .escape(),
+  body("descripcion")
+    .trim()
+    .notEmpty()
+    .withMessage("La descripcion no puede estar vacia")
+    .escape(),
+  body("seccion")
+    .trim()
+    .notEmpty()
+    .withMessage("La seccion no puede estar vacia")
+    .bail()
+    .isAlphanumeric(["es-ES"], { ignore: " -" })
+    .withMessage(
+      "La seccion solo puede tener numeros, letras y los caracteres especiales: '-' y ' '"
+    )
+    .escape(),
+  body("profesor")
+    .trim()
+    .notEmpty()
+    .withMessage("Debe seleccionar un profesor")
+    .escape(),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(206).json({
-        message: "Invalid data",
+        message: "Datos invalidos",
         errors,
       });
     } else {
@@ -107,28 +127,67 @@ exports.actualizar_materia_get = async (req, res, next) => {
 // Actualizar
 
 exports.actualizar_materia_put = [
-  (req, res, next) => {
-    current_id = req.params.id;
-    next();
-  },
-  checkSchema(materiaSchema),
+  body("nombre")
+    .trim()
+    .notEmpty()
+    .withMessage("El nombre no puede estar vacio")
+    .bail()
+    .isLength({ min: 3 })
+    .withMessage("El nombre debe tener minimo 3 caracteres")
+    .bail()
+    .isAlphanumeric({ ignore: " -" })
+    .withMessage(
+      "El nombre solo puede tener numeros, letras y los caracteres especiales: '-' y ' '"
+    )
+    .custom(async (value, { req }) => {
+      const materia = await Materia.findOne({ nombre: value }).limit(1);
+      if (materia.length > 0 && materia._id !== req.params.id) {
+        return Promise.reject("El nombre de la materia ya esta en uso");
+      }
+    })
+    .escape(),
+  body("descripcion")
+    .trim()
+    .notEmpty()
+    .withMessage("La descripcion no puede estar vacia")
+    .escape(),
+  body("seccion")
+    .trim()
+    .notEmpty()
+    .withMessage("La seccion no puede estar vacia")
+    .bail()
+    .isAlphanumeric(["es-ES"], { ignore: " -" })
+    .withMessage(
+      "La seccion solo puede tener numeros, letras y los caracteres especiales: '-' y ' '"
+    )
+    .escape(),
+  body("profesor")
+    .trim()
+    .notEmpty()
+    .withMessage("Debe seleccionar un profesor")
+    .escape(),
   async (req, res, next) => {
-    const materia = new Materia({
-      nombre: req.body.nombre,
-      descripcion: req.body.descripcion,
-      seccion: req.body.seccion,
-      profesor: req.body.profesor,
-      _id: req.params.id,
-    });
-    try {
-      await Materia.findByIdAndUpdate(req.params.id, materia, (err) => {
-        if (err) {
-          next(err);
-        }
-        res.status(200).json({ message: "Materia actualizada" });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(206).json({ mensaje: "Datos invalidos", errors: errors });
+    } else {
+      const materia = new Materia({
+        nombre: req.body.nombre,
+        descripcion: req.body.descripcion,
+        seccion: req.body.seccion,
+        profesor: req.body.profesor,
+        _id: req.params.id,
       });
-    } catch (err) {
-      next(err);
+      try {
+        await Materia.findByIdAndUpdate(req.params.id, materia, (err) => {
+          if (err) {
+            next(err);
+          }
+          res.status(200).json({ mensaje: "Materia actualizada" });
+        });
+      } catch (err) {
+        next(err);
+      }
     }
   },
 ];

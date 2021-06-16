@@ -16,13 +16,18 @@ const FileModel = require("../models/Archivo");
 
 // Modelo de las nota
 const notaController = require("../controllers/notaController");
+router.get("/notas", notaController.mostrar_notas);
+router.get("/notas/:id", notaController.mostrar_nota);
 router.post("/nota/crear", notaController.crear_nota);
+router.put("/nota/actualizar", notaController.actualizar_nota);
 
 // RUTAS DE LAS MATERIAS //
 
 router.post("/crear", materia_controller.crear_materia);
 
 router.get("/", materia_controller.conseguir_lista);
+
+router.get("/:id", materia_controller.mostrar_materia);
 
 router.get("/crear/:id", materia_controller.actualizar_materia_get);
 
@@ -32,9 +37,14 @@ router.delete("/borrar/:id", materia_controller.borrar_materia);
 
 // RUTAS DE LAS ACTIVIDADES //
 
+router.get("/:id/actividades/", actividad_controller.conseguir_lista);
+
 router.post("/actividades/crear", actividad_controller.crear_actividad);
 
-router.get("/actividades/", actividad_controller.conseguir_lista);
+router.get(
+  "/:idMateria/actividades/:id",
+  actividad_controller.mostrar_actividad
+);
 
 router.get(
   "/actividades/crear/:id",

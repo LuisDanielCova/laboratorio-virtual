@@ -6,12 +6,15 @@ function FormaNotas() {
   const [errors, setErrors] = useState([]);
   const [nota, setNota] = useState({
     calificacion: -1,
+    actividad: "60b82f037d191354596d727e",
+    alumno: "60b814b5e8d9d13953f4a57a",
+    id: "60c4e82747102d1c49aedbef",
   });
 
   const crearNota = async (nota) => {
     try {
-      let response = await Axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/materias/nota/crear`,
+      let response = await Axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/materias/nota/actualizar`,
         nota
       );
       if (response.status === 200) {

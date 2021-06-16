@@ -7,7 +7,7 @@ let MateriaSchema = Schema({
   descripcion: { type: String, required: true },
   seccion: { type: String, required: true },
   profesor: { type: Schema.Types.ObjectId, ref: "Usuario", required: true },
-  alumnos: [{ type: Schema.Types.ObjectId, ref: "Usuario" }],
+  estudiantes: [{ type: Schema.Types.ObjectId, ref: "Usuario" }],
 });
 
 module.exports = mongoose.model("Materia", MateriaSchema);

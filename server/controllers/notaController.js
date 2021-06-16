@@ -2,11 +2,14 @@ const Nota = require("../models/Nota");
 const { validationResult, body } = require("express-validator");
 
 // Mostrar todas las notas
-
 exports.mostrar_notas = async (req, res, next) => {
   Nota.find()
-    .populate("Actividad")
-    .populate("Usuario")
+    .populate("alumno", ["nombre", "apellido"])
+    .populate({
+      path: "actividad",
+      select: ["nombre"],
+      populate: { path: "materia", select: ["nombre", "seccion"] },
+    })
     .exec((err, lista_notas) => {
       if (err) {
         return next(err);
@@ -15,8 +18,26 @@ exports.mostrar_notas = async (req, res, next) => {
     });
 };
 
-// Crear una nota
+// Mostrar una nota
 
+exports.mostrar_nota = async (req, res, next) => {
+  try {
+    const nota = await Nota.findById(req.params.id)
+      .populate("actividad", "nombre")
+      .populate("estudiante", "nombre apellido cedula")
+      .exec();
+    if (nota === null) {
+      let err = new Error("La nota no existe");
+      err.status = 404;
+      return next(err);
+    }
+    res.status(200).json({ nota });
+  } catch (err) {
+    if (err) return next(err);
+  }
+};
+
+// Crear una nota
 exports.crear_nota = [
   body("calificacion")
     .trim()
@@ -49,3 +70,45 @@ exports.crear_nota = [
     }
   },
 ];
+
+// Actualizar Nota
+
+exports.actualizar_nota = [
+  body("calificacion")
+    .trim()
+    .notEmpty()
+    .withMessage("La calificacion no puede estar vacia")
+    .bail()
+    .isInt({ min: 0, max: 20 })
+    .withMessage("La calificacion debe estar entre 0 y 20")
+    .escape(),
+  async (req, res, next) => {
+    try {
+      await Nota.findByIdAndUpdate(
+        req.body.id,
+        {
+          $set: { calificacion: req.body.calificacion },
+        },
+        (err) => {
+          if (err) {
+            next(err);
+          }
+          res.status(200).json({ message: "Nota actualizada" });
+        }
+      );
+    } catch (err) {
+      res.status(206).json({ mensaje: err });
+    }
+  },
+];
+
+// Borrar nota
+exports.borrar_nota = async (req, res, next) => {
+  await Nota.findByIdAndRemove(req.params.id, (err) => {
+    if (err) {
+      res.status(400);
+      return next(err);
+    }
+    res.status(200).json({ mensaje: "Nota Borrada" });
+  });
+};

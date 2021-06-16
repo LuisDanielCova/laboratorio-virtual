@@ -1,153 +1,7 @@
-let Usuario = require("../models/Usuario");
-const { checkSchema, validationResult } = require("express-validator");
+const Usuario = require("../models/Usuario");
+const Materia = require("../models/Materia");
+const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
-
-let current_id = "";
-
-// SCHEMA
-
-const usuarioSchema = {
-  cedula: {
-    trim: true,
-    notEmpty: {
-      errorMessage: "La cedula no puede estar vacia",
-    },
-    isInt: {
-      errorMessage: "La cedula deben ser solo numeros",
-    },
-    isLength: {
-      errorMessage:
-        "La cedula debe tener 8 numeros, si la cedula es menor a 10 millones, agregue un 0 al comienzo",
-      options: { min: 8, max: 8 },
-    },
-    custom: {
-      options: (value) => {
-        return Usuario.find({ cedula: value })
-          .limit(1)
-          .then((usuario) => {
-            if (usuario.length > 0 && usuario[0]._id != current_id) {
-              return Promise.reject("La cedula ya esta en uso");
-            }
-          });
-      },
-    },
-    escape: true,
-  },
-  nombre: {
-    trim: true,
-    notEmpty: {
-      errorMessage: "El nombre no puede estar vacio",
-    },
-    isAlpha: {
-      errorMessage: "El nombre solo debe contener letras",
-    },
-    isLength: {
-      errorMessage: "El nombre debe tener al menos 3 letras",
-      options: { min: 3 },
-    },
-    escape: true,
-  },
-  apellido: {
-    trim: true,
-    notEmpty: {
-      errorMessage: "El apellido no puede estar vacio",
-    },
-    isAlpha: {
-      errorMessage: "El apellido solo debe contener letras",
-    },
-    isLength: {
-      errorMessage: "El apellido debe tener al menos 3 letras",
-      options: { min: 3 },
-    },
-    escape: true,
-  },
-  fecha_nac: {
-    isISO8601: {
-      errorMessage: "La fecha es invalida",
-    },
-    toDate: true,
-  },
-  telefono: {
-    trim: true,
-    optional: {
-      checkFalsy: true,
-    },
-    isInt: {
-      errorMessage: "Telefono invalido, solo debe contener numeros",
-    },
-    isLength: {
-      errorMessage: "El telefono debe contener 11 numeros",
-      options: { min: 11, max: 11 },
-    },
-    escape: true,
-  },
-  correo: {
-    trim: true,
-    notEmpty: {
-      errorMessage: "El correo no puede estar vacio",
-    },
-    isEmail: {
-      errorMessage: "El correo debe ser valido",
-    },
-    custom: {
-      options: (value) => {
-        return Usuario.find({ correo: value }).then((usuario) => {
-          if (usuario.length > 0 && usuario[0]._id != current_id) {
-            return Promise.reject("El correo ya esta en uso");
-          }
-        });
-      },
-    },
-    escape: true,
-  },
-  usuario: {
-    trim: true,
-    notEmpty: {
-      errorMessage: "El usuario no puede estar vacio",
-    },
-    isAlphanumeric: {
-      errorMessage: "El usuario debe tener solo letras y numeros",
-    },
-    custom: {
-      options: (value) => {
-        return Usuario.find({ usuario: value }).then((usuario) => {
-          if (usuario.length > 0 && usuario[0]._id != current_id) {
-            return Promise.reject("El usuario ya esta en uso");
-          }
-        });
-      },
-    },
-    escape: true,
-  },
-  contrasena: {
-    trim: true,
-    notEmpty: {
-      errorMessage: "La contraseña no puede estar vacia",
-    },
-    isStrongPassword: {
-      minLength: 8,
-      minLowercase: 1,
-      minUppercase: 1,
-      minNumbers: 1,
-      errorMessage:
-        "La contraseña debe tener minimo 8 caracteres, 1 letra minuscula, 1 letra mayuscula, 1 numero y 1 caracter especial",
-    },
-    escape: true,
-  },
-  cargo: {
-    trim: true,
-    notEmpty: {
-      errorMessage: "Seleccione un cargo",
-      bail: true,
-    },
-    isIn: {
-      options: [["Estudiante", "Profesor", "Coordinador"]],
-      errorMessage:
-        "Solo puede escoger 'Estudiante', 'Profesor' o 'Administrador'",
-    },
-    escape: true,
-  },
-};
 
 // Mostrar todos los usuarios
 exports.conseguir_lista = (req, res, next) => {
@@ -161,11 +15,143 @@ exports.conseguir_lista = (req, res, next) => {
     });
 };
 
+// Mostrar un usuario
+exports.mostrar_usuario = async (req, res, next) => {
+  try {
+    const usuario = await Usuario.findById(req.params.id, "-contrasena").exec();
+    if (usuario === null) {
+      let err = new Error("Usuario no encontrado");
+      err.status = 404;
+      return next(err);
+    }
+    if (usuario.cargo === "Profesor") {
+      const materias = await Materia.find(
+        { profesor: usuario._id },
+        "nombre seccion"
+      ).exec();
+      res.status(200).json({ usuario, materias });
+    } else if (usuario.cargo === "Estudiante") {
+      const materias = await Materia.find(
+        { estudiantes: usuario._id },
+        "nombre seccion"
+      ).exec();
+      res.status(200).json({ usuario, materias });
+    } else {
+      res
+        .status(200)
+        .json({ usuario, materias: "El Administrador no tiene materias" });
+    }
+  } catch (err) {
+    if (err) return next(err);
+  }
+};
+
 // Crear usuario
 
 exports.crear_usuario = [
   //Validar y limpiar los campos
-  checkSchema(usuarioSchema),
+  body("cedula")
+    .trim()
+    .notEmpty()
+    .withMessage("La cedula no puede estar vacia")
+    .bail()
+    .isInt({ allow_leading_zeroes: true })
+    .withMessage("La cedula solo pueden ser caracteres numericos")
+    .bail()
+    .isLength({ min: 8, max: 8 })
+    .withMessage(
+      "La cedula solo pueden ser 8 numeros, si tiene una cedula menor a las 10 millones, ingrese un 0 al comienzo"
+    )
+    .bail()
+    .custom(async (value) => {
+      const usuario = await Usuario.find({ cedula: value }).limit(1);
+      if (usuario.length > 0) {
+        return Promise.reject("La cedula ya esta en uso");
+      }
+    })
+    .bail()
+    .escape(),
+  body("nombre")
+    .trim()
+    .notEmpty()
+    .withMessage("El nombre no puede estar vacio")
+    .bail()
+    .isAlpha(["es-ES"])
+    .withMessage("El nombre solo puede contener letras")
+    .bail()
+    .isLength({ min: 3 })
+    .withMessage("El nombre debe tener al menos 3 letras")
+    .escape(),
+  body("apellido")
+    .trim()
+    .notEmpty()
+    .withMessage("El apellido no puede estar vacio")
+    .bail()
+    .isAlpha(["es-ES"])
+    .withMessage("El apellido solo puede contener letras")
+    .bail()
+    .isLength({ min: 3 })
+    .withMessage("El apellido debe tener al menos 3 letras")
+    .escape(),
+  body("fechaNac").trim().isISO8601().withMessage("Fecha Invalida").toDate(),
+  body("telefono")
+    .trim()
+    .optional({ checkFalsy: true })
+    .isInt()
+    .withMessage(
+      "El numero de telefono solo puede contener caracteres numericos"
+    )
+    .isLength({ min: 11, max: 11 })
+    .withMessage("El numero de telefono debe contener 11 numeros")
+    .escape(),
+  body("correo")
+    .trim()
+    .notEmpty()
+    .withMessage("El correo no puede estar vacio")
+    .bail()
+    .isEmail()
+    .withMessage("Debe ingresar un correo valido")
+    .bail()
+    .custom(async (value) => {
+      const usuario = await Usuario.find({ correo: value });
+      if (usuario.length > 0) {
+        return Promise.reject("El correo ya esta en uso");
+      }
+    })
+    .escape(),
+  body("usuario")
+    .trim()
+    .notEmpty()
+    .withMessage("El usuario no puede estar vacio")
+    .bail()
+    .isAlphanumeric()
+    .withMessage("El usuario solo puede contener letras y numeros")
+    .bail()
+    .custom(async (value) => {
+      const usuario = await Usuario.find({ usuario: value });
+      if (usuario.length > 0) {
+        return Promise.reject("El usuario ya esta en uso");
+      }
+    })
+    .escape(),
+  body("contrasena")
+    .trim()
+    .notEmpty()
+    .withMessage("La contraseña no puede estar vacia")
+    .bail()
+    .isStrongPassword()
+    .withMessage(
+      "La contraseña debe contener al menos: 8 caracteres, 1 letra minuscula, 1 letra mayuscula, 1 numero y un caracter especial"
+    )
+    .escape(),
+  body("cargo")
+    .trim()
+    .notEmpty()
+    .withMessage("Seleccione un cargo")
+    .bail()
+    .isIn([["Estudiante", "Profesor", "Administrador"]])
+    .withMessage("Seleccione un cargo valido")
+    .escape(),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -211,13 +197,88 @@ exports.actualizar_usuario_get = async (req, res, next) => {
 };
 
 // Actualizar un usuario
+// Un usuario puede actualizar: su correo, su contrasena y sus datos pesonales
+// Un usuario no puede actualizar: su usuario y su cargo
 exports.actualizar_usuario_put = [
-  // Validar los campos
-  (req, res, next) => {
-    current_id = req.params.id;
-    next();
-  },
-  checkSchema(usuarioSchema),
+  body("cedula")
+    .trim()
+    .notEmpty()
+    .withMessage("La cedula no puede estar vacia")
+    .bail()
+    .isInt({ allow_leading_zeroes: true })
+    .withMessage("La cedula solo pueden ser caracteres numericos")
+    .bail()
+    .isLength({ min: 8, max: 8 })
+    .withMessage(
+      "La cedula solo pueden ser 8 numeros, si tiene una cedula menor a las 10 millones, ingrese un 0 al comienzo"
+    )
+    .bail()
+    .custom(async (value, { req }) => {
+      const usuario = await Usuario.find({ cedula: value }).limit(1);
+      if (usuario.length > 0 && usuario._id !== req.params.id) {
+        return Promise.reject("La cedula ya esta en uso");
+      }
+    })
+    .bail()
+    .escape(),
+  body("nombre")
+    .trim()
+    .notEmpty()
+    .withMessage("El nombre no puede estar vacio")
+    .bail()
+    .isAlpha(["es-ES"])
+    .withMessage("El nombre solo puede contener letras")
+    .bail()
+    .isLength({ min: 3 })
+    .withMessage("El nombre debe tener al menos 3 letras")
+    .escape(),
+  body("apellido")
+    .trim()
+    .notEmpty()
+    .withMessage("El apellido no puede estar vacio")
+    .bail()
+    .isAlpha(["es-ES"])
+    .withMessage("El apellido solo puede contener letras")
+    .bail()
+    .isLength({ min: 3 })
+    .withMessage("El apellido debe tener al menos 3 letras")
+    .escape(),
+  body("fechaNac").trim().isISO8601().withMessage("Fecha Invalida").toDate(),
+  body("telefono")
+    .trim()
+    .optional({ checkFalsy: true })
+    .isInt()
+    .withMessage(
+      "El numero de telefono solo puede contener caracteres numericos"
+    )
+    .isLength({ min: 11, max: 11 })
+    .withMessage("El numero de telefono debe contener 11 numeros")
+    .escape(),
+  body("correo")
+    .trim()
+    .notEmpty()
+    .withMessage("El correo no puede estar vacio")
+    .bail()
+    .isEmail()
+    .withMessage("Debe ingresar un correo valido")
+    .bail()
+    .custom(async (value, { req }) => {
+      const usuario = await Usuario.find({ correo: value });
+      if (usuario.length > 0 && usuario._id !== req.params.id) {
+        return Promise.reject("El correo ya esta en uso");
+      }
+    })
+    .escape(),
+  body("contrasena")
+    .trim()
+    .notEmpty()
+    .withMessage("La contraseña no puede estar vacia")
+    .bail()
+    .isStrongPassword()
+    .withMessage(
+      "La contraseña debe contener al menos: 8 caracteres, 1 letra minuscula, 1 letra mayuscula, 1 numero y un caracter especial"
+    )
+    .escape(),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -226,28 +287,24 @@ exports.actualizar_usuario_put = [
         errors_array: errors,
       });
     } else {
-      let hash = bcrypt.hashSync(
-        req.body.contrasena,
-        process.env.PASSWORD_SALT
-      );
-      const usuario = new Usuario({
-        cedula: req.body.cedula,
-        nombre: req.body.nombre,
-        apellido: req.body.apellido,
-        fecha_nac: req.body.fecha_nac,
-        telefono: req.body.telefono,
-        correo: req.body.correo,
-        usuario: req.body.usuario,
-        contrasena: hash,
-        cargo: req.body.cargo,
-        _id: req.params.id,
-      });
-
       try {
+        let hash = bcrypt.hashSync(
+          req.body.contrasena,
+          process.env.PASSWORD_SALT
+        );
         await Usuario.findByIdAndUpdate(
           req.params.id,
-          usuario,
-          {},
+          {
+            $set: {
+              cedula: req.body.cedula,
+              nombre: req.body.nombre,
+              apellido: req.body.apellido,
+              fecha_nac: req.body.fecha_nac,
+              telefono: req.body.telefono,
+              correo: req.body.correo,
+              contrasena: hash,
+            },
+          },
           function (err) {
             if (err) {
               return next(err);
@@ -273,16 +330,3 @@ exports.borrar_usuario = async (req, res, next) => {
     res.status(200).json({ message: "Usuario borrado" });
   });
 };
-
-// Actualizar todos los campos que se manden
-// exports.pruebaloca = async (req, res, next) => {
-//   console.log(`doings shit`);
-//   console.log(req.app.locals._id);
-//   const entries = Object.keys(req.body);
-//   const updates = {};
-//   for (let i = 0; i < entries.length; i++) {
-//     updates[entries[i]] = Object.values(req.body)[i];
-//   }
-//   this.actual_user = req.params.id;
-//   res.json(updates);
-// };

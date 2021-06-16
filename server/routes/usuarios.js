@@ -1,4 +1,3 @@
-const { response } = require("express");
 let express = require("express");
 const passport = require("passport");
 let router = express.Router();
@@ -11,6 +10,8 @@ const usuarioController = require("../controllers/usuarioController");
 router.post("/crear", usuarioController.crear_usuario);
 
 router.get("/", usuarioController.conseguir_lista);
+
+router.get("/:id", usuarioController.mostrar_usuario);
 
 router.get("/actualizar/:id", usuarioController.actualizar_usuario_get);
 
