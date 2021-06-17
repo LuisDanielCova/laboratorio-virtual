@@ -4,7 +4,24 @@ const { validationResult, body } = require("express-validator");
 // Mostrar todas las notas
 exports.mostrar_notas = async (req, res, next) => {
   Nota.find()
-    .populate("alumno", ["nombre", "apellido"])
+    .populate("estudiante", ["nombre", "apellido"])
+    .populate({
+      path: "actividad",
+      select: ["nombre"],
+      populate: { path: "materia", select: ["nombre", "seccion"] },
+    })
+    .exec((err, lista_notas) => {
+      if (err) {
+        return next(err);
+      }
+      res.status(200).json({ lista_notas: lista_notas });
+    });
+};
+
+// Mostrar todas las notas de un estudiante
+exports.mostrar_notas_estudiante = async (req, res, next) => {
+  Nota.find({ estudiante: req.params.id })
+    .populate("estudiante", ["nombre", "apellido"])
     .populate({
       path: "actividad",
       select: ["nombre"],
@@ -44,8 +61,8 @@ exports.crear_nota = [
     .notEmpty()
     .withMessage("La calificacion no puede estar vacia")
     .bail()
-    .isInt({ min: 0, max: 20 })
-    .withMessage("La calificacion debe estar entre 0 y 20")
+    .isInt({ min: 1, max: 20 })
+    .withMessage("La calificacion debe estar entre 1 y 20")
     .escape(),
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -79,8 +96,8 @@ exports.actualizar_nota = [
     .notEmpty()
     .withMessage("La calificacion no puede estar vacia")
     .bail()
-    .isInt({ min: 0, max: 20 })
-    .withMessage("La calificacion debe estar entre 0 y 20")
+    .isInt({ min: 1, max: 20 })
+    .withMessage("La calificacion debe estar entre 1 y 20")
     .escape(),
   async (req, res, next) => {
     try {

@@ -20,6 +20,7 @@ const TablasUsuarios = ({ usuarios, cargando }) => {
             <th scope="col">Cedula</th>
             <th scope="col">Nombre</th>
             <th scope="col">Apellido</th>
+            <th scope="col">Cargo</th>
             <th scope="col">Correo</th>
             <th scope="col">Acciones</th>
           </tr>
@@ -28,13 +29,14 @@ const TablasUsuarios = ({ usuarios, cargando }) => {
           {usuarios.map((val, key) => {
             return (
               <tr key={key}>
-                <th scope="row">{val.albumId}</th>
-                <td>{val.id}</td>
-                <td>{val.title}</td>
-                <td>{val.url}</td>
-                <td colSpan="3" className="p-0">
+                <th scope="row">{val.cedula.toString()}</th>
+                <td>{val.nombre}</td>
+                <td>{val.apellido}</td>
+                <td>{val.cargo}</td>
+                <td>{val.correo}</td>
+                <td className="p-0">
                   <div
-                    className="btn-group"
+                    className="btn-group w-100"
                     role="group"
                     aria-label="Basic example"
                   >

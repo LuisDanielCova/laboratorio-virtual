@@ -1,9 +1,7 @@
 import React from "react";
-import FormaActividad from "./components/FormaActividad";
 //import axios from "axios";
 //import { useHistory } from "react-router-dom";
-//import Navbar from "./components/complements/Navbar";
-import FormaNotas from "./components/FormaNotas";
+import Dashboard from "./components/users/Dashboard";
 
 export const UserContext = React.createContext();
 
@@ -11,11 +9,7 @@ function App() {
   return (
     <div>
       <UserContext.Provider value={"Profesor"}>
-        <div className="container-fluid p-0">
-          <div className="row flex-nowrap gx-0">
-            <FormaNotas />
-          </div>
-        </div>
+        <Dashboard />
       </UserContext.Provider>
     </div>
   );

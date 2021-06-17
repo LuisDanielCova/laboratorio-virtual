@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import TablasUsuarios from "../complements/TablasUsuarios";
-import TablasPaginacion from "../complements/TablasPaginacion";
-import TablasPaginas from "../complements/TablasPaginas";
+import TablasUsuarios from "../tablas/TablasUsuarios";
+import TablasPaginacion from "../tablas/TablasPaginacion";
+import TablasPaginas from "../tablas/TablasPaginas";
+import Sidebar from "../complements/Sidebar";
 
 function LeerUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
@@ -20,7 +21,7 @@ function LeerUsuarios() {
     const conseguirUsuarios = async () => {
       setCargando(true);
       const response = await axios.get(
-        "https://jsonplaceholder.typicode.com/photos"
+        `${process.env.REACT_APP_SERVER_URL}/usuarios/`
       );
       setUsuarios(response.data);
       setCargando(false);
@@ -31,7 +32,7 @@ function LeerUsuarios() {
 
   useEffect(() => {
     const filtrarValor = (valor) => {
-      if (valor.title.includes(valorBusqueda)) {
+      if (valor.cedula.toString().includes(valorBusqueda)) {
         return true;
       }
       return false;
@@ -55,47 +56,52 @@ function LeerUsuarios() {
   const paginas = (numero) => setUsuariosPorPagina(numero);
 
   return (
-    <div className="col m-3">
-      <h1 className="display-2">Lista de Usuarios</h1>
-      <p className="lead">
-        Aqui puede observar una lista de todos los usuarios registrados.
-      </p>
-      <div className="">
-        <div className="row mb-1">
-          <div className="col-lg-4 col-sm-4">
-            <TablasPaginas paginas={paginas} />
-          </div>
-          <div className="col-lg-8 d-flex justify-content-end row">
-            <div className="col-lg-3 d-flex justify-content-end">
-              <label htmlFor="buscar" className="form-label mt-2">
-                Buscar Cedula:
-              </label>
+    <div className="container-fluid p-0">
+      <div className="row flex-nowrap gx-0">
+        <Sidebar />
+        <div className="col m-3">
+          <h1 className="display-2">Lista de Usuarios</h1>
+          <p className="lead">
+            Aqui puede observar una lista de todos los usuarios registrados.
+          </p>
+          <div className="">
+            <div className="row mb-1">
+              <div className="col-lg-4 col-sm-4">
+                <TablasPaginas paginas={paginas} />
+              </div>
+              <div className="col-lg-8 d-flex justify-content-end row">
+                <div className="col-lg-3 d-flex justify-content-end">
+                  <label htmlFor="buscar" className="form-label mt-2">
+                    Buscar Cedula:
+                  </label>
+                </div>
+                <div className="col-lg-4 pe-0">
+                  <input
+                    type="text"
+                    id="buscar"
+                    name="buscar"
+                    placeholder="Ejemplo: 25416008"
+                    className="form-control"
+                    value={valorBusqueda}
+                    onChange={(e) => {
+                      const { value } = e.target;
+                      setValorBusqueda(value);
+                      setPaginaActual(1);
+                    }}
+                    required
+                  />
+                </div>
+              </div>
             </div>
-            <div className="col-lg-4 pe-0">
-              <input
-                type="text"
-                id="buscar"
-                name="buscar"
-                placeholder="Ejemplo: 25416008"
-                className="form-control"
-                value={valorBusqueda}
-                onChange={(e) => {
-                  const { value } = e.target;
-                  setValorBusqueda(value);
-                  setPaginaActual(1);
-                }}
-                required
-              />
-            </div>
+            <TablasUsuarios usuarios={usuariosActuales} cargando={cargando} />
+            <TablasPaginacion
+              usuariosPorPaginas={usuariosPorPagina}
+              usuariosTotal={usuariosTotal}
+              paginacion={paginacion}
+              paginaActual={paginaActual}
+            />
           </div>
         </div>
-        <TablasUsuarios usuarios={usuariosActuales} cargando={cargando} />
-        <TablasPaginacion
-          usuariosPorPaginas={usuariosPorPagina}
-          usuariosTotal={usuariosTotal}
-          paginacion={paginacion}
-          paginaActual={paginaActual}
-        />
       </div>
     </div>
   );

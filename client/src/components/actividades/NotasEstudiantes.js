@@ -4,6 +4,7 @@ import { TablaNotasProfesores } from "../tablas/TablaNotasProfesores";
 
 function NotasEstudiantes({ notas }) {
   const [notasOrdenadas, setNotasOrdenadas] = useState([]);
+  const [tablas, setTablas] = useState([]);
   const [materiasSeparadas, setMateriasSeparadas] = useState([]);
   const [notasSeparadas, setNotasSeparadas] = useState([]);
 
@@ -41,14 +42,18 @@ function NotasEstudiantes({ notas }) {
     }
   }, [notasOrdenadas, materiasSeparadas]);
 
-  return (
-    <div>
-      {notasSeparadas &&
-        notasSeparadas.map((notas, key) => (
-          <TablaNotasProfesores notas={notas} key={key} />
-        ))}
-    </div>
-  );
+  useEffect(() => {
+    if (notasSeparadas !== undefined) {
+      notasSeparadas.map((notas, key) =>
+        setTablas((tablaAnterior) => [
+          ...tablaAnterior,
+          <TablaNotasProfesores notas={notas} key={key} />,
+        ])
+      );
+    }
+  }, [notasSeparadas]);
+
+  return <div>{tablas}</div>;
 }
 
 export default NotasEstudiantes;

@@ -15,7 +15,7 @@ exports.conseguir_lista = (req, res, next) => {
       if (err) {
         return next(err);
       }
-      res.status(200).json({ lista_materias: lista_materias });
+      res.status(200).send(lista_materias);
     });
 };
 
@@ -30,7 +30,7 @@ exports.mostrar_materia = async (req, res, next) => {
       })
       .populate({
         path: "estudiantes",
-        select: ["nombre", "apellido", "cedula"],
+        select: ["nombre", "apellido", "correo"],
       })
       .exec();
     if (materia === null) {

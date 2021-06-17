@@ -31,7 +31,7 @@ exports.subir_archivo = async (req, res, next) => {
   } = req;
 
   if (file.detectedFileExtension != ".zip") {
-    next(new Error("Invalid file type"));
+    next(new Error("Tipo de archivo invalido"));
   }
 
   const fileName = `${uuid()}-${file.originalName}`;
@@ -56,12 +56,12 @@ exports.descargar_archivo = async (req, res, next) => {
   const file = `${__dirname}/../public/files/${req.params.nombre}`;
 
   fs.access(file, fs.constants.F_OK, (err) => {
-    console.log(`${file} ${err ? "does not exist" : "exists"}`);
+    console.log(`${file} ${err ? "no existe" : "existe"}`);
   });
 
   fs.readFile(file, function (err, content) {
     if (err) {
-      res.status(204).json({ message: "No such file" });
+      res.status(204).json({ message: "No existe el archivo" });
     } else {
       const fileS = fs.createReadStream(file);
       // Antes era file xd

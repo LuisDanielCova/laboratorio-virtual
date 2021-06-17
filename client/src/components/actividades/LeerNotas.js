@@ -1,180 +1,32 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../App";
 import NotasEstudiantes from "./NotasEstudiantes";
-import { TablaNotasProfesores } from "../tablas/TablaNotasProfesores";
+import Sidebar from "../complements/Sidebar";
+import axios from "axios";
 
 function LeerNotas() {
-  const user = useContext(UserContext);
+  const [user] = useState("Estudiante");
+  //const user = useContext(UserContext);
   const [notasEstudiantes, setNotasEstudiantes] = useState([]);
-  const [notasProfesor, setNotasProfesor] = useState([]);
   const [headerOne, setHeaderOne] = useState("");
   const [paragraph, setParagraph] = useState("");
 
   useEffect(() => {
-    setNotasEstudiantes([
-      {
-        calificacion: 12,
-        actividad: {
-          nombre: "Arreglos - 1",
-          materia: {
-            nombre: "Programacion 3",
-            profesor: "Profesor",
-          },
-        },
-        estudiante: {
-          nombre: "Estudiante",
-        },
-      },
-      {
-        calificacion: 15,
-        actividad: {
-          nombre: "Arreglos - 2",
-          materia: {
-            nombre: "Programacion 3",
-            profesor: "Profesor",
-          },
-        },
-        estudiante: {
-          nombre: "Estudiante",
-        },
-      },
-      {
-        calificacion: 20,
-        actividad: {
-          nombre: "Listas - 1",
-          materia: {
-            nombre: "Programacion 3",
-            profesor: "Profesor",
-          },
-        },
-        estudiante: {
-          nombre: "Estudiante",
-        },
-      },
-      {
-        calificacion: 10,
-        actividad: {
-          nombre: "Diagramas UML - 1",
-          materia: {
-            nombre: "Bases de Datos",
-            profesor: "Profesor",
-          },
-        },
-        estudiante: {
-          nombre: "Estudiante",
-        },
-      },
-      {
-        calificacion: 15,
-        actividad: {
-          nombre: "Diagramas UML - 2",
-          materia: {
-            nombre: "Bases de Datos",
-            profesor: "Profesor",
-          },
-        },
-        estudiante: {
-          nombre: "Estudiante",
-        },
-      },
-      {
-        calificacion: 20,
-        actividad: {
-          nombre: "SQL - 1",
-          materia: {
-            nombre: "Bases de Datos",
-            profesor: "Profesor",
-          },
-        },
-        estudiante: {
-          nombre: "Estudiante",
-        },
-      },
-    ]);
-  }, []);
-
-  useEffect(() => {
-    setNotasProfesor([
-      {
-        calificacion: 10,
-        actividad: {
-          nombre: "Arreglos - 1",
-          materia: {
-            nombre: "Programacion 3",
-            profesor: "Profesor",
-          },
-        },
-        estudiante: {
-          nombre: "Estudiante",
-        },
-      },
-      {
-        calificacion: 20,
-        actividad: {
-          nombre: "funciones - 1",
-          materia: {
-            nombre: "Programacion 2",
-            profesor: "Profesor",
-          },
-        },
-        estudiante: {
-          nombre: "Luis Cova",
-        },
-      },
-      {
-        calificacion: 15,
-        actividad: {
-          nombre: "cosas - 1",
-          materia: {
-            nombre: "Programacion 1",
-            profesor: "Profesor",
-          },
-        },
-        estudiante: {
-          nombre: "Hector",
-        },
-      },
-      {
-        calificacion: 10,
-        actividad: {
-          nombre: "cosas - 1",
-          materia: {
-            nombre: "Programacion 1",
-            profesor: "Profesor",
-          },
-        },
-        estudiante: {
-          nombre: "Victor",
-        },
-      },
-      {
-        calificacion: 12,
-        actividad: {
-          nombre: "cosas - 2",
-          materia: {
-            nombre: "Programacion 1",
-            profesor: "Profesor",
-          },
-        },
-        estudiante: {
-          nombre: "Victor",
-        },
-      },
-      {
-        calificacion: 10,
-        actividad: {
-          nombre: "cosas - 2",
-          materia: {
-            nombre: "Programacion 1",
-            profesor: "Profesor",
-          },
-        },
-        estudiante: {
-          nombre: "Hector",
-        },
-      },
-    ]);
-  }, []);
+    const conseguirNotas = async () => {
+      if (user === "Profesor") {
+        const response = await axios.get(
+          `${process.env.REACT_APP_SERVER_URL}/notas`
+        );
+        setNotasEstudiantes(response.data.lista_notas);
+      } else if (user === "Estudiante") {
+        const response = await axios.get(
+          `${process.env.REACT_APP_SERVER_URL}/notas/estudiante/60ca00f313a50581eee7d3ad`
+        );
+        setNotasEstudiantes(response.data.lista_notas);
+      }
+    };
+    conseguirNotas();
+  }, [user]);
 
   useEffect(() => {
     switch (user) {
@@ -202,11 +54,16 @@ function LeerNotas() {
   }, [user]);
 
   return (
-    <div className="col m-3">
-      {headerOne}
-      {paragraph}
-      <div>
-        <NotasEstudiantes notas={notasProfesor} />
+    <div className="container-fluid p-0">
+      <div className="row flex-nowrap gx-0">
+        <Sidebar />
+        <div className="col m-3">
+          {headerOne}
+          {paragraph}
+          <div>
+            <NotasEstudiantes notas={notasEstudiantes} />
+          </div>
+        </div>
       </div>
     </div>
   );

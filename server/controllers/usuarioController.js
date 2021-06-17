@@ -6,7 +6,8 @@ const bcrypt = require("bcryptjs");
 // Mostrar todos los usuarios
 exports.conseguir_lista = (req, res, next) => {
   Usuario.find()
-    .sort([["apellido", "ascending"]])
+    .select(["cedula", "nombre", "apellido", "correo", "cargo"])
+    .sort([["cedula", "ascending"]])
     .exec((err, lista_usuarios) => {
       if (err) {
         return next(err);

@@ -40,12 +40,12 @@ export const TablaNotasProfesores = ({ notas }) => {
   }, [estudiantesSeparados]);
 
   useEffect(() => {
-    const functionLoca = (lmao, key) => {
-      setTh((thAnterior) => [...thAnterior, <th key={key}>{lmao}</th>]);
+    const acoplarTh = (value, key) => {
+      setTh((thAnterior) => [...thAnterior, <th key={key}>{value}</th>]);
     };
 
     if (actividadesSeparadas.size > 0) {
-      actividadesSeparadas.forEach(functionLoca);
+      actividadesSeparadas.forEach(acoplarTh);
     }
   }, [actividadesSeparadas]);
 

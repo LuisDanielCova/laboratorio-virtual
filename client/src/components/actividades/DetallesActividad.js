@@ -1,65 +1,70 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../App";
+import axios from "axios";
 import TarjetasArchivoProfesor from "../cards/TarjetasArchivoProfesor";
 import TarjetasArchivoProfesorEditar from "../cards/TarjetasArchivoProfesorEditar";
 import TarjetasArchivosEstudiantesEditar from "../cards/TarjetasArchivosEstudiantesEditar";
 import TarjetasArchivosEstudiantesSubir from "../cards/TarjetasArchivosEstudiantesSubir";
 import TarjetasMostrarArchivosEstudiantes from "../cards/TarjetasMostrarArchivosEstudiantes";
+import Sidebar from "../complements/Sidebar";
+import { useParams } from "react-router-dom";
 
 function DetallesActividad() {
   const user = useContext(UserContext);
+  const { idActividad, idMateria } = useParams();
+  const [actividad, setActividad] = useState();
+  const [archivos, setArchivos] = useState([]);
   const [estado, setEstado] = useState();
   const [acciones, setAcciones] = useState("");
   const [archivoProfesor, setArchivoProfesor] = useState();
-  const [archivosEstudiantes, setArchivosEstudiantes] = useState([]);
-
-  const actividad = {
-    nombre: "Arreglos - Parte 1",
-    descripcion:
-      "Invertir los numeros dentro de un arreglo o algo asi idk, c++ y vaina",
-    fecha_entrega: new Date().toISOString().slice(0, 10),
-    materia: {
-      nombre: "Programacion 3",
-    },
-    nota: 20,
-    archivo: {
-      nombre: "vaina.zip",
-      url: "http://localhost:3001/vaina.zip",
-    },
-  };
 
   useEffect(() => {
-    setArchivosEstudiantes([
-      {
-        nombre: "vaina.zip",
-        alumno: "alumno1",
-        url: "http://localhost:3001/vaina2.zip",
-      },
-      {
-        nombre: "vaina2.zip",
-        alumno: "Estudiante",
-        url: "http://localhost:3001/vaina2.zip",
-      },
-    ]);
-  }, []);
+    const conseguirActividad = async () => {
+      const response = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/materias/${idMateria}/actividades/${idActividad}`
+      );
+      setActividad(response.data.actividad);
+    };
+    conseguirActividad();
+  }, [idMateria, idActividad]);
 
   useEffect(() => {
-    if (actividad.archivo !== undefined) {
-      if (user === "Estudiante" || user === "Administrador") {
-        setArchivoProfesor();
-        <TarjetasArchivoProfesor archivo={actividad.archivo} />;
+    const conseguirArchivos = async () => {
+      if (actividad !== undefined) {
+        const response = await axios.get(
+          `${process.env.REACT_APP_SERVER_URL}/materias/${idMateria}/actividades/${idActividad}/archivos`
+        );
+        setArchivos(response.data.archivos);
+      }
+    };
+    conseguirArchivos();
+  }, [actividad, idMateria, idActividad]);
+
+  useEffect(() => {
+    if (archivos !== undefined) {
+      const archivo = archivos.find((value) => {
+        return value.usuario.cargo === "Profesor";
+      });
+      if (
+        user === "Estudiante" ||
+        user === "Administrador" ||
+        user === undefined
+      ) {
+        setArchivoProfesor(<TarjetasArchivoProfesor archivo={archivo} />);
       } else if (user === "Profesor") {
-        setArchivoProfesor();
-        <TarjetasArchivoProfesorEditar archivo={actividad.archivo} />;
+        setArchivoProfesor(<TarjetasArchivoProfesorEditar archivo={archivo} />);
       }
     } else {
       setArchivoProfesor(
         <p className="card-text">El profesor no ha subido un archivo</p>
       );
     }
-  }, [actividad.archivo, user]);
+  }, [archivos, user]);
 
   useEffect(() => {
+    const archivosEstudiantes = archivos.filter((value) => {
+      return value.usuario.cargo === "Estudiante";
+    });
     switch (user) {
       case "Administrador":
         setEstado(
@@ -104,8 +109,8 @@ function DetallesActividad() {
         );
         break;
       case "Estudiante":
-        const archivoEntregado = archivosEstudiantes.find(
-          (archivo) => archivo.alumno === user
+        const archivoEntregado = archivos.find(
+          (archivo) => archivo.usuario === user
         );
         if (archivoEntregado === undefined) {
           setEstado(<TarjetasArchivosEstudiantesSubir />);
@@ -121,41 +126,54 @@ function DetallesActividad() {
         setEstado(<p className="card-text">Error, recargue la pagina</p>);
         break;
     }
-  }, [user, archivosEstudiantes]);
+  }, [user, archivos]);
 
   return (
-    <div className="col m-3">
-      <div className="card py-3 p shadow-lg">
-        <h3 className="fw-bold text-center">{actividad.nombre}</h3>
-        <div className="row m-3">
-          <div className="col-lg-8 my-2">
-            <div className="card p-3">
-              <h4 className="fw-bold card-text">Descripcion:</h4>
-              <p className="card-text">{actividad.descripcion}</p>
-              {archivoProfesor}
-              <h4 className="fw-bold card-text">Fecha de Entrega:</h4>
-              <p className="card-text">{actividad.fecha_entrega}</p>
-              <h4 className="fw-bold card-text">Estado:</h4>
-              {estado}
-            </div>
-          </div>
-          <div className="col-lg-4 my-2">
-            <div className="card p-2">
-              <div className="card p-2">
-                <h5 className="fw-bold card-text">
-                  <i className="bi bi-book"></i> Materia:
-                </h5>
-                <p className="card-text">
-                  <i className="bi bi-laptop"></i> {actividad.materia.nombre}
-                </p>
-                <h5 className="fw-bold card-text">
-                  <i className="bi bi-award"></i> Nota:
-                </h5>
-                <p className="card-text">
-                  <i className="bi bi-star"></i> {actividad.nota} / 20
-                </p>
+    <div className="container-fluid p-0">
+      <div className="row flex-nowrap gx-0">
+        <Sidebar />
+        <div className="col m-3">
+          <div className="card py-3 p shadow-lg">
+            <h3 className="fw-bold text-center">
+              {actividad && actividad.nombre}
+            </h3>
+            <div className="row m-3">
+              <div className="col-lg-8 my-2">
+                <div className="card p-3">
+                  <h4 className="fw-bold card-text">Descripcion:</h4>
+                  <p className="card-text">
+                    {actividad && actividad.descripcion}
+                  </p>
+                  {archivoProfesor}
+                  <h4 className="fw-bold card-text">Fecha de Entrega:</h4>
+                  <p className="card-text">
+                    {actividad && actividad.fechaEntrega.slice(0, 10)}
+                  </p>
+                  <h4 className="fw-bold card-text">Estado:</h4>
+                  {estado}
+                </div>
               </div>
-              {acciones}
+              <div className="col-lg-4 my-2">
+                <div className="card p-2">
+                  <div className="card p-2">
+                    <h5 className="fw-bold card-text">
+                      <i className="bi bi-book"></i> Materia:
+                    </h5>
+                    <p className="card-text">
+                      <i className="bi bi-laptop"></i>{" "}
+                      {actividad && actividad.materia.nombre}
+                    </p>
+                    <h5 className="fw-bold card-text">
+                      <i className="bi bi-award"></i> Nota:
+                    </h5>
+                    <p className="card-text">
+                      <i className="bi bi-star"></i>{" "}
+                      {actividad && actividad.nota} / 20
+                    </p>
+                  </div>
+                  {acciones}
+                </div>
+              </div>
             </div>
           </div>
         </div>

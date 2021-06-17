@@ -1,36 +1,56 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import App from "./App";
-import FormaMateria from "./components/FormaMateria";
-import LeerMateria from "./components/LeerMateria";
+import LeerMaterias from "./components/materias/LeerMaterias";
+import DetallesMateria from "./components/materias/DetallesMateria";
+import CrearMateria from "./components/materias/CrearMateria";
+import DetallesActividad from "./components/actividades/DetallesActividad";
 import FormaActividad from "./components/FormaActividad";
-import LeerActividad from "./components/LeerActividad";
+import RegistroUsuario from "./components/users/RegistroUsuario";
 import Login from "./components/users/Login";
 import FormaUsuario from "./components/users/FormaUsuario";
-import LeerUsuario from "./components/LeerUsuario";
-//import Inicio from "./components/inicio/Inicio";
-import RegistroUsuario from "./components/users/RegistroUsuario";
+import LeerUsuarios from "./components/users/LeerUsuarios";
+import DetallesUsuario from "./components/users/DetallesUsuario";
 import Contacto from "./components/inicio/Contacto";
-import Sidebar from "./components/complements/Sidebar";
+import LeerNotas from "./components/actividades/LeerNotas";
 
 const Routes = () => {
   return (
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={App} />
-        <Route exact path="/materias/crear" component={FormaMateria} />
-        <Route exact path="/materias/crear/:id" component={FormaMateria} />
-        <Route exact path="/materias/leer" component={LeerMateria} />
-        <Route exact path="/actividades/crear" component={FormaActividad} />
-        <Route exact path="/actividades/crear/:id" component={FormaActividad} />
-        <Route exact path="/actividades/leer" component={LeerActividad} />
+        {/* RUTAS MATERIAS */}
+        <Route exact path="/materias/" component={LeerMaterias} />
+        <Route exact path="/materias/:id" component={DetallesMateria} />
+        <Route exact path="/materias/crear" component={CrearMateria} />
+        <Route exact path="/materias/crear/:id" component={CrearMateria} />
+        {/* RUTAS ACTIVIDADES */}
+        <Route
+          exact
+          path="/materias/:idMateria/actividades/:idActividad"
+          component={DetallesActividad}
+        />
+        <Route
+          exact
+          path="/materias/:idMateria/actividades/crear"
+          component={FormaActividad}
+        />
+        <Route
+          exact
+          path="/materias/:idMateria/actividades/crear/:id"
+          component={FormaActividad}
+        />
+        {/* RUTAS USUARIOS */}
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/registro/" component={RegistroUsuario} />
+        <Route exact path="/usuarios/" component={LeerUsuarios} />
+        <Route exact path="/usuarios/:id" component={DetallesUsuario} />
         <Route exact path="/usuarios/crear" component={FormaUsuario} />
         <Route exact path="/usuarios/crear/:id" component={FormaUsuario} />
-        <Route exact path="/usuarios/" component={LeerUsuario} />
-        <Route exact path="/registro/" component={RegistroUsuario} />
-        <Route exact path="/login" component={Login} />
+        {/* RUTAS NOTAS */}
+        <Route exact path="/notas" component={LeerNotas} />
+        {/* INICIO */}
         <Route exact path="/contacto" component={Contacto} />
-        <Route exact path="/sidebar" component={Sidebar} />
       </Switch>
     </BrowserRouter>
   );

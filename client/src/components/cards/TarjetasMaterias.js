@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../App";
 import ReactTooltip from "react-tooltip";
 
-function TarjetasMaterias(props) {
+function TarjetasMaterias({ materia }) {
   const user = useContext(UserContext);
   const [button, setButton] = useState();
 
@@ -29,7 +29,7 @@ function TarjetasMaterias(props) {
         break;
       case "Estudiante":
         // Si la materia esta llena, impedir que se inscriba
-        if (props.materia.alumnos.length >= 30) {
+        if (materia.estudiantes.length > 30) {
           setButton(
             <div>
               <span data-for="noCupos" data-tip="No hay cupos">
@@ -58,20 +58,20 @@ function TarjetasMaterias(props) {
         <p>Error, cargue la pagina nuevamente</p>;
         break;
     }
-  }, [user, props]);
+  }, [user, materia]);
 
   return (
     <div className="col-lg-4 col-md-6 col-sm-12 my-2">
       <div className="card border-dark bg-light shadow">
-        <h5 className="card-header bg-warning">{props.materia.nombre}</h5>
+        <h5 className="card-header bg-warning">{materia.nombre}</h5>
         <div className="card-body ">
-          <h5 className="card-title">Profesor: {props.materia.profesor}</h5>
+          <h5 className="card-title">Profesor: {materia.profesor.nombre}</h5>
           <h6 className="card-subtitle mb-2 text-muted">
-            Seccion: {props.materia.seccion}
+            Seccion: {materia.seccion}
           </h6>
-          <p className="card-text ">{props.materia.descripcion}</p>
+          <p className="card-text ">{materia.descripcion}</p>
           <p className="card-text">
-            Inscritos: {props.materia.alumnos.length} / 30
+            Inscritos: {materia.estudiantes.length} / 30
           </p>
           {button}
         </div>

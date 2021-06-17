@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { UserContext } from "../../../App";
+import { UserContext } from "../../App";
 
 function TarjetasActividades(props) {
   const user = useContext(UserContext);
@@ -44,7 +44,7 @@ function TarjetasActividades(props) {
         <h5 className="card-header bg-warning">{props.actividad.nombre}</h5>
         <div className="card-body ">
           <h6 className="card-subtitle mb-2 text-muted">
-            Fecha de Entrega: {props.actividad.fecha_entrega}
+            Fecha de Entrega: {props.actividad.fechaEntrega.slice(0, 10)}
           </h6>
           <p className="card-text ">{props.actividad.descripcion}</p>
           <p className="card-text">Nota: {props.actividad.nota}</p>
