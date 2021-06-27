@@ -3,7 +3,7 @@ import axios from "axios";
 import { useHistory, useParams } from "react-router-dom";
 import { UserContext } from "../../Routes";
 
-const TarjetasArchivosEstudiantesSubir = () => {
+export const TarjetasArchivoProfesorSubir = () => {
   const history = useHistory();
   const [file, setFile] = useState("");
   const { idActividad } = useParams();
@@ -17,14 +17,12 @@ const TarjetasArchivosEstudiantesSubir = () => {
       data
     );
     if (response.status === 200) {
-      alert(`Archivo subido`);
       history.go(0);
     }
   };
 
   return (
     <div>
-      <div className="alert alert-danger card-text">¡Falta por Entregar! </div>
       <h5 className="card-text">Subir Archivo:</h5>
       <div className="card col-lg-4 mb-2">
         <h6 className="card-header bg-dark text-center text-light">
@@ -59,5 +57,3 @@ const TarjetasArchivosEstudiantesSubir = () => {
     </div>
   );
 };
-
-export default TarjetasArchivosEstudiantesSubir;

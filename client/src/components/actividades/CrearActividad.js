@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router";
 import Axios from "axios";
 import Sidebar from "../complements/Sidebar";
 import FormError from "../errors/FormError";
 import { withRouter } from "react-router-dom";
+import { UserContext } from "../../Routes";
 
 function CrearActividad() {
+  const { usuario } = useContext(UserContext);
   const history = useHistory();
   const { idMateria, id } = useParams();
   const [actividad, setActividad] = useState({
@@ -31,14 +33,15 @@ function CrearActividad() {
 
   const agregarActividad = async (actividad, file) => {
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      let data = new FormData();
+      data.append("nombre", actividad.nombre);
+      data.append("descripcion", actividad.descripcion);
+      data.append("fechaEntrega", actividad.fechaEntrega);
+      data.append("nota", actividad.nota);
+      data.append("file", file);
       const response = await Axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/materias/${idMateria}/actividad/crear`,
-        {
-          actividad,
-          formData,
-        }
+        `${process.env.REACT_APP_SERVER_URL}/materias/${idMateria}/actividad/crear/${usuario.id}`,
+        data
       );
       if (response.status === 200) {
         alert(`Actividad Agregada`);
@@ -79,7 +82,6 @@ function CrearActividad() {
             </h3>
             <form
               action=""
-              encType="multipart/form-data"
               onSubmit={(event) => {
                 event.preventDefault();
               }}
@@ -176,7 +178,7 @@ function CrearActividad() {
                   <div className="container-fluid mt-5 row pe-0">
                     <div className="col-lg-5">
                       <label htmlFor="formFile" className="form-label mt-2">
-                        (Opcional) Seleccione uno o varios archivos:
+                        (Opcional) Seleccione un archivo:
                       </label>
                     </div>
                     <div className="col-lg-7 pe-0">
@@ -188,7 +190,7 @@ function CrearActividad() {
                           const file = event.target.files[0];
                           setFile(file);
                         }}
-                        value={actividad.file}
+                        value={file}
                         accept=".zip"
                         multiple
                       />

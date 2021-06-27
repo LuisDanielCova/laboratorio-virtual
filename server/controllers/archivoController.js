@@ -26,8 +26,7 @@ exports.mostrar_archivos = async (req, res, next) => {
 exports.subir_archivo = async (req, res, next) => {
   const {
     file,
-    body: { usuario },
-    params: { idActividad },
+    params: { idActividad, idUsuario },
   } = req;
 
   if (file.detectedFileExtension != ".zip") {
@@ -43,7 +42,7 @@ exports.subir_archivo = async (req, res, next) => {
 
   const fileDB = new FileModel({
     nombre: fileName,
-    usuario: usuario,
+    usuario: idUsuario,
     actividad: idActividad,
   });
 
@@ -63,9 +62,7 @@ exports.descargar_archivo = async (req, res, next) => {
     if (err) {
       res.status(204).json({ message: "No existe el archivo" });
     } else {
-      const fileS = fs.createReadStream(file);
-      // Antes era file xd
-      res.download(fileS, (err) => {
+      res.download(file, (err) => {
         if (err) {
           res
             .status(204)

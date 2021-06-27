@@ -4,7 +4,6 @@ import Inicio from "./components/inicio/Inicio";
 function App() {
   // TODO Funcional
   // Borrar objetos de la base de datos
-  // Subir Archivos
 
   return (
     <div>

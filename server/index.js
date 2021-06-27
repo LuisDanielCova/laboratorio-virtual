@@ -3,8 +3,6 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
 const app = express();
 const cors = require("cors");
@@ -12,6 +10,7 @@ const cookieParser = require("cookie-parser");
 const routerUsuarios = require("./routes/usuarios");
 const routerMaterias = require("./routes/materias");
 const routerNotas = require("./routes/notas");
+const routerArchivos = require("./routes/archivos");
 const createError = require("http-errors");
 
 // Database Connection
@@ -38,14 +37,12 @@ app.use(
   })
 );
 app.use(cookieParser("XDDDDD"));
-app.use(passport.initialize());
-app.use(passport.session());
-require("./passportConfig")(passport);
 
 // Rutas
 app.use("/usuarios", routerUsuarios);
 app.use("/materias", routerMaterias);
 app.use("/notas", routerNotas);
+app.use("/archivos", routerArchivos);
 
 // Atrapar el error y mandarlo al manejador de errores
 app.use(function (req, res, next) {

@@ -1,20 +1,12 @@
 let express = require("express");
 let router = express.Router();
 const multer = require("multer");
-const uuid = require("uuid").v4;
-const fs = require("fs");
-const { promisify } = require("util");
-const pipeline = promisify(require("stream").pipeline);
 const upload = multer();
 const { validateToken } = require("../middlewares/AuthMiddleware");
 
 // Modulo de las materias
 const materiaController = require("../controllers/materiaController");
 const actividadController = require("../controllers/actividadController");
-const archivoController = require("../controllers/archivoController");
-
-// Modelo del archivo
-const FileModel = require("../models/Archivo");
 
 // RUTAS DE LAS MATERIAS //
 
@@ -40,7 +32,11 @@ router.get(
   actividadController.mostrar_actividad
 );
 
-router.post("/:idMateria/actividad/crear", actividadController.crear_actividad);
+router.post(
+  "/:idMateria/actividad/crear/:idProfesor",
+  upload.single("file"),
+  actividadController.crear_actividad
+);
 
 router.get(
   "/:idMateria/actividad/crear/:id",
@@ -53,24 +49,5 @@ router.put(
 );
 
 router.delete("/actividades/borrar/:id", actividadController.borrar_actividad);
-
-// RUTAS DE LOS ARCHIVOS
-router.get(
-  "/:idMateria/actividades/:idActividad/archivos",
-  archivoController.mostrar_archivos
-);
-
-router.post(
-  "/:idMateria/actividades/:idActividad/archivos/subir",
-  upload.single("file"),
-  archivoController.subir_archivo
-);
-
-router.get(
-  ":/idMateria/actividades/:idActividad/archivos/descargar/:name",
-  archivoController.descargar_archivo
-);
-
-router.delete("/:idMateria/actividades/:idActividad/archivos/borrar/:name");
 
 module.exports = router;

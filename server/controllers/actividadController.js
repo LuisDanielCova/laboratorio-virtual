@@ -1,6 +1,6 @@
 const Actividad = require("../models/Actividad");
 const FileModel = require("../models/Archivo");
-const { body, validationResult } = require("express-validator");
+const { body, check, validationResult } = require("express-validator");
 const multer = require("multer");
 const uuid = require("uuid").v4;
 const fs = require("fs");
@@ -47,7 +47,7 @@ exports.mostrar_actividad = async (req, res, next) => {
 // CREAR UNA ACTIVIDAD
 
 exports.crear_actividad = [
-  body("nombre")
+  check("nombre")
     .trim()
     .notEmpty()
     .withMessage("El nombre no puede estar vacio")
@@ -64,7 +64,7 @@ exports.crear_actividad = [
       }
     })
     .escape(),
-  body("descripcion")
+  check("descripcion")
     .trim()
     .notEmpty()
     .withMessage("La descripcion no puede estar vacia")
@@ -72,7 +72,7 @@ exports.crear_actividad = [
     .isLength({ min: 30 })
     .withMessage("La descripcion debe tener minimo 30 caracteres")
     .escape(),
-  body("fechaEntrega")
+  check("fechaEntrega")
     .trim()
     .notEmpty()
     .withMessage("La fecha no puede estar vacia")
@@ -81,7 +81,7 @@ exports.crear_actividad = [
     .withMessage("Fecha invalida")
     .bail()
     .escape(),
-  body("nota")
+  check("nota")
     .trim()
     .notEmpty()
     .withMessage("La nota no puede estar vacia")
@@ -89,7 +89,6 @@ exports.crear_actividad = [
     .isInt({ min: 1, max: 20 })
     .withMessage("La nota debe ser un numero entero entre 1 o 20")
     .escape(),
-  upload.single("file"),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -118,6 +117,7 @@ exports.crear_actividad = [
           const fileDB = new FileModel({
             nombre: fileName,
             actividad: nuevaActividad._id,
+            usuario: req.params.idProfesor,
           });
           await fileDB.save();
           res.status(200).json({ mensaje: "actividad creada con archivo" });

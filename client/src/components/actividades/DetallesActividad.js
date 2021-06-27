@@ -6,6 +6,7 @@ import TarjetasArchivoProfesorEditar from "../cards/TarjetasArchivoProfesorEdita
 import TarjetasArchivosEstudiantesEditar from "../cards/TarjetasArchivosEstudiantesEditar";
 import TarjetasArchivosEstudiantesSubir from "../cards/TarjetasArchivosEstudiantesSubir";
 import TarjetasMostrarArchivosEstudiantes from "../cards/TarjetasMostrarArchivosEstudiantes";
+import { TarjetasArchivoProfesorSubir } from "../cards/TarjetasArchivoProfesorSubir";
 import Sidebar from "../complements/Sidebar";
 import { useHistory, useParams, withRouter } from "react-router-dom";
 
@@ -33,7 +34,7 @@ function DetallesActividad() {
     const conseguirArchivos = async () => {
       if (actividad !== undefined) {
         const response = await axios.get(
-          `${process.env.REACT_APP_SERVER_URL}/materias/${idMateria}/actividades/${idActividad}/archivos`
+          `${process.env.REACT_APP_SERVER_URL}/archivos/${idMateria}/actividades/${idActividad}/`
         );
         setArchivos(response.data.archivos);
       }
@@ -42,19 +43,33 @@ function DetallesActividad() {
   }, [actividad, idMateria, idActividad]);
 
   useEffect(() => {
-    if (archivos !== undefined) {
+    if (archivos.length > 0) {
       const archivo = archivos.find((value) => {
         return value.usuario.cargo === "Profesor";
       });
-      if (usuario.cargo === "Estudiante" || usuario.cargo === "Administrador") {
-        setArchivoProfesor(<TarjetasArchivoProfesor archivo={archivo} />);
-      } else if (usuario.cargo === "Profesor") {
-        setArchivoProfesor(<TarjetasArchivoProfesorEditar archivo={archivo} />);
+      if (archivo !== undefined) {
+        if (
+          usuario.cargo === "Estudiante" ||
+          usuario.cargo === "Administrador"
+        ) {
+          setArchivoProfesor(<TarjetasArchivoProfesor archivo={archivo} />);
+        } else if (usuario.cargo === "Profesor") {
+          setArchivoProfesor(
+            <TarjetasArchivoProfesorEditar archivo={archivo} />
+          );
+        }
+      } else {
+        if (
+          usuario.cargo === "Estudiante" ||
+          usuario.cargo === "Administrador"
+        ) {
+          setArchivoProfesor(
+            <p className="card-text">El profesor no ha subido un archivo</p>
+          );
+        } else if (usuario.cargo === "Profesor") {
+          setArchivoProfesor(<TarjetasArchivoProfesorSubir />);
+        }
       }
-    } else {
-      setArchivoProfesor(
-        <p className="card-text">El profesor no ha subido un archivo</p>
-      );
     }
   }, [archivos, usuario]);
 
