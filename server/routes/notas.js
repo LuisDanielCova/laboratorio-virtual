@@ -6,6 +6,7 @@ const notaController = require("../controllers/notaController");
 // Rutas de las notas
 router.get("/", notaController.mostrar_notas);
 router.get("/estudiante/:id", notaController.mostrar_notas_estudiante);
+router.get("/profesor/:id", notaController.mostrar_notas_profesor);
 router.get("/:id", notaController.mostrar_nota);
 router.post("/crear", notaController.crear_nota);
 router.put("/actualizar/:id", notaController.actualizar_nota);

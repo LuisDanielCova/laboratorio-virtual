@@ -10,9 +10,14 @@ const TarjetasMostrarArchivosEstudiantes = ({ val }) => {
           {val.usuario.nombre}
         </h6>
         <div className="col">
-          <CrearNota estudiante={val.usuario._id} />
+          <CrearNota estudiante={val.usuario} idActividad={val.actividad._id} />
         </div>
-        <button className="col btn btn-warning rounded-0">
+        <button
+          className="col btn btn-warning rounded-0"
+          onClick={() => {
+            //download bs
+          }}
+        >
           <i className="col bi bi-file-earmark"></i> Descargar
         </button>
       </div>

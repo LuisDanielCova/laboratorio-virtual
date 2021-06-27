@@ -1,6 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
-function CrearNota({ estudiante }) {
+function CrearNota({ estudiante, idActividad }) {
+  const [nota, setNota] = useState({
+    calificacion: 0,
+    actividad: idActividad,
+    estudiante: estudiante._id,
+  });
+
+  const calificarEstudiante = async (nota) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/notas/crear`,
+        nota
+      );
+      if (response.status === 200) {
+        alert(`Alumno calificado!`);
+      } else {
+        alert(`Ha ocurrido un error`);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="">
       <button
@@ -24,7 +47,7 @@ function CrearNota({ estudiante }) {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="Calificar">
-                Calificar - {estudiante}
+                Calificar - {estudiante.apellido}, {estudiante.nombre}
               </h5>
               <button
                 type="button"
@@ -44,6 +67,10 @@ function CrearNota({ estudiante }) {
                 placeholder="1"
                 min="1"
                 className="form-control"
+                onChange={(e) => {
+                  const { value } = e.target;
+                  setNota({ ...nota, calificacion: value });
+                }}
                 required
               />
             </div>
@@ -55,7 +82,13 @@ function CrearNota({ estudiante }) {
               >
                 Cerrar
               </button>
-              <button type="button" className="btn btn-warning">
+              <button
+                type="button"
+                className="btn btn-warning"
+                onClick={() => {
+                  calificarEstudiante(nota);
+                }}
+              >
                 Calificar
               </button>
             </div>

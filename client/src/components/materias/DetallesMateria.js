@@ -1,15 +1,55 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import TarjetasActividades from "../cards/TarjetasActividades";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams, withRouter } from "react-router-dom";
 import Sidebar from "../complements/Sidebar";
 import axios from "axios";
+import { UserContext } from "../../Routes";
 
 function DetallesMateria() {
+  const history = useHistory();
   const [materia, setMateria] = useState();
   const [actividades, setActividades] = useState();
   const [tarjetasActividades, setTarjetasActividades] = useState([]);
+  const [aviso, setAviso] = useState();
   const [alumnos, setAlumnos] = useState();
+  const { usuario } = useContext(UserContext);
+  const [acciones, setAcciones] = useState("");
   const { id } = useParams();
+
+  useEffect(() => {
+    if (usuario.cargo === "Administrador") {
+      setAcciones(
+        <div className="card p-2 mt-1">
+          <h4 className="fw-bold">Acciones:</h4>
+          <button
+            className="btn btn-warning"
+            onClick={() => {
+              history.push(`/materia/crear/${id}`);
+            }}
+          >
+            <i className="bi bi-pencil"></i> Editar
+          </button>
+          <button className="btn btn-danger mt-1">
+            <i className="bi bi-dash-circle"></i> Borrar
+          </button>
+        </div>
+      );
+    } else if (usuario.cargo === "Profesor") {
+      setAcciones(
+        <div className="card p-2 mt-1">
+          <h4 className="fw-bold">Acciones:</h4>
+          <button
+            className="btn btn-warning"
+            onClick={() => {
+              history.push(`/materias/${id}/actividad/crear`);
+            }}
+          >
+            Crear Nueva Actividad
+          </button>
+        </div>
+      );
+    }
+  }, [usuario, history, id]);
 
   useEffect(() => {
     const conseguirMateria = async () => {
@@ -43,7 +83,9 @@ function DetallesMateria() {
         const response = await axios.get(
           `${process.env.REACT_APP_SERVER_URL}/materias/${id}/actividades`
         );
-        setActividades(response.data.lista_actividades);
+        if (response.data.lista_actividades !== undefined) {
+          setActividades(response.data.lista_actividades);
+        }
       }
     };
     conseguirActividades();
@@ -51,12 +93,19 @@ function DetallesMateria() {
 
   useEffect(() => {
     if (actividades !== undefined) {
+      if (actividades.length > 0) setAviso("");
       actividades.map((val, key) => {
         return setTarjetasActividades((tarjetaAnterior) => [
           ...tarjetaAnterior,
           <TarjetasActividades actividad={val} key={key} />,
         ]);
       });
+    } else {
+      setAviso(
+        <div className="col-xl-12">
+          <div className="alert alert-warning">No hay actividades</div>
+        </div>
+      );
     }
   }, [actividades]);
 
@@ -80,6 +129,7 @@ function DetallesMateria() {
                     <i className="bi bi-clipboard-check"></i> Actividades:
                   </h4>
                   <div className="row">
+                    {aviso && aviso}
                     {tarjetasActividades &&
                       tarjetasActividades.map((val) => {
                         return val;
@@ -105,6 +155,7 @@ function DetallesMateria() {
                     </h5>
                     {alumnos && alumnos}
                   </div>
+                  {acciones}
                 </div>
               </div>
             </div>
@@ -115,4 +166,4 @@ function DetallesMateria() {
   );
 }
 
-export default DetallesMateria;
+export default withRouter(DetallesMateria);

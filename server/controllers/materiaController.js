@@ -1,4 +1,5 @@
-let Materia = require("../models/Materia");
+const Materia = require("../models/Materia");
+const Usuario = require("../models/Usuario");
 const { validationResult, body } = require("express-validator");
 
 // Mostrar todas las materias
@@ -19,6 +20,58 @@ exports.conseguir_lista = (req, res, next) => {
     });
 };
 
+// Mostrar las Materias de un Profesor
+
+exports.conseguir_materias_profesor = async (req, res, next) => {
+  try {
+    const materias = await Materia.find({ profesor: req.params.id })
+      .populate({
+        path: "profesor",
+        select: ["nombre", "apellido", "correo"],
+      })
+      .populate({
+        path: "estudiantes",
+        select: ["nombre", "apellido", "cedula"],
+      })
+      .sort([["nombre", "ascending"]])
+      .exec();
+    if (materias === null) {
+      let err = new Error("El profesor no tiene materias");
+      err.status = 404;
+      return next(err);
+    }
+    res.json({ materias });
+  } catch (err) {
+    if (err) next(err);
+  }
+};
+
+// Mostrar las materias de un estudiante
+
+exports.conseguir_materias_estudiante = async (req, res, next) => {
+  try {
+    const materias = await Materia.find({ estudiantes: req.params.id })
+      .populate({
+        path: "profesor",
+        select: ["nombre", "apellido", "correo"],
+      })
+      .populate({
+        path: "estudiantes",
+        select: ["nombre", "apellido", "cedula"],
+      })
+      .sort([["nombre", "ascending"]])
+      .exec();
+    if (materias === null) {
+      let err = new Error("El estudiante no tiene materias");
+      err.status = 404;
+      return next(err);
+    }
+    res.json({ materias });
+  } catch (err) {
+    if (err) next(err);
+  }
+};
+
 // Mostrar una materia
 
 exports.mostrar_materia = async (req, res, next) => {
@@ -30,7 +83,7 @@ exports.mostrar_materia = async (req, res, next) => {
       })
       .populate({
         path: "estudiantes",
-        select: ["nombre", "apellido", "correo"],
+        select: ["nombre", "apellido", "correo", "cedula"],
       })
       .exec();
     if (materia === null) {
@@ -39,6 +92,25 @@ exports.mostrar_materia = async (req, res, next) => {
       return next(err);
     }
     res.status(200).json({ materia });
+  } catch (err) {
+    if (err) return next(err);
+  }
+};
+
+// Inscribir un estudiante en una materia
+exports.inscribir_estudiante = async (req, res, next) => {
+  const { idMateria, idEstudiante } = req.params;
+  try {
+    const estudiante = await Usuario.findById(idEstudiante).exec();
+
+    await Materia.findByIdAndUpdate(
+      idMateria,
+      { $addToSet: { estudiantes: estudiante._id } },
+      (err) => {
+        if (err) return next(err);
+        res.json("Usuario Inscrito");
+      }
+    );
   } catch (err) {
     if (err) return next(err);
   }
@@ -56,13 +128,15 @@ exports.crear_materia = [
     .isLength({ min: 3 })
     .withMessage("El nombre debe tener minimo 3 caracteres")
     .bail()
-    .isAlphanumeric({ ignore: " -" })
+    .matches(/^[A-Za-z0-9\s.:-]+$/)
     .withMessage(
-      "El nombre solo puede tener numeros, letras y los caracteres especiales: '-' y ' '"
+      "El nombre solo puede contener letras, numeros y los caracteres especiales: ':', '.', '-' y ' '"
     )
+    .bail()
     .custom(async (value) => {
       const materia = await Materia.findOne({ nombre: value }).limit(1);
-      if (materia.length > 0) {
+      if (materia !== null) {
+        console.log(materia);
         return Promise.reject("El nombre de la materia ya esta en uso");
       }
     })
@@ -138,13 +212,14 @@ exports.actualizar_materia_put = [
     .isLength({ min: 3 })
     .withMessage("El nombre debe tener minimo 3 caracteres")
     .bail()
-    .isAlphanumeric({ ignore: " -" })
+    .matches(/^[A-Za-z0-9\s.:-]+$/)
     .withMessage(
-      "El nombre solo puede tener numeros, letras y los caracteres especiales: '-' y ' '"
+      "El nombre solo puede contener letras, numeros y los caracteres especiales: ':', '.', '-' y ' '"
     )
+    .bail()
     .custom(async (value, { req }) => {
       const materia = await Materia.findOne({ nombre: value }).limit(1);
-      if (materia.length > 0 && materia._id !== req.params.id) {
+      if (materia !== null && materia._id != req.params.id) {
         return Promise.reject("El nombre de la materia ya esta en uso");
       }
     })

@@ -6,24 +6,27 @@ import Footer from "../complements/Footer";
 
 function Login() {
   let history = useHistory();
-
   const [loginUsuario, setLoginUsuario] = useState("");
   const [loginContrasena, setLoginContrasena] = useState("");
+  const [errors, setErrors] = useState("");
 
   const login = async () => {
-    let response = await axios({
+    const response = await axios({
       method: "POST",
       data: {
-        username: loginUsuario,
-        password: loginContrasena,
+        usuario: loginUsuario,
+        contrasena: loginContrasena,
       },
       withCredentials: true,
       url: `${process.env.REACT_APP_SERVER_URL}/usuarios/login`,
     });
     if (response.status === 200) {
-      history.push("/");
+      localStorage.setItem("accessToken", response.data);
+      history.push("/inicio");
     } else {
-      history.go(0);
+      setErrors(
+        <div className="alert alert-warning">{response.data.error}</div>
+      );
     }
   };
 
@@ -31,7 +34,7 @@ function Login() {
     <div className="">
       <Navbar login="true" />
       <div className="container text-center">
-        <div className="card p-5 m-5 mx-auto" style={{ width: "40%" }}>
+        <div className="card p-5 m-5 mx-auto w-50">
           <h1 className="display-5 fw-bold col-md-12">Iniciar Sesion</h1>
           <div className="container-fluid mb-3">
             <label htmlFor="usuario" className="form-label">
@@ -63,6 +66,7 @@ function Login() {
               }}
             />
           </div>
+          {errors}
           <div className="container-fluid">
             <button
               className="btn btn-warning mx-auto col-md-6"

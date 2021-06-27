@@ -52,13 +52,14 @@ exports.crear_actividad = [
     .notEmpty()
     .withMessage("El nombre no puede estar vacio")
     .bail()
-    .isAlphanumeric(["es-ES"], { ignore: " -" })
+    .matches(/^[A-Za-z0-9\s.:-]+$/)
     .withMessage(
-      "El nombre solo puede contener letras, numeros y los caracteres especiales: '-' y ' '"
+      "El nombre solo puede contener letras, numeros y los caracteres especiales: ':', '.', '-' y ' '"
     )
+    .bail()
     .custom(async (value, { req }) => {
       const actividad = await Actividad.findOne({ nombre: value }).limit(1);
-      if (actividad.length > 0 && actividad.materia === req.body.materia) {
+      if (actividad !== null && actividad.materia._id == req.params.idMateria) {
         return Promise.reject("El nombre de la actividad ya esta en uso");
       }
     })
@@ -85,8 +86,8 @@ exports.crear_actividad = [
     .notEmpty()
     .withMessage("La nota no puede estar vacia")
     .bail()
-    .isInt()
-    .withMessage("La nota debe ser un numero entero")
+    .isInt({ min: 1, max: 20 })
+    .withMessage("La nota debe ser un numero entero entre 1 o 20")
     .escape(),
   upload.single("file"),
   async (req, res, next) => {
@@ -98,14 +99,14 @@ exports.crear_actividad = [
       const actividad = new Actividad({
         nombre: req.body.nombre,
         descripcion: req.body.descripcion,
-        fecha_entrega: req.body.fecha_entrega,
+        fechaEntrega: req.body.fechaEntrega,
         nota: req.body.nota,
-        materia: req.body.materia,
+        materia: req.params.idMateria,
       });
       try {
         const nuevaActividad = await actividad.save();
         // Si la actividad se ha guardado, y se ha subido un archivo
-        if (nuevaActividad !== null && file !== null) {
+        if (nuevaActividad !== null && file !== undefined) {
           if (file.detectedFileExtension != ".zip") {
             next(new Error("Invalid file type"));
           }
@@ -124,6 +125,7 @@ exports.crear_actividad = [
           res.status(200).json({ mensaje: "actividad creada" });
         }
       } catch (err) {
+        console.log(err);
         res.status(400);
         next(err);
       }
@@ -155,16 +157,16 @@ exports.actualizar_actividad_put = [
     .notEmpty()
     .withMessage("El nombre no puede estar vacio")
     .bail()
-    .isAlphanumeric(["es-ES"], { ignore: " -" })
+    .matches(/^[A-Za-z0-9\s.:-]+$/)
     .withMessage(
       "El nombre solo puede contener letras, numeros y los caracteres especiales: '-' y ' '"
     )
     .custom(async (value, { req }) => {
       const actividad = await Actividad.findOne({ nombre: value }).limit(1);
       if (
-        actividad.length > 0 &&
-        actividad.materia === req.body.materia &&
-        actividad._id !== req.params.id
+        actividad !== null &&
+        actividad.materia._id == req.params.idMateria &&
+        actividad._id != req.params.id
       ) {
         return Promise.reject("El nombre de la actividad ya esta en uso");
       }
@@ -192,8 +194,8 @@ exports.actualizar_actividad_put = [
     .notEmpty()
     .withMessage("La nota no puede estar vacia")
     .bail()
-    .isInt()
-    .withMessage("La nota debe ser un numero entero")
+    .isInt({ min: 1, max: 20 })
+    .withMessage("La nota debe ser un numero entero entre 1 y 20")
     .escape(),
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -211,7 +213,7 @@ exports.actualizar_actividad_put = [
               nombre: req.body.nombre,
               descripcion: req.body.descripcion,
               seccion: req.body.seccion,
-              profesor: req.body.profesor,
+              nota: req.body.nota,
             },
           },
           (err) => {

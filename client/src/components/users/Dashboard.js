@@ -1,4 +1,5 @@
 import React from "react";
+import { withRouter } from "react-router-dom";
 import Sidebar from "../complements/Sidebar";
 
 function Dashboard() {
@@ -37,4 +38,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default withRouter(Dashboard);

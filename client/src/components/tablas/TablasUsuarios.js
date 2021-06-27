@@ -1,6 +1,25 @@
 import React from "react";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 const TablasUsuarios = ({ usuarios, cargando }) => {
+  const history = useHistory();
+
+  const borrarUsuario = async (confirmacion, cedula, id) => {
+    if (confirmacion === cedula) {
+      const response = axios.delete(
+        `${process.env.REACT_APP_SERVER_URL}/usuarios/borrar/${id}`
+      );
+      if (response.status === 200) {
+        alert(`Usuario Borrado exitosamente`);
+      } else {
+        alert(`Ha ocurrido un error, intente nuevamente`);
+      }
+    } else {
+      alert(`Cedula invalida`);
+    }
+  };
+
   if (cargando) {
     return (
       <div className="d-flex row justify-content-center my-3">
@@ -40,13 +59,22 @@ const TablasUsuarios = ({ usuarios, cargando }) => {
                     role="group"
                     aria-label="Basic example"
                   >
-                    <button type="button" className="btn btn-warning rounded-0">
+                    <button
+                      type="button"
+                      className="btn btn-warning rounded-0"
+                      onClick={() => {
+                        history.push(`/usuarios/${val._id}`);
+                      }}
+                    >
                       <i className="bi bi-person"></i> Detalles
                     </button>
                     <button
                       type="button"
                       className="btn btn-warning border-0"
                       style={{ backgroundColor: "#F59B18" }}
+                      onClick={() => {
+                        history.push(`/usuarios/crear/${val._id}`);
+                      }}
                     >
                       <i className="bi bi-pencil"></i> Actualizar
                     </button>
@@ -54,6 +82,12 @@ const TablasUsuarios = ({ usuarios, cargando }) => {
                       type="button"
                       className="btn text-light btn-danger border-0 rounded-0"
                       style={{ backgroundColor: "#E24E3A" }}
+                      onClick={() => {
+                        const confirmacion = prompt(
+                          `Para confirmar que quiere borrar el usuario, ingrese la cedula: ${val.cedula}`
+                        );
+                        borrarUsuario(confirmacion, val.cedula, val._id);
+                      }}
                     >
                       <i className="bi bi-dash-circle"></i> Borrar
                     </button>

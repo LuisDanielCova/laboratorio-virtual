@@ -2,25 +2,44 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import TarjetasMaterias from "../cards/TarjetasMaterias";
 import Sidebar from "../complements/Sidebar";
-import { UserContext } from "../../App";
+import { UserContext } from "../../Routes";
+import { withRouter } from "react-router-dom";
 
 function LeerMaterias() {
-  const user = useContext(UserContext);
+  const { usuario } = useContext(UserContext);
   const [materias, setMaterias] = useState([]);
   const [listaMaterias, setListaMaterias] = useState([]);
   const [headerOne, setHeaderOne] = useState("");
   const [paragraph, setParagraph] = useState("");
 
   useEffect(() => {
-    const conseguirMaterias = async () => {
-      const response = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/materias/`
-      );
-      setMaterias(response.data);
+    const conseguirMaterias = async (usuario) => {
+      switch (usuario.cargo) {
+        case "Administrador":
+          const response = await axios.get(
+            `${process.env.REACT_APP_SERVER_URL}/materias/`
+          );
+          setMaterias(response.data);
+          break;
+        case "Profesor":
+          const response2 = await axios.get(
+            `${process.env.REACT_APP_SERVER_URL}/materias/profesor/${usuario.id}`
+          );
+          setMaterias(response2.data.materias);
+          break;
+        case "Estudiante":
+          const response3 = await axios.get(
+            `${process.env.REACT_APP_SERVER_URL}/materias/estudiante/${usuario.id}`
+          );
+          setMaterias(response3.data.materias);
+          break;
+        default:
+          break;
+      }
     };
 
-    conseguirMaterias();
-  }, []);
+    conseguirMaterias(usuario);
+  }, [usuario]);
 
   useEffect(() => {
     if (materias.length > 0) {
@@ -34,7 +53,7 @@ function LeerMaterias() {
   }, [materias]);
 
   useEffect(() => {
-    switch (user) {
+    switch (usuario.cargo) {
       case "Administrador":
         setHeaderOne(<h1 className="m-3">Administrar Materias</h1>);
         setParagraph(
@@ -54,11 +73,11 @@ function LeerMaterias() {
         );
         break;
       case "Estudiante":
-        setHeaderOne(<h1 className="m-3">Inscribir Materias</h1>);
+        setHeaderOne(<h1 className="m-3">Lista de Materias</h1>);
         setParagraph(
           <p className="lead m-3">
-            Inscribe las materias al presionar el boton en sus respectivas
-            tarjetas
+            Aqui puedes ver tus materias inscritas, haz click en el boton de
+            detalles para dirigirte a la pagina de detalles de la materia
           </p>
         );
         break;
@@ -66,7 +85,7 @@ function LeerMaterias() {
         <p className="lead m-3">Error, cargue la pagina nuevamente</p>;
         break;
     }
-  }, [user]);
+  }, [usuario]);
 
   return (
     <div className="container-fluid p-0">
@@ -82,4 +101,4 @@ function LeerMaterias() {
   );
 }
 
-export default LeerMaterias;
+export default withRouter(LeerMaterias);

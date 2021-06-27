@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "../complements/Navbar";
 import Footer from "../complements/Footer";
 
-function Contacto() {
+function Contacto({ stuff }) {
   return (
     <div>
       <Navbar />

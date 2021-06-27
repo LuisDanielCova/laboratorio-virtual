@@ -16,6 +16,19 @@ exports.conseguir_lista = (req, res, next) => {
     });
 };
 
+// Mostrar todos los profesores
+exports.conseguir_lista_profesores = (req, res, next) => {
+  Usuario.find({ cargo: "Profesor" })
+    .select(["cedula", "nombre", "apellido", "correo", "cargo"])
+    .sort([["cedula", "ascending"]])
+    .exec((err, lista_profesores) => {
+      if (err) {
+        return next(err);
+      }
+      res.status(200).send(lista_profesores);
+    });
+};
+
 // Mostrar un usuario
 exports.mostrar_usuario = async (req, res, next) => {
   try {
@@ -66,7 +79,7 @@ exports.crear_usuario = [
     .bail()
     .custom(async (value) => {
       const usuario = await Usuario.find({ cedula: value }).limit(1);
-      if (usuario.length > 0) {
+      if (usuario !== null) {
         return Promise.reject("La cedula ya esta en uso");
       }
     })
@@ -115,7 +128,7 @@ exports.crear_usuario = [
     .bail()
     .custom(async (value) => {
       const usuario = await Usuario.find({ correo: value });
-      if (usuario.length > 0) {
+      if (usuario !== null) {
         return Promise.reject("El correo ya esta en uso");
       }
     })
@@ -130,7 +143,7 @@ exports.crear_usuario = [
     .bail()
     .custom(async (value) => {
       const usuario = await Usuario.find({ usuario: value });
-      if (usuario.length > 0) {
+      if (usuario !== null) {
         return Promise.reject("El usuario ya esta en uso");
       }
     })
@@ -189,7 +202,7 @@ exports.crear_usuario = [
 
 // Enviar la informacion de un usuario para actualizarlo
 exports.actualizar_usuario_get = async (req, res, next) => {
-  await Usuario.findById(req.params.id, (err, results) => {
+  await Usuario.findById(req.params.id, "-contrasena", (err, results) => {
     if (err) {
       return next(err);
     }
@@ -216,7 +229,8 @@ exports.actualizar_usuario_put = [
     .bail()
     .custom(async (value, { req }) => {
       const usuario = await Usuario.find({ cedula: value }).limit(1);
-      if (usuario.length > 0 && usuario._id !== req.params.id) {
+      console.log(usuario);
+      if (usuario.length > 0 && usuario[0]._id != req.params.id) {
         return Promise.reject("La cedula ya esta en uso");
       }
     })
@@ -264,8 +278,8 @@ exports.actualizar_usuario_put = [
     .withMessage("Debe ingresar un correo valido")
     .bail()
     .custom(async (value, { req }) => {
-      const usuario = await Usuario.find({ correo: value });
-      if (usuario.length > 0 && usuario._id !== req.params.id) {
+      const usuario = await Usuario.find({ correo: value }).limit(1);
+      if (usuario.length > 0 && usuario[0]._id != req.params.id) {
         return Promise.reject("El correo ya esta en uso");
       }
     })

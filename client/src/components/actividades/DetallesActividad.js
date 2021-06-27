@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { UserContext } from "../../App";
+import { UserContext } from "../../Routes";
 import axios from "axios";
 import TarjetasArchivoProfesor from "../cards/TarjetasArchivoProfesor";
 import TarjetasArchivoProfesorEditar from "../cards/TarjetasArchivoProfesorEditar";
@@ -7,10 +7,11 @@ import TarjetasArchivosEstudiantesEditar from "../cards/TarjetasArchivosEstudian
 import TarjetasArchivosEstudiantesSubir from "../cards/TarjetasArchivosEstudiantesSubir";
 import TarjetasMostrarArchivosEstudiantes from "../cards/TarjetasMostrarArchivosEstudiantes";
 import Sidebar from "../complements/Sidebar";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams, withRouter } from "react-router-dom";
 
 function DetallesActividad() {
-  const user = useContext(UserContext);
+  const { usuario } = useContext(UserContext);
+  const history = useHistory();
   const { idActividad, idMateria } = useParams();
   const [actividad, setActividad] = useState();
   const [archivos, setArchivos] = useState([]);
@@ -45,13 +46,9 @@ function DetallesActividad() {
       const archivo = archivos.find((value) => {
         return value.usuario.cargo === "Profesor";
       });
-      if (
-        user === "Estudiante" ||
-        user === "Administrador" ||
-        user === undefined
-      ) {
+      if (usuario.cargo === "Estudiante" || usuario.cargo === "Administrador") {
         setArchivoProfesor(<TarjetasArchivoProfesor archivo={archivo} />);
-      } else if (user === "Profesor") {
+      } else if (usuario.cargo === "Profesor") {
         setArchivoProfesor(<TarjetasArchivoProfesorEditar archivo={archivo} />);
       }
     } else {
@@ -59,13 +56,13 @@ function DetallesActividad() {
         <p className="card-text">El profesor no ha subido un archivo</p>
       );
     }
-  }, [archivos, user]);
+  }, [archivos, usuario]);
 
   useEffect(() => {
     const archivosEstudiantes = archivos.filter((value) => {
       return value.usuario.cargo === "Estudiante";
     });
-    switch (user) {
+    switch (usuario.cargo) {
       case "Administrador":
         setEstado(
           <span className="alert alert-danger card-text">
@@ -99,7 +96,14 @@ function DetallesActividad() {
         setAcciones(
           <div className="card p-2 mt-1">
             <h4 className="fw-bold">Acciones:</h4>
-            <button className="btn btn-warning">
+            <button
+              className="btn btn-warning"
+              onClick={() => {
+                history.push(
+                  `/materias/${idMateria}/actividad/crear/${idActividad}`
+                );
+              }}
+            >
               <i className="bi bi-pencil"></i> Editar
             </button>
             <button className="btn btn-danger mt-1">
@@ -110,7 +114,7 @@ function DetallesActividad() {
         break;
       case "Estudiante":
         const archivoEntregado = archivos.find(
-          (archivo) => archivo.usuario === user
+          (archivo) => archivo.usuario._id === usuario.id
         );
         if (archivoEntregado === undefined) {
           setEstado(<TarjetasArchivosEstudiantesSubir />);
@@ -126,7 +130,7 @@ function DetallesActividad() {
         setEstado(<p className="card-text">Error, recargue la pagina</p>);
         break;
     }
-  }, [user, archivos]);
+  }, [usuario, archivos, history, idActividad, idMateria]);
 
   return (
     <div className="container-fluid p-0">
@@ -168,12 +172,17 @@ function DetallesActividad() {
                     </h5>
                     <p className="card-text">
                       <i className="bi bi-star"></i>{" "}
-                      {actividad && actividad.nota} / 20
+                      {actividad && actividad.nota}
                     </p>
                   </div>
                   {acciones}
                 </div>
               </div>
+            </div>
+            <div className="container text-center">
+              <a className="link-dark" href={`/materias/${idMateria}`}>
+                Volver
+              </a>
             </div>
           </div>
         </div>
@@ -182,4 +191,4 @@ function DetallesActividad() {
   );
 }
 
-export default DetallesActividad;
+export default withRouter(DetallesActividad);

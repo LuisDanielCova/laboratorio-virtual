@@ -1,20 +1,51 @@
 import React, { useContext, useState, useEffect } from "react";
-import { UserContext } from "../../App";
-import ReactTooltip from "react-tooltip";
+import { UserContext } from "../../Routes";
+import { useHistory } from "react-router-dom";
 
 function TarjetasMaterias({ materia }) {
-  const user = useContext(UserContext);
+  const { usuario } = useContext(UserContext);
   const [button, setButton] = useState();
+  const history = useHistory();
+
+  const borrarMateria = (materia) => {
+    const respuesta = prompt(
+      `Para confirmar que quieres borrar la materia, por favor ingresa en el cuadro de dialogo lo siguiente: ${materia.nombre}`,
+      ""
+    );
+    if (respuesta === materia.nombre) {
+      alert(`Materia Borrada`);
+    } else {
+      alert(`La Materia no fue borrada`);
+    }
+  };
 
   useEffect(() => {
-    switch (user) {
+    switch (usuario.cargo) {
       case "Administrador":
         setButton(
           <div className="col">
-            <button className="btn btn-warning col-xl-5 me-2">
+            <button
+              className="btn btn-warning me-2"
+              onClick={() => {
+                history.push(`/materias/${materia._id}`);
+              }}
+            >
+              <i className="bi bi-file-text"></i> Detalles
+            </button>
+            <button
+              className="btn btn-warning col-xl-5 me-2"
+              onClick={() => {
+                history.push(`/materia/crear/${materia._id}`);
+              }}
+            >
               <i className="bi bi-pencil"></i> Actualizar
             </button>
-            <button className="btn btn-danger col-xl-4">
+            <button
+              className="btn btn-danger col-xl-4 mt-2"
+              onClick={() => {
+                borrarMateria(materia);
+              }}
+            >
               <i className="bi bi-dash-circle"></i> Borrar
             </button>
           </div>
@@ -22,43 +53,33 @@ function TarjetasMaterias({ materia }) {
         break;
       case "Profesor":
         setButton(
-          <button className="btn btn-warning">
-            <i class="bi bi-file-text"></i> Detalles
+          <button
+            className="btn btn-warning"
+            onClick={() => {
+              history.push(`/materias/${materia._id}`);
+            }}
+          >
+            <i className="bi bi-file-text"></i> Detalles
           </button>
         );
         break;
       case "Estudiante":
-        // Si la materia esta llena, impedir que se inscriba
-        if (materia.estudiantes.length > 30) {
-          setButton(
-            <div>
-              <span data-for="noCupos" data-tip="No hay cupos">
-                <button className="btn btn-warning" disabled>
-                  <i class="bi bi-plus-circle"></i> Inscribir
-                </button>
-              </span>
-              <ReactTooltip
-                id="noCupos"
-                place="bottom"
-                type="dark"
-                effect="float"
-              />
-            </div>
-          );
-        } else {
-          setButton(
-            <button className="btn btn-warning">
-              <i class="bi bi-plus-circle"></i> Inscribir
-            </button>
-          );
-        }
-
+        setButton(
+          <button
+            className="btn btn-warning"
+            onClick={() => {
+              history.push(`/materias/${materia._id}`);
+            }}
+          >
+            <i className="bi bi-file-text"></i> Detalles
+          </button>
+        );
         break;
       default:
         <p>Error, cargue la pagina nuevamente</p>;
         break;
     }
-  }, [user, materia]);
+  }, [usuario, materia, history]);
 
   return (
     <div className="col-lg-4 col-md-6 col-sm-12 my-2">

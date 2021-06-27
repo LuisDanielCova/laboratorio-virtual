@@ -40,9 +40,9 @@ function Navbar(props) {
               <a href="/contacto" className="nav-link active">
                 Contactenos
               </a>
-              <nav class="nav-item dropdown">
+              <nav className="nav-item dropdown">
                 <nav
-                  class="nav-link dropdown-toggle"
+                  className="nav-link dropdown-toggle"
                   href="#"
                   id="navbarDropdownMenuLink"
                   role="button"
@@ -52,13 +52,13 @@ function Navbar(props) {
                   Registro
                 </nav>
                 <nav
-                  class="dropdown-menu"
+                  className="dropdown-menu"
                   aria-labelledby="navbarDropdownMenuLink"
                 >
-                  <a class="dropdown-item" href="/registro">
+                  <a className="dropdown-item" href="/registro">
                     Registro de Estudiante
                   </a>
-                  <a class="dropdown-item" href="/recuperar">
+                  <a className="dropdown-item" href="/recuperar">
                     Recuperar Contraseña
                   </a>
                 </nav>

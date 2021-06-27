@@ -35,6 +35,33 @@ exports.mostrar_notas_estudiante = async (req, res, next) => {
     });
 };
 
+// Mostrar todas las notas de un profesor
+exports.mostrar_notas_profesor = async (req, res, next) => {
+  Nota.find()
+    .populate("estudiante", ["nombre", "apellido"])
+    .populate({
+      path: "actividad",
+      select: ["nombre"],
+      populate: {
+        path: "materia",
+        select: ["nombre", "seccion"],
+        populate: {
+          path: "profesor",
+          select: "nombre apellido cedula",
+        },
+      },
+    })
+    .exec((err, lista) => {
+      if (err) {
+        return next(err);
+      }
+      const lista_notas = lista.filter((value) => {
+        return value.actividad.materia.profesor._id == req.params.id;
+      });
+      res.status(200).json({ lista_notas: lista_notas });
+    });
+};
+
 // Mostrar una nota
 
 exports.mostrar_nota = async (req, res, next) => {

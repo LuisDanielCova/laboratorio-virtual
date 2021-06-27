@@ -1,14 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../App";
+import { useHistory } from "react-router-dom";
+import { UserContext } from "../../Routes";
 
 function Sidebar() {
-  const user = useContext(UserContext);
-
+  const history = useHistory();
+  const { usuario, setUsuario } = useContext(UserContext);
   const [liMaterias, setLiMaterias] = useState();
   const [liUsuarios, setLiUsuarios] = useState();
 
+  const logout = () => {
+    localStorage.removeItem("accessToken");
+    setUsuario(false);
+    history.push("/");
+  };
+
   useEffect(() => {
-    if (user === "Administrador") {
+    if (usuario.cargo === "Administrador") {
       setLiMaterias(
         <li>
           <a
@@ -25,7 +32,7 @@ function Sidebar() {
             data-bs-parent="#menu"
           >
             <li className="w-100">
-              <a href="/materias/crear" className="nav-link px-0 link-warning">
+              <a href="/materia/crear" className="nav-link px-0 link-warning">
                 {" "}
                 <span className="d-none d-sm-inline">Crear Materia</span>{" "}
               </a>
@@ -55,7 +62,7 @@ function Sidebar() {
             data-bs-parent="#menu"
           >
             <li className="w-100">
-              <a href="/usuarios/crear" className="nav-link link-warning px-0">
+              <a href="/usuario/crear" className="nav-link link-warning px-0">
                 {" "}
                 <span className="d-none d-sm-inline">Crear Usuario</span>
               </a>
@@ -69,7 +76,7 @@ function Sidebar() {
           </ul>
         </li>
       );
-    } else if (user === "Profesor") {
+    } else if (usuario.cargo === "Profesor") {
       setLiMaterias(
         <li>
           <a
@@ -86,10 +93,7 @@ function Sidebar() {
             data-bs-parent="#menu"
           >
             <li className="w-100">
-              <a
-                href={`/profesores/materias/${user}`} // CAMBIAR A ID DE USUARIO
-                className="nav-link px-0 link-warning"
-              >
+              <a href={`/materias`} className="nav-link px-0 link-warning">
                 {" "}
                 <span className="d-none d-sm-inline">Mis Materias</span>{" "}
               </a>
@@ -97,7 +101,7 @@ function Sidebar() {
           </ul>
         </li>
       );
-    } else if (user === "Estudiante") {
+    } else if (usuario.cargo === "Estudiante") {
       setLiMaterias(
         <li>
           <a
@@ -115,7 +119,7 @@ function Sidebar() {
           >
             <li className="w-100">
               <a
-                href={`/estudiantes/materias/inscribir`} // CAMBIAR A ID DE USUARIO
+                href={`/materias/inscribir`}
                 className="nav-link px-0 link-warning"
               >
                 {" "}
@@ -131,10 +135,7 @@ function Sidebar() {
             data-bs-parent="#menu"
           >
             <li className="w-100">
-              <a
-                href={`/estudiantes/materias/${user}`} // CAMBIAR A ID DE USUARIO
-                className="nav-link px-0 link-warning"
-              >
+              <a href={`/materias/`} className="nav-link px-0 link-warning">
                 {" "}
                 <span className="d-none d-sm-inline">Mis Materias</span>{" "}
               </a>
@@ -142,14 +143,16 @@ function Sidebar() {
           </ul>
         </li>
       );
+    } else if (usuario.status === false) {
+      // Redirigir o algo asi cool
     }
-  }, [user]);
+  }, [usuario]);
 
   return (
     <div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
       <div className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100 sticky-top">
         <a
-          href="/"
+          href="/inicio"
           className="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none"
         >
           <img
@@ -166,15 +169,18 @@ function Sidebar() {
           id="menu"
         >
           <li className="nav-item">
-            <a href="/" className="nav-link link-warning align-middle px-0">
+            <a
+              href="/inicio"
+              className="nav-link link-warning align-middle px-0"
+            >
               <i className="fs-4 bi-house"></i>{" "}
               <span className="ms-1 d-none d-sm-inline">Inicio</span>
             </a>
           </li>
-          {liMaterias}
+          {usuario.status && liMaterias}
           <li>
             <a
-              href={`/notas/${user}`} ///// CAMBIAR A ID DE USUARIO
+              href={`/notas/`}
               className="nav-link px-0 align-middle link-warning"
             >
               <i className="fs-4 bi bi-award"></i>{" "}
@@ -191,7 +197,7 @@ function Sidebar() {
               <span className="ms-1 d-none d-sm-inline">Compilador</span>
             </a>
           </li>
-          {liUsuarios}
+          {usuario.status && liUsuarios}
         </ul>
         <hr />
         <div className="dropdown pb-4">
@@ -209,16 +215,15 @@ function Sidebar() {
               height="30"
               className="rounded-circle"
             />
-            <span className="d-none d-sm-inline mx-1">Usuario</span>
+            <span className="d-none d-sm-inline mx-1">{usuario.usuario}</span>
           </a>
           <ul
             className="dropdown-menu dropdown-menu-dark text-small shadow"
             aria-labelledby="dropdownUser1"
           >
             <li>
-              <a className="dropdown-item" href={`/usuarios/${user}`}>
+              <a className="dropdown-item" href={`/usuarios/${usuario.id}`}>
                 {" "}
-                {/* CAMBIAR A ID DE USUARIO */}
                 Perfil
               </a>
             </li>
@@ -226,9 +231,9 @@ function Sidebar() {
               <hr className="dropdown-divider" />
             </li>
             <li>
-              <a className="dropdown-item" href="/logout">
+              <button className="btn text-light" onClick={logout}>
                 Cerrar Sesion
-              </a>
+              </button>
             </li>
           </ul>
         </div>
@@ -238,15 +243,3 @@ function Sidebar() {
 }
 
 export default Sidebar;
-
-/*
-  
-  Agregar esto entre elementos en el componente que llame al Sidebar
-  
-  <div class="container-fluid">
-    <div class="row flex-nowrap">
-      <Sidebar/>
-      <otro elemento/> <-- Este elemento debe estar en un div con la clase "col"
-    </div>
-  </div>;
- */

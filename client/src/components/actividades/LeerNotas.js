@@ -1,35 +1,48 @@
 import React, { useState, useEffect, useContext } from "react";
-import { UserContext } from "../../App";
+import { UserContext } from "../../Routes";
 import NotasEstudiantes from "./NotasEstudiantes";
 import Sidebar from "../complements/Sidebar";
 import axios from "axios";
 
 function LeerNotas() {
-  const [user] = useState("Estudiante");
-  //const user = useContext(UserContext);
+  const { usuario } = useContext(UserContext);
   const [notasEstudiantes, setNotasEstudiantes] = useState([]);
   const [headerOne, setHeaderOne] = useState("");
   const [paragraph, setParagraph] = useState("");
 
   useEffect(() => {
     const conseguirNotas = async () => {
-      if (user === "Profesor") {
+      if (usuario.cargo === "Administrador") {
         const response = await axios.get(
-          `${process.env.REACT_APP_SERVER_URL}/notas`
+          `${process.env.REACT_APP_SERVER_URL}/notas/`
         );
         setNotasEstudiantes(response.data.lista_notas);
-      } else if (user === "Estudiante") {
+      }
+      if (usuario.cargo === "Profesor") {
         const response = await axios.get(
-          `${process.env.REACT_APP_SERVER_URL}/notas/estudiante/60ca00f313a50581eee7d3ad`
+          `${process.env.REACT_APP_SERVER_URL}/notas/profesor/${usuario.id}`
+        );
+        setNotasEstudiantes(response.data.lista_notas);
+      } else if (usuario.cargo === "Estudiante") {
+        const response = await axios.get(
+          `${process.env.REACT_APP_SERVER_URL}/notas/estudiante/${usuario.id}`
         );
         setNotasEstudiantes(response.data.lista_notas);
       }
     };
     conseguirNotas();
-  }, [user]);
+  }, [usuario]);
 
   useEffect(() => {
-    switch (user) {
+    switch (usuario.cargo) {
+      case "Administrador":
+        setHeaderOne(<h1 className="display-2">Notas</h1>);
+        setParagraph(
+          <p className="lead">
+            Aqui podras ver las notas de todos los estudiantes
+          </p>
+        );
+        break;
       case "Profesor":
         setHeaderOne(<h1 className="display-2">Notas</h1>);
         setParagraph(
@@ -40,7 +53,7 @@ function LeerNotas() {
         );
         break;
       case "Estudiante":
-        setHeaderOne(<h1 className="display-2">Inscribir Materias</h1>);
+        setHeaderOne(<h1 className="display-2">Notas</h1>);
         setParagraph(
           <p className="lead">
             Aqui podras ver las notas de todas tus materias
@@ -51,7 +64,7 @@ function LeerNotas() {
         <p className="lead">Error, cargue la pagina nuevamente</p>;
         break;
     }
-  }, [user]);
+  }, [usuario]);
 
   return (
     <div className="container-fluid p-0">
