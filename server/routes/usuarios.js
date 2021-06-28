@@ -45,6 +45,14 @@ router.get("/auth", validateToken, (req, res, next) => {
   res.json(req.usuario);
 });
 
+// Recuperar Contrasena
+
+router.post("/auth/pedir_contrasena", usuarioController.pedirContrasena);
+router.put(
+  "/auth/recuperarContrasena/:idUsuario/:token",
+  usuarioController.recuperarContrasena
+);
+
 // RUTAS DE LOS USUARIOS //
 
 router.get("/", usuarioController.conseguir_lista);

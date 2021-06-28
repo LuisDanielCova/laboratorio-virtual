@@ -3,8 +3,7 @@ import Inicio from "./components/inicio/Inicio";
 
 function App() {
   // TODO Funcional
-  // Borrar objetos de la base de datos
-  // Recuperar contrasena
+  // Borrar objetos de la base de datos -- En mantenimiento
 
   return (
     <div>

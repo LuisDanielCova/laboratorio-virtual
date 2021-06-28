@@ -20,6 +20,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import InscribirMateria from "./components/materias/InscribirMateria";
 import ConfirmarUsuario from "./components/users/ConfirmarUsuario";
 import CambiarContrasena from "./components/users/CambiarContrasena";
+import RecuperarContrasenaPedir from "./components/users/RecuperarContrasenaPedir";
 
 export const UserContext = createContext("");
 
@@ -131,6 +132,11 @@ const Routes = () => {
 
           <Route exact path="/login" component={Login} />
           <Route exact path="/recuperar" component={RecuperarContrasena} />
+          <Route
+            exact
+            path="/recuperar/:idUsuario/:codigoConfirmacion"
+            component={RecuperarContrasenaPedir}
+          />
           <Route exact path="/registro/" component={Registro} />
 
           {/* Lista de los usuarios registrados */}

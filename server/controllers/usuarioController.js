@@ -1,9 +1,11 @@
 const Usuario = require("../models/Usuario");
 const Materia = require("../models/Materia");
+const Token = require("../models/Token");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 const correoServidor = process.env.CORREO_USUARIO;
 
@@ -50,6 +52,45 @@ const enviarCorreoAgradecimiento = (nombreUsuario, correoUsuario) => {
           dejamos el link a la pagina de inicio de sesion
         </p>
         <a href="${process.env.CLIENT_SERVER_URL}/login">Inicia sesion</a>
+      </div>`,
+  });
+};
+
+const enviarCorreoRecuperarContrasena = (
+  nombreUsuario,
+  idUsuario,
+  correoUsuario,
+  codigoConfirmacion
+) => {
+  transport.sendMail({
+    from: correoServidor,
+    to: correoUsuario,
+    subject: "Recuperar contraseña",
+    html: `<div>
+        <h1>Recuperar Contraseña</h1>
+        <h2>Hola, ${nombreUsuario}</h2>
+        <p>
+          Hemos recibido una solicitud para reiniciar tu contraseña, si no lo
+          has hecho tu, por favor ignora este mensaje. Haz click en el siguiente
+          enlace si quieres reiniciar tu contraseña.
+        </p>
+        <a href="${process.env.CLIENT_SERVER_URL}/recuperar/${idUsuario}/${codigoConfirmacion}">¡Haz Click Aqui!</a>
+      </div>`,
+  });
+};
+
+const enviarCorreoContrasenaCambiada = (nombreUsuario, correoUsuario) => {
+  transport.sendMail({
+    from: correoServidor,
+    to: correoUsuario,
+    subject: "Cambio de contraseña realizado",
+    html: `<div>
+        <h1>Contraseña cambiada</h1>
+        <h2>Hola ${nombreUsuario}</h2>
+        <p>
+          Haz cambiado tu contraseña con exito. Si tu no has realizado esta
+          accion, por favor contactanos por medio de este correo.
+        </p>
       </div>`,
   });
 };
@@ -422,6 +463,116 @@ exports.actualizar_usuario_put = [
   },
 ];
 
+// Pedir una nueva contrasena
+
+exports.pedirContrasena = async (req, res, next) => {
+  const usuario = await Usuario.findOne({ usuario: req.body.usuario });
+
+  if (!usuario) {
+    return res.status(206).json({ mensaje: "El usuario no existe" });
+  }
+  const token = await Token.findOne({ idUsuario: usuario._id });
+  if (token) await token.deleteOne();
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  const hash = await bcrypt.hash(resetToken, 10);
+
+  const tokenNuevo = new Token({
+    idUsuario: usuario._id,
+    token: hash,
+    creado: Date.now(),
+  });
+
+  await tokenNuevo.save();
+
+  enviarCorreoRecuperarContrasena(
+    usuario.usuario,
+    usuario._id,
+    usuario.correo,
+    resetToken
+  );
+
+  res.json({
+    mensaje:
+      "Solicitud de recuperacion de contraseña enviada. Revise su correo electronico",
+  });
+};
+
+// Recuperar contrasena
+exports.recuperarContrasena = [
+  async (req, res, next) => {
+    const tokenResetContrasena = await Token.findOne({
+      idUsuario: req.params.idUsuario,
+    });
+    if (!tokenResetContrasena) {
+      res.status(208).json({ mensaje: "Token invalido o ha expirado" });
+    }
+    const esValido = await bcrypt.compare(
+      req.params.token,
+      tokenResetContrasena.token
+    );
+    if (!esValido) {
+      res.status(208).json({ mensaje: "Token invalido o ha expirado" });
+    }
+    next();
+  },
+  body("contrasenaNueva")
+    .trim()
+    .notEmpty()
+    .withMessage("La contraseña no puede estar vacia")
+    .bail()
+    .isStrongPassword()
+    .withMessage(
+      "La contraseña debe contener al menos: 8 caracteres, 1 letra minuscula, 1 letra mayuscula, 1 numero y un caracter especial"
+    )
+    .escape(),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(206).json({ mensaje: "Datos invalidos", errors });
+    } else {
+      const { contrasenaNueva } = req.body;
+      const tokenResetContrasena = await Token.findOne({
+        idUsuario: req.params.idUsuario,
+      });
+      const usuario = await Usuario.findById(req.params.idUsuario, (err) => {
+        if (err) return next(err);
+      });
+      if (!usuario) {
+        let err = new Error("El usuario no existe");
+        err.status = 404;
+        return next(err);
+      }
+      bcrypt.compare(contrasenaNueva, usuario.contrasena, (err, resultado) => {
+        if (err) return next(err);
+        if (resultado === true) {
+          res.status(207).json({
+            mensaje: "La contrasena nueva debe ser diferente a la anterior",
+          });
+        } else {
+          const hash = bcrypt.hashSync(
+            contrasenaNueva,
+            process.env.PASSWORD_SALT
+          );
+          Usuario.findByIdAndUpdate(
+            usuario._id,
+            {
+              $set: {
+                contrasena: hash,
+              },
+            },
+            async (err) => {
+              if (err) return next(err);
+              await tokenResetContrasena.deleteOne();
+              enviarCorreoContrasenaCambiada(usuario.usuario, usuario.correo);
+              res.status(200).json({ mensaje: "Contrasena cambiada" });
+            }
+          );
+        }
+      });
+    }
+  },
+];
+
 // Actualiza la contrasena de un usuario
 // Solo la actualiza si es diferente a la anterior
 exports.actualizar_contrasena = [
@@ -483,6 +634,10 @@ exports.actualizar_contrasena = [
                 },
                 (err) => {
                   if (err) return next(err);
+                  enviarCorreoContrasenaCambiada(
+                    usuario.usuario,
+                    usuario.correo
+                  );
                   res.status(200).json({ mensaje: "Contrasena cambiada" });
                 }
               );
