@@ -504,14 +504,14 @@ exports.recuperarContrasena = [
       idUsuario: req.params.idUsuario,
     });
     if (!tokenResetContrasena) {
-      res.status(208).json({ mensaje: "Token invalido o ha expirado" });
+      return res.status(208).json({ mensaje: "Token invalido o ha expirado" });
     }
     const esValido = await bcrypt.compare(
       req.params.token,
       tokenResetContrasena.token
     );
     if (!esValido) {
-      res.status(208).json({ mensaje: "Token invalido o ha expirado" });
+      return res.status(208).json({ mensaje: "Token invalido o ha expirado" });
     }
     next();
   },
