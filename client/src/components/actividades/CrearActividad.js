@@ -175,27 +175,29 @@ function CrearActividad() {
                     />
                     <FormError errors={errors} campo={"fechaEntrega"} />
                   </div>
-                  <div className="container-fluid mt-5 row pe-0">
-                    <div className="col-lg-5">
-                      <label htmlFor="formFile" className="form-label mt-2">
-                        (Opcional) Seleccione un archivo:
-                      </label>
+                  {!id && (
+                    <div className="container-fluid mt-5 row pe-0">
+                      <div className="col-lg-5">
+                        <label htmlFor="formFile" className="form-label mt-2">
+                          (Opcional) Seleccione un archivo:
+                        </label>
+                      </div>
+                      <div className="col-lg-7 pe-0">
+                        <input
+                          className="form-control"
+                          type="file"
+                          id="formFile"
+                          onChange={(event) => {
+                            const file = event.target.files[0];
+                            setFile(file);
+                          }}
+                          value={file}
+                          accept=".zip"
+                          multiple
+                        />
+                      </div>
                     </div>
-                    <div className="col-lg-7 pe-0">
-                      <input
-                        className="form-control"
-                        type="file"
-                        id="formFile"
-                        onChange={(event) => {
-                          const file = event.target.files[0];
-                          setFile(file);
-                        }}
-                        value={file}
-                        accept=".zip"
-                        multiple
-                      />
-                    </div>
-                  </div>
+                  )}
                 </div>
                 <button
                   className="btn btn-warning mx-auto col-md-2 mt-2 mb-1"

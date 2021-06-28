@@ -18,6 +18,8 @@ import axios from "axios";
 import Dashboard from "./components/users/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import InscribirMateria from "./components/materias/InscribirMateria";
+import ConfirmarUsuario from "./components/users/ConfirmarUsuario";
+import CambiarContrasena from "./components/users/CambiarContrasena";
 
 export const UserContext = createContext("");
 
@@ -158,6 +160,19 @@ const Routes = () => {
             path="/usuario/crear/:id"
             cargo="Cualquiera"
             component={CrearUsuario}
+          />
+          {/* Confirmar Usuario */}
+          <Route
+            exact
+            path="/confirmar/:tokenConfirmacion"
+            component={ConfirmarUsuario}
+          />
+          {/* Cambiar Contraseña */}
+          <ProtectedRoute
+            exact
+            path="/usuario/cambiarcontrasena"
+            cargo="Cualquiera"
+            component={CambiarContrasena}
           />
 
           {/* RUTAS NOTAS */}

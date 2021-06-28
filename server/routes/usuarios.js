@@ -19,6 +19,11 @@ router.post("/login", async (req, res, next) => {
 
   if (!user) return res.status(206).json({ error: "El usuario no existe" });
 
+  if (user.estado != "Activo")
+    return res.status(206).json({
+      error: "El usuario no esta verificado. Por favor comprueba tu correo",
+    });
+
   const resultado = await bcrypt.compare(contrasena, user.contrasena);
 
   if (!resultado)
@@ -45,6 +50,8 @@ router.get("/auth", validateToken, (req, res, next) => {
 router.get("/", usuarioController.conseguir_lista);
 
 router.post("/crear", usuarioController.crear_usuario);
+
+router.get("/confirmar/:tokenConfirmacion", usuarioController.confirmar_cuenta);
 
 router.get("/profesores", usuarioController.conseguir_lista_profesores);
 

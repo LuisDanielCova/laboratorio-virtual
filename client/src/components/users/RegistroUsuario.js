@@ -23,7 +23,7 @@ function RegistroUsuario() {
   });
 
   useEffect(() => {
-    if (usuario.cargo === "Administrador") {
+    if (usuario.cargo === "Administrador" && id === undefined) {
       setCampoAdmin(
         <div className="container-fluid ps-0 my-3 row">
           <div className="col-lg-1">
@@ -50,7 +50,7 @@ function RegistroUsuario() {
         </div>
       );
     }
-  }, [usuario, errors, usuarioNuevo]);
+  }, [usuario, errors, usuarioNuevo, id]);
 
   useEffect(() => {
     const conseguirUsuario = async () => {
@@ -59,7 +59,9 @@ function RegistroUsuario() {
       );
       setUsuario({ ...response.data.results, contrasena: "" });
     };
-    conseguirUsuario();
+    if (id !== undefined) {
+      conseguirUsuario();
+    }
   }, [id]);
 
   const agregarUsuario = async (usuario) => {
@@ -69,7 +71,7 @@ function RegistroUsuario() {
         usuario
       );
       if (response.status === 200) {
-        alert("Registro Exitoso!");
+        alert(response.data.msg);
         history.push("/login/");
       } else {
         setErrors(response.data.errors_array.errors);
@@ -239,50 +241,52 @@ function RegistroUsuario() {
                 <FormError errors={errors} campo={"correo"} />
               </div>
             </div>
-            <div className="container-fluid ps-0 my-3 row">
-              <div className="col-lg-1">
-                <label htmlFor="usuario" className="form-label mt-2">
-                  Usuario:
-                </label>
+            {!id && (
+              <div className="container-fluid ps-0 my-3 row">
+                <div className="col-lg-1">
+                  <label htmlFor="usuario" className="form-label mt-2">
+                    Usuario:
+                  </label>
+                </div>
+                <div className="col-lg-5">
+                  <input
+                    type="text"
+                    id="usuario"
+                    name="usuario"
+                    placeholder="Ejemplo: LuisCova"
+                    className="form-control"
+                    onChange={(event) => {
+                      const { value } = event.target;
+                      setUsuario({ ...usuarioNuevo, usuario: value });
+                    }}
+                    value={usuarioNuevo.usuario}
+                    required
+                  />
+                  <FormError errors={errors} campo={"usuario"} />
+                </div>
+                <div className="col-lg-2">
+                  <label htmlFor="contrasena" className="form-label mt-2">
+                    Contraseña:
+                  </label>
+                </div>
+                <div className="col-lg-4">
+                  <input
+                    type="password"
+                    id="contrasena"
+                    name="contrasena"
+                    placeholder="8 caracteres minimo"
+                    className="form-control"
+                    onChange={(event) => {
+                      const { value } = event.target;
+                      setUsuario({ ...usuarioNuevo, contrasena: value });
+                    }}
+                    value={usuarioNuevo.contrasena}
+                    required
+                  />
+                  <FormError errors={errors} campo={"contrasena"} />
+                </div>
               </div>
-              <div className="col-lg-5">
-                <input
-                  type="text"
-                  id="usuario"
-                  name="usuario"
-                  placeholder="Ejemplo: LuisCova"
-                  className="form-control"
-                  onChange={(event) => {
-                    const { value } = event.target;
-                    setUsuario({ ...usuarioNuevo, usuario: value });
-                  }}
-                  value={usuarioNuevo.usuario}
-                  required
-                />
-                <FormError errors={errors} campo={"usuario"} />
-              </div>
-              <div className="col-lg-2">
-                <label htmlFor="contrasena" className="form-label mt-2">
-                  Contraseña:
-                </label>
-              </div>
-              <div className="col-lg-4">
-                <input
-                  type="password"
-                  id="contrasena"
-                  name="contrasena"
-                  placeholder="8 caracteres minimo"
-                  className="form-control"
-                  onChange={(event) => {
-                    const { value } = event.target;
-                    setUsuario({ ...usuarioNuevo, contrasena: value });
-                  }}
-                  value={usuarioNuevo.contrasena}
-                  required
-                />
-                <FormError errors={errors} campo={"contrasena"} />
-              </div>
-            </div>
+            )}
             {campoAdmin}
             <button
               className="btn btn-warning"

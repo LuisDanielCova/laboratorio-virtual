@@ -8,8 +8,9 @@ function DetallesUsuario() {
   const { id } = useParams();
   const history = useHistory();
   const { usuario } = useContext(UserContext);
-  const [detallesUsuario, setUsuario] = useState();
-  const [botonBorrar, setBotonBorrar] = useState("");
+  const [detallesUsuario, setUsuario] = useState("");
+  const [accionesUsuario, setAccionesUsuario] = useState("");
+  const [accionesAdmin, setAccionesAdmin] = useState("");
 
   const borrarUsuario = async (confirmacion, cedula, id) => {
     if (confirmacion === cedula) {
@@ -41,25 +42,64 @@ function DetallesUsuario() {
   }, [id]);
 
   useEffect(() => {
-    if (usuario.cargo === "Administrador") {
-      setBotonBorrar(
-        <button
-          className="btn btn-danger mt-1"
-          onClick={() => {
-            const confirmacion = prompt(
-              `Para confirmar que quiere borrar el usuario, ingrese la cedula: ${detallesUsuario.cedula}`
-            );
-            borrarUsuario(
-              confirmacion,
-              detallesUsuario.cedula,
-              detallesUsuario._id
-            );
-          }}
-        >
-          <i className="bi bi-dash-circle"></i> Borrar
-        </button>
+    if (usuario.id === detallesUsuario._id) {
+      setAccionesUsuario(
+        <div className="card px-3 py-2 mt-1">
+          <h4 className="fw-bold">Acciones:</h4>
+          <button
+            className="btn btn-warning"
+            onClick={() => {
+              history.push(`/usuario/crear/${detallesUsuario._id}`);
+            }}
+          >
+            <i className="bi bi-pencil"></i> Editar Detalles
+          </button>
+          <button
+            className="btn btn-warning mt-1"
+            onClick={() => {
+              history.push(`/usuario/cambiarcontrasena/`);
+            }}
+          >
+            <i className="bi bi-pencil"></i> Cambiar Contraseña
+          </button>
+        </div>
       );
     }
+    //eslint-disable-next-line
+  }, [usuario, detallesUsuario]);
+
+  useEffect(() => {
+    if (usuario.cargo === "Administrador") {
+      setAccionesAdmin(
+        <div className="card px-3 py-2 mt-1">
+          <h4 className="fw-bold">Acciones:</h4>
+          <button
+            className="btn btn-warning"
+            onClick={() => {
+              history.push(`/usuario/crear/${detallesUsuario._id}`);
+            }}
+          >
+            <i className="bi bi-pencil"></i> Editar
+          </button>
+          <button
+            className="btn btn-danger mt-1"
+            onClick={() => {
+              const confirmacion = prompt(
+                `Para confirmar que quiere borrar el usuario, ingrese la cedula: ${detallesUsuario.cedula}`
+              );
+              borrarUsuario(
+                confirmacion,
+                detallesUsuario.cedula,
+                detallesUsuario._id
+              );
+            }}
+          >
+            <i className="bi bi-dash-circle"></i> Borrar
+          </button>
+        </div>
+      );
+    }
+    //eslint-disable-next-line
   }, [usuario, detallesUsuario]);
 
   return (
@@ -121,18 +161,8 @@ function DetallesUsuario() {
                       {detallesUsuario && detallesUsuario.cargo}
                     </p>
                   </div>
-                  <div className="card px-3 py-2 mt-1">
-                    <h4 className="fw-bold">Acciones:</h4>
-                    <button
-                      className="btn btn-warning"
-                      onClick={() => {
-                        history.push(`/usuario/crear/${detallesUsuario._id}`);
-                      }}
-                    >
-                      <i className="bi bi-pencil"></i> Editar
-                    </button>
-                    {botonBorrar}
-                  </div>
+                  {accionesUsuario}
+                  {accionesAdmin}
                 </div>
               </div>
             </div>

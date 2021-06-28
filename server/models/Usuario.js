@@ -17,6 +17,15 @@ let UsuarioSchema = Schema({
     enum: ["Estudiante", "Profesor", "Administrador"],
     default: "Estudiante",
   },
+  estado: {
+    type: String,
+    enum: ["Pendiente", "Activo"],
+    default: "Pendiente",
+  },
+  tokenConfirmacion: {
+    type: String,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Usuario", UsuarioSchema);
