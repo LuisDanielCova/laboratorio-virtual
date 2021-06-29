@@ -66,10 +66,10 @@ exports.mostrar_notas_profesor = async (req, res, next) => {
 
 exports.mostrar_nota = async (req, res, next) => {
   try {
-    const nota = await Nota.findById(req.params.id)
-      .populate("actividad", "nombre")
-      .populate("estudiante", "nombre apellido cedula")
-      .exec();
+    const nota = await Nota.findOne({
+      estudiante: req.params.idEstudiante,
+      actividad: req.params.idActividad,
+    }).exec();
     if (nota === null) {
       let err = new Error("La nota no existe");
       err.status = 404;
@@ -127,19 +127,20 @@ exports.actualizar_nota = [
     .withMessage("La calificacion debe estar entre 1 y 20")
     .escape(),
   async (req, res, next) => {
+    const { estudiante, actividad, calificacion } = req.body;
     try {
-      await Nota.findByIdAndUpdate(
-        req.body.id,
-        {
-          $set: { calificacion: req.body.calificacion },
-        },
-        (err) => {
-          if (err) {
-            next(err);
-          }
-          res.status(200).json({ message: "Nota actualizada" });
+      const nota = await Nota.findOne({
+        estudiante: estudiante,
+        actividad: actividad,
+      }).exec();
+
+      nota.calificacion = calificacion;
+      await nota.save((err) => {
+        if (err) {
+          next(err);
         }
-      );
+        res.status(200).json({ message: "Nota actualizada" });
+      });
     } catch (err) {
       res.status(206).json({ mensaje: err });
     }

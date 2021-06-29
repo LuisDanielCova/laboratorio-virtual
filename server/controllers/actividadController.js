@@ -5,9 +5,7 @@ const multer = require("multer");
 const uuid = require("uuid").v4;
 const fs = require("fs");
 const { promisify } = require("util");
-const e = require("express");
 const pipeline = promisify(require("stream").pipeline);
-const upload = multer();
 
 // MOSTRAR TODAS LAS ACTIVIDADES
 exports.conseguir_lista = async (req, res, next) => {
@@ -105,7 +103,7 @@ exports.crear_actividad = [
       try {
         const nuevaActividad = await actividad.save();
         // Si la actividad se ha guardado, y se ha subido un archivo
-        if (nuevaActividad !== null && file !== undefined) {
+        if (nuevaActividad !== null && file !== null) {
           if (file.detectedFileExtension != ".zip") {
             next(new Error("Invalid file type"));
           }

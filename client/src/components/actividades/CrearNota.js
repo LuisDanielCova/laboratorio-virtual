@@ -10,8 +10,8 @@ function CrearNota({ estudiante, idActividad }) {
 
   const calificarEstudiante = async (nota) => {
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/notas/crear`,
+      const response = await axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/notas/actualizar/`,
         nota
       );
       if (response.status === 200) {
@@ -30,7 +30,7 @@ function CrearNota({ estudiante, idActividad }) {
         type="button"
         className="btn btn-warning border-0 rounded-0"
         data-bs-toggle="modal"
-        data-bs-target="#modalCalificar"
+        data-bs-target={"#modal" + estudiante._id}
         style={{ backgroundColor: "#F59B18", width: "100%" }}
       >
         <i className="col bi bi-pen"></i> Calificar
@@ -38,7 +38,7 @@ function CrearNota({ estudiante, idActividad }) {
 
       <div
         className="modal fade"
-        id="modalCalificar"
+        id={"modal" + estudiante._id}
         tabIndex="-1"
         aria-labelledby="Ventana para Calificar"
         aria-hidden="true"
