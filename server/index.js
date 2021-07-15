@@ -16,7 +16,7 @@ const compression = require("compression");
 const helmet = require("helmet");
 
 // Database Connection
-const mongoDB = `${process.env.DB_URL}`;
+const mongoDB = process.env.DB_URL;
 mongoose.connect(mongoDB, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

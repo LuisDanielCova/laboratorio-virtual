@@ -1,6 +1,9 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "engines": {
+    "node": "12.14.1"
+  },
   "description": "Servidor del laboratorio virtual para la UGMA",
   "main": "index.js",
   "scripts": {
