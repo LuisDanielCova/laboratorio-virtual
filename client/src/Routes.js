@@ -56,12 +56,7 @@ const Routes = () => {
           {/* INICIO */}
 
           {/* Pagina de inicio */}
-          <ProtectedRoute
-            exact
-            path="/laboratorio-virtual/"
-            component={App}
-            cargo="Ninguno"
-          />
+          <ProtectedRoute exact path="/" component={App} cargo="Ninguno" />
           {/* Pagina de bienvenida a un usuario con sesion activa */}
           <ProtectedRoute
             path="/inicio"
