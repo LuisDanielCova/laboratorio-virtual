@@ -26,7 +26,7 @@ mongoose.connect(mongoDB, {
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({ origin: process.env.CLIENT_SERVER_URL, credentials: true }));
 app.use(
   session({
     secret: `${process.env.SESSION_SECRET}`,
@@ -62,6 +62,6 @@ app.use(function (err, req, res, next) {
     .json({ status: err.status, mensaje: err.message });
 });
 
-app.listen(3001, () => {
+app.listen(process.env.PORT || 3001, () => {
   console.log(`Servidor en ejecucion en el puerto 3001`);
 });
