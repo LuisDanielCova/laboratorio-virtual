@@ -12,6 +12,8 @@ const routerMaterias = require("./routes/materias");
 const routerNotas = require("./routes/notas");
 const routerArchivos = require("./routes/archivos");
 const createError = require("http-errors");
+const compression = require("compression");
+const helmet = require("helmet");
 
 // Database Connection
 const mongoDB = `${process.env.DB_URL}`;
@@ -21,22 +23,19 @@ mongoose.connect(mongoDB, {
 });
 
 // Middleware
+app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: process.env.CLIENT_SERVER_URL,
-    credentials: true,
-  })
-);
+app.use(cors());
 app.use(
   session({
-    secret: "XDDDDD",
+    secret: `${process.env.SESSION_SECRET}`,
     resave: false,
     saveUninitialized: false,
   })
 );
-app.use(cookieParser("XDDDDD"));
+app.use(cookieParser(`${process.env.SESSION_SECRET}`));
+app.use(compression());
 
 // Rutas
 app.use("/usuarios", routerUsuarios);

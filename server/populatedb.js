@@ -4,6 +4,7 @@ console.log(
   `Este archivo va a poblar la base de datos con usuarios, materias, actividades, notas y archivos`
 );
 
+require("dotenv").config();
 const Usuario = require("./models/Usuario");
 const Materia = require("./models/Materia");
 const Actividad = require("./models/Actividad");
@@ -14,8 +15,9 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const uuid = require("uuid").v4;
 const async = require("async");
+const jwt = require("jsonwebtoken");
 
-const mongoDB = `mongodb://localhost:27017/test1`;
+const mongoDB = `${process.env.DB_URL}`;
 mongoose.connect(mongoDB, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -31,7 +33,9 @@ let archivos = [];
 let notas = [];
 
 const createUsuario = (c, n, a, fn, t, co, u, con, car, cb) => {
-  detallesUsuario = {
+  const token = jwt.sign({ correo: co }, process.env.CORREO_JWT_SECRET);
+
+  const detallesUsuario = {
     cedula: c,
     nombre: n,
     apellido: a,
@@ -41,6 +45,8 @@ const createUsuario = (c, n, a, fn, t, co, u, con, car, cb) => {
     usuario: u,
     contrasena: con,
     cargo: car,
+    estado: "Activo",
+    tokenConfirmacion: token,
   };
 
   const usuario = new Usuario(detallesUsuario);
@@ -78,7 +84,7 @@ const createMateria = (n, d, s, p, es, cb) => {
 };
 
 const createActividad = (n, d, fE, no, m, cb) => {
-  detallesActividad = {
+  const detallesActividad = {
     nombre: n,
     descripcion: d,
     fechaEntrega: fE,
@@ -99,7 +105,7 @@ const createActividad = (n, d, fE, no, m, cb) => {
 };
 
 const createNota = (c, a, e, cb) => {
-  detallesNota = {
+  const detallesNota = {
     calificacion: c,
     actividad: a,
     estudiante: e,
@@ -118,7 +124,7 @@ const createNota = (c, a, e, cb) => {
 };
 
 const createArchivo = (n, u, a, cb) => {
-  detallesArchivo = {
+  const detallesArchivo = {
     nombre: n,
     usuario: u,
     actividad: a,
@@ -602,13 +608,13 @@ function crearArchivos(cb) {
 }
 
 async.series(
-  [crearUsuarios, crearMaterias, crearActividades, crearNotas, crearArchivos],
+  [crearUsuarios, crearMaterias, crearActividades, crearArchivos],
   // Optional callback
   function (err, results) {
     if (err) {
       console.log("FINAL ERR: " + err);
     } else {
-      console.log("Stuff: " + notas);
+      console.log("Stuff: " + results);
     }
     // All done, disconnect from database
     mongoose.connection.close();
