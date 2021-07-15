@@ -106,7 +106,7 @@ function BorrarMateria({ materia, tarjeta }) {
           "btn btn-danger " + (tarjeta ? "col-xl-4 mt-2" : "w-100 mt-1")
         }
         data-bs-toggle="modal"
-        data-bs-target="#modalBorrar"
+        data-bs-target={"#modalBorrar" + materia._id}
         onClick={() => {
           setMensaje(
             <div className="modal-body">
@@ -141,7 +141,7 @@ function BorrarMateria({ materia, tarjeta }) {
 
       <div
         className="modal fade"
-        id="modalBorrar"
+        id={"modalBorrar" + materia._id}
         data-bs-backdrop="static"
         data-bs-keyboard="false"
         tabIndex="-1"

@@ -137,7 +137,7 @@ function BorrarUsuario({ usuario, tabla }) {
         type="button"
         className={"btn btn-danger " + (tabla ? "rounded-0" : "w-100 mt-1")}
         data-bs-toggle="modal"
-        data-bs-target="#modalBorrar"
+        data-bs-target={"#modalBorrar" + usuario.cedula}
         onClick={() => {
           setMensaje(
             <div className="modal-body">
@@ -172,7 +172,7 @@ function BorrarUsuario({ usuario, tabla }) {
 
       <div
         className="modal fade"
-        id="modalBorrar"
+        id={"modalBorrar" + usuario.cedula}
         data-bs-backdrop="static"
         data-bs-keyboard="false"
         tabIndex="-1"
