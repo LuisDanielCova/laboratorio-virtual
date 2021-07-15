@@ -10,7 +10,7 @@ function Sidebar() {
 
   const logout = () => {
     localStorage.removeItem("accessToken");
-    setUsuario(false);
+    setUsuario(undefined);
     history.push("/");
   };
 

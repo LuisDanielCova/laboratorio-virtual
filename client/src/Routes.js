@@ -56,7 +56,7 @@ const Routes = () => {
           {/* INICIO */}
 
           {/* Pagina de inicio */}
-          <Route exact path="/" component={App} />
+          <ProtectedRoute exact path="/" component={App} cargo="Ninguno" />
           {/* Pagina de bienvenida a un usuario con sesion activa */}
           <ProtectedRoute
             path="/inicio"
@@ -64,7 +64,12 @@ const Routes = () => {
             component={Dashboard}
           />
           {/* Pagina de Contacto */}
-          <Route exact path="/contacto" component={Contacto} />
+          <ProtectedRoute
+            exact
+            path="/contacto"
+            component={Contacto}
+            cargo="Ninguno"
+          />
 
           {/* RUTAS MATERIAS */}
 
@@ -131,13 +136,24 @@ const Routes = () => {
           {/* RUTAS USUARIOS */}
 
           <Route exact path="/login" component={Login} />
-          <Route exact path="/recuperar" component={RecuperarContrasena} />
-          <Route
+          <ProtectedRoute
+            exact
+            path="/recuperar"
+            component={RecuperarContrasena}
+            cargo="Ninguno"
+          />
+          <ProtectedRoute
             exact
             path="/recuperar/:idUsuario/:codigoConfirmacion"
             component={RecuperarContrasenaPedir}
+            cargo="Ninguno"
           />
-          <Route exact path="/registro/" component={Registro} />
+          <ProtectedRoute
+            exact
+            path="/registro/"
+            component={Registro}
+            cargo="Ninguno"
+          />
 
           {/* Lista de los usuarios registrados */}
           <ProtectedRoute

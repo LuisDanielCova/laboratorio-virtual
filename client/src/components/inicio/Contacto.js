@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import Navbar from "../complements/Navbar";
 import Footer from "../complements/Footer";
+import { UserContext } from "../../Routes";
 
 function Contacto({ stuff }) {
+  const { usuario } = useContext(UserContext);
+
+  console.log(usuario);
+
   return (
     <div>
       <Navbar />

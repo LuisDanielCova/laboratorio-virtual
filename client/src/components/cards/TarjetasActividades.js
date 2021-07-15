@@ -1,23 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../../Routes";
+import BorrarActividad from "../actividades/BorrarActividad";
 
 function TarjetasActividades({ actividad }) {
   const history = useHistory();
   const { usuario } = useContext(UserContext);
   const [button, setButton] = useState("");
-
-  const borrarActividad = (actividad) => {
-    const respuesta = prompt(
-      `Para confirmar que quieres borrar la actividad, por favor ingresa en el cuadro de dialogo lo siguiente: ${actividad.nombre}`,
-      ""
-    );
-    if (respuesta === actividad.nombre) {
-      alert(`Actividad Borrada`);
-    } else {
-      alert(`La Materia no fue borrada`);
-    }
-  };
 
   useEffect(() => {
     switch (usuario.cargo) {
@@ -58,14 +47,7 @@ function TarjetasActividades({ actividad }) {
             >
               <i className="bi bi-pencil"></i> Editar
             </button>
-            <button
-              className="btn btn-danger col-xl mt-2"
-              onClick={() => {
-                borrarActividad(actividad);
-              }}
-            >
-              <i className="bi bi-dash-circle"></i> Borrar
-            </button>
+            <BorrarActividad tarjeta={true} actividad={actividad} />
           </div>
         );
         break;

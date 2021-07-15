@@ -4,6 +4,7 @@ import { useHistory, useParams, withRouter } from "react-router-dom";
 import Sidebar from "../complements/Sidebar";
 import axios from "axios";
 import { UserContext } from "../../Routes";
+import BorrarMateria from "./BorrarMateria";
 
 function DetallesMateria() {
   const history = useHistory();
@@ -29,9 +30,7 @@ function DetallesMateria() {
           >
             <i className="bi bi-pencil"></i> Editar
           </button>
-          <button className="btn btn-danger mt-1">
-            <i className="bi bi-dash-circle"></i> Borrar
-          </button>
+          <BorrarMateria tarjeta={false} materia={materia} />
         </div>
       );
     } else if (usuario.cargo === "Profesor") {
@@ -49,7 +48,7 @@ function DetallesMateria() {
         </div>
       );
     }
-  }, [usuario, history, id]);
+  }, [usuario, history, id, materia]);
 
   useEffect(() => {
     const conseguirMateria = async () => {

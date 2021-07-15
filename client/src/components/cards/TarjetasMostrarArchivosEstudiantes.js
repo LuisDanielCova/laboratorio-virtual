@@ -1,7 +1,17 @@
 import React from "react";
+import axios from "axios";
 import CrearNota from "../actividades/CrearNota";
 
 const TarjetasMostrarArchivosEstudiantes = ({ val }) => {
+  const descargarArchivo = async () => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_SERVER_URL}/archivos/descargar/${val.nombre}`
+    );
+    if (response.status === 200) {
+      window.open(response.config.url);
+    }
+  };
+
   return (
     <div className="col-lg-4 pe-0 my-1">
       <div className="card">
@@ -14,9 +24,7 @@ const TarjetasMostrarArchivosEstudiantes = ({ val }) => {
         </div>
         <button
           className="col btn btn-warning rounded-0"
-          onClick={() => {
-            //download bs
-          }}
+          onClick={descargarArchivo}
         >
           <i className="col bi bi-file-earmark"></i> Descargar
         </button>

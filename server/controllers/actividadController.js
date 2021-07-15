@@ -231,11 +231,11 @@ exports.actualizar_actividad_put = [
 
 // BORRAR UNA ACTIVIDAD
 exports.borrar_actividad = async (req, res, next) => {
-  await Actividad.findByIdAndRemove(req.params.id, (err) => {
-    if (err) {
-      res.status(400);
-      return next(err);
-    }
-    res.status(200).json({ mensaje: "Actividad Borrada" });
-  });
+  const actividad = await Actividad.findById(req.params.id);
+  if (actividad) {
+    await actividad.remove((err) => {
+      if (err) return next(err);
+      res.status(200).json({ mensaje: "Actividad borrada exitosamente" });
+    });
+  }
 };

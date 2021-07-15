@@ -74,6 +74,8 @@ router.put(
   usuarioController.actualizar_contrasena
 );
 
+router.get("/borrar/:id", usuarioController.borrar_usuario_get);
+
 router.delete("/borrar/:id", usuarioController.borrar_usuario);
 
 module.exports = router;

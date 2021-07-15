@@ -3,6 +3,7 @@ import { useHistory, useParams } from "react-router-dom";
 import axios from "axios";
 import Sidebar from "../complements/Sidebar";
 import { UserContext } from "../../Routes";
+import BorrarUsuario from "./BorrarUsuario";
 
 function DetallesUsuario() {
   const { id } = useParams();
@@ -11,21 +12,6 @@ function DetallesUsuario() {
   const [detallesUsuario, setUsuario] = useState("");
   const [accionesUsuario, setAccionesUsuario] = useState("");
   const [accionesAdmin, setAccionesAdmin] = useState("");
-
-  const borrarUsuario = async (confirmacion, cedula, id) => {
-    if (confirmacion === cedula) {
-      const response = axios.delete(
-        `${process.env.REACT_APP_SERVER_URL}/usuarios/borrar/${id}`
-      );
-      if (response.status === 200) {
-        alert(`Usuario Borrado exitosamente`);
-      } else {
-        alert(`Ha ocurrido un error, intente nuevamente`);
-      }
-    } else {
-      alert(`Cedula invalida`);
-    }
-  };
 
   useEffect(() => {
     const conseguirUsuario = async () => {
@@ -81,21 +67,7 @@ function DetallesUsuario() {
           >
             <i className="bi bi-pencil"></i> Editar
           </button>
-          <button
-            className="btn btn-danger mt-1"
-            onClick={() => {
-              const confirmacion = prompt(
-                `Para confirmar que quiere borrar el usuario, ingrese la cedula: ${detallesUsuario.cedula}`
-              );
-              borrarUsuario(
-                confirmacion,
-                detallesUsuario.cedula,
-                detallesUsuario._id
-              );
-            }}
-          >
-            <i className="bi bi-dash-circle"></i> Borrar
-          </button>
+          <BorrarUsuario usuario={detallesUsuario} tabla={false} />
         </div>
       );
     }

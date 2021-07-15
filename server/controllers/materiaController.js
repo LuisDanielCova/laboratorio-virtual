@@ -1,5 +1,6 @@
 const Materia = require("../models/Materia");
 const Usuario = require("../models/Usuario");
+const Actividad = require("../models/Actividad");
 const { validationResult, body } = require("express-validator");
 
 // Mostrar todas las materias
@@ -273,10 +274,20 @@ exports.actualizar_materia_put = [
 // Borrar
 
 exports.borrar_materia = async (req, res, next) => {
-  await Materia.findByIdAndRemove(req.params.id, (err) => {
-    if (err) {
-      return next(err);
-    }
-    res.status(200).json({ message: "Materia Borrada" });
-  });
+  const materia = await Materia.findById(req.params.id);
+  if (materia) {
+    const idMateria = materia._id;
+    await materia.remove((err) => {
+      if (err) return next(err);
+      res.status(200).json({ mensaje: "Materia borrada exitosamente" });
+    });
+
+    const resultados = await Actividad.find({ materia: idMateria }).exec();
+
+    resultados.forEach(async (actividad) => {
+      await actividad.remove((err) => {
+        if (err) return next(err);
+      });
+    });
+  }
 };

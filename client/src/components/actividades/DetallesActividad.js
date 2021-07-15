@@ -9,6 +9,7 @@ import TarjetasMostrarArchivosEstudiantes from "../cards/TarjetasMostrarArchivos
 import { TarjetasArchivoProfesorSubir } from "../cards/TarjetasArchivoProfesorSubir";
 import Sidebar from "../complements/Sidebar";
 import { useHistory, useParams, withRouter } from "react-router-dom";
+import BorrarActividad from "./BorrarActividad";
 
 function DetallesActividad() {
   const { usuario } = useContext(UserContext);
@@ -121,9 +122,7 @@ function DetallesActividad() {
             >
               <i className="bi bi-pencil"></i> Editar
             </button>
-            <button className="btn btn-danger mt-1">
-              <i className="bi bi-dash-circle"></i> Borrar
-            </button>
+            <BorrarActividad actividad={actividad} tarjeta={false} />
           </div>
         );
         break;
@@ -145,7 +144,7 @@ function DetallesActividad() {
         setEstado(<p className="card-text">Error, recargue la pagina</p>);
         break;
     }
-  }, [usuario, archivos, history, idActividad, idMateria]);
+  }, [usuario, archivos, history, idActividad, idMateria, actividad]);
 
   return (
     <div className="container-fluid p-0">

@@ -1,23 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../Routes";
 import { useHistory } from "react-router-dom";
+import BorrarMateria from "../materias/BorrarMateria";
 
 function TarjetasMaterias({ materia }) {
   const { usuario } = useContext(UserContext);
   const [button, setButton] = useState();
   const history = useHistory();
-
-  const borrarMateria = (materia) => {
-    const respuesta = prompt(
-      `Para confirmar que quieres borrar la materia, por favor ingresa en el cuadro de dialogo lo siguiente: ${materia.nombre}`,
-      ""
-    );
-    if (respuesta === materia.nombre) {
-      alert(`Materia Borrada`);
-    } else {
-      alert(`La Materia no fue borrada`);
-    }
-  };
 
   useEffect(() => {
     switch (usuario.cargo) {
@@ -40,14 +29,7 @@ function TarjetasMaterias({ materia }) {
             >
               <i className="bi bi-pencil"></i> Actualizar
             </button>
-            <button
-              className="btn btn-danger col-xl-4 mt-2"
-              onClick={() => {
-                borrarMateria(materia);
-              }}
-            >
-              <i className="bi bi-dash-circle"></i> Borrar
-            </button>
+            <BorrarMateria tarjeta={true} materia={materia} />
           </div>
         );
         break;

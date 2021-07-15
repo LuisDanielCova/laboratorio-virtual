@@ -19,6 +19,6 @@ router.post(
 
 router.get("/descargar/:nombre", archivoController.descargar_archivo);
 
-router.delete("/:idMateria/actividades/:idActividad/archivos/borrar/:name");
+router.delete("/borrar/:idArchivo", archivoController.borrar_archivo);
 
 module.exports = router;

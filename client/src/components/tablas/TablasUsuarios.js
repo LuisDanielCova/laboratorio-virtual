@@ -1,24 +1,9 @@
 import React from "react";
-import axios from "axios";
 import { useHistory } from "react-router-dom";
+import BorrarUsuario from "../users/BorrarUsuario";
 
 const TablasUsuarios = ({ usuarios, cargando }) => {
   const history = useHistory();
-
-  const borrarUsuario = async (confirmacion, cedula, id) => {
-    if (confirmacion === cedula) {
-      const response = axios.delete(
-        `${process.env.REACT_APP_SERVER_URL}/usuarios/borrar/${id}`
-      );
-      if (response.status === 200) {
-        alert(`Usuario Borrado exitosamente`);
-      } else {
-        alert(`Ha ocurrido un error, intente nuevamente`);
-      }
-    } else {
-      alert(`Cedula invalida`);
-    }
-  };
 
   if (cargando) {
     return (
@@ -78,19 +63,7 @@ const TablasUsuarios = ({ usuarios, cargando }) => {
                     >
                       <i className="bi bi-pencil"></i> Actualizar
                     </button>
-                    <button
-                      type="button"
-                      className="btn text-light btn-danger border-0 rounded-0"
-                      style={{ backgroundColor: "#E24E3A" }}
-                      onClick={() => {
-                        const confirmacion = prompt(
-                          `Para confirmar que quiere borrar el usuario, ingrese la cedula: ${val.cedula}`
-                        );
-                        borrarUsuario(confirmacion, val.cedula, val._id);
-                      }}
-                    >
-                      <i className="bi bi-dash-circle"></i> Borrar
-                    </button>
+                    <BorrarUsuario usuario={val} tabla={true} />
                   </div>
                 </td>
               </tr>

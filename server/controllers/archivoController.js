@@ -74,15 +74,19 @@ exports.descargar_archivo = async (req, res, next) => {
 };
 
 exports.borrar_archivo = async (req, res, next) => {
-  const filePath = `${__dirname}/../public/files/${req.params.nombre}`;
-  fs.unlink(filePath, (err) => {
-    if (err) {
-      res
-        .status(206)
-        .json({ mensaje: "Error al borrar el archivo, intente nuevamente" });
-      next(err);
-    } else {
-      res.status(200).json({ mensaje: "Archivo borrado correctamente" });
-    }
-  });
+  const file = await FileModel.findById(req.params.idArchivo);
+  if (file) {
+    await file.deleteOne();
+    const filePath = `${__dirname}/../public/files/${file.nombre}`;
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        res
+          .status(206)
+          .json({ mensaje: "Error al borrar el archivo, intente nuevamente" });
+        next(err);
+      } else {
+        res.status(200).json({ mensaje: "Archivo borrado correctamente" });
+      }
+    });
+  }
 };

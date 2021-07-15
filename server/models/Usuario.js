@@ -1,4 +1,7 @@
 let mongoose = require("mongoose");
+const Materia = require("./Materia");
+const Archivo = require("./Archivo");
+const Nota = require("./Nota");
 
 let Schema = mongoose.Schema;
 
@@ -26,6 +29,37 @@ let UsuarioSchema = Schema({
     type: String,
     required: true,
   },
+});
+
+UsuarioSchema.post("remove", async (doc) => {
+  const resultadoMaterias = await Materia.find({ estudiantes: doc._id });
+  const resultadoArchivos = await Archivo.find({ usuario: doc._id });
+  const resultadoNotas = await Nota.find({ estudiante: doc._id });
+
+  if (resultadoMaterias !== null) {
+    resultadoMaterias.forEach(async (materia) => {
+      await Materia.updateOne(
+        { _id: materia._id },
+        {
+          $pull: {
+            estudiantes: { _id: doc._id },
+          },
+        }
+      );
+    });
+  }
+
+  if (resultadoArchivos !== null) {
+    resultadoArchivos.forEach(async (archivo) => {
+      await archivo.remove();
+    });
+  }
+
+  if (resultadoNotas !== null) {
+    resultadoNotas.forEach(async (nota) => {
+      await nota.remove();
+    });
+  }
 });
 
 module.exports = mongoose.model("Usuario", UsuarioSchema);

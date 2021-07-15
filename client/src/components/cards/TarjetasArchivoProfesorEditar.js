@@ -1,13 +1,26 @@
 import React from "react";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 const TarjetasArchivoProfesorEditar = ({ archivo }) => {
+  const history = useHistory();
+
   const descargarArchivo = async () => {
     const response = await axios.get(
       `${process.env.REACT_APP_SERVER_URL}/archivos/descargar/${archivo.nombre}`
     );
     if (response.status === 200) {
       window.open(response.config.url);
+    }
+  };
+
+  const borrarArchivo = async () => {
+    const response = await axios.delete(
+      `${process.env.REACT_APP_SERVER_URL}/archivos/borrar/${archivo._id}`
+    );
+    if (response.status === 200) {
+      alert(`Archivo borrado`);
+      history.go(0);
     }
   };
 
@@ -27,6 +40,7 @@ const TarjetasArchivoProfesorEditar = ({ archivo }) => {
         <button
           className="col btn btn-danger border-0 rounded-0"
           style={{ backgroundColor: "#E24E3A" }}
+          onClick={borrarArchivo}
         >
           <i className="col bi bi-dash-circle"></i> Borrar
         </button>

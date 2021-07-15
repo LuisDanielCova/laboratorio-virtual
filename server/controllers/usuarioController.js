@@ -568,12 +568,34 @@ exports.actualizar_contrasena = [
   },
 ];
 
+exports.borrar_usuario_get = async (req, res, next) => {
+  try {
+    const resultados = await Materia.find({ profesor: req.params.id }).exec();
+    if (resultados.length <= 0)
+      return res.status(200).json({ mensaje: "No posee materias" });
+
+    res.status(200).json({ resultados, mensaje: "Materias encontradas" });
+  } catch (err) {
+    if (err) return next(err);
+  }
+};
+
 // Borrar un usuario
 exports.borrar_usuario = async (req, res, next) => {
-  await Usuario.findByIdAndRemove(req.params.id, (err) => {
-    if (err) {
-      return next(err);
+  try {
+    const usuario = await Usuario.findById(req.params.id).exec();
+    if (usuario === null) {
+      let error = new Error("No existe el usuario");
+      error.status = 404;
+      return next(error);
     }
-    res.status(200).json({ message: "Usuario borrado" });
-  });
+
+    await usuario.remove((err) => {
+      if (err) return next(err);
+
+      res.status(200).json({ mensaje: "Usuario borrado existosamente" });
+    });
+  } catch (err) {
+    if (err) return next(err);
+  }
 };

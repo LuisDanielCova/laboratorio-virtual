@@ -48,6 +48,9 @@ router.put(
   actividadController.actualizar_actividad_put
 );
 
-router.delete("/actividades/borrar/:id", actividadController.borrar_actividad);
+router.delete(
+  "/:idMateria/actividades/:id/borrar",
+  actividadController.borrar_actividad
+);
 
 module.exports = router;

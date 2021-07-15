@@ -12,7 +12,17 @@ function ProtectedRoute({ cargo, component: Component, ...rest }) {
         <Route
           {...rest}
           render={(props) => {
-            if (cargo !== "Cualquiera") {
+            if (cargo === "Ninguno") {
+              if (usuario.status) {
+                return (
+                  <Redirect
+                    to={{ pathname: "inicio", state: { from: props.location } }}
+                  />
+                );
+              } else {
+                return <Component />;
+              }
+            } else if (cargo !== "Cualquiera") {
               if (usuario.status && usuario.cargo === cargo) {
                 return <Component />;
               } else {
