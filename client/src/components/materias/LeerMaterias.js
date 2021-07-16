@@ -56,12 +56,16 @@ function LeerMaterias() {
         });
         setMensajeError("");
       } else {
-        setMensajeError(
-          <p className="lead">Actualmente no hay materias en el sistema</p>
-        );
+        if (cargando !== true) {
+          setMensajeError(
+            <p className="lead">Actualmente no hay materias en el sistema</p>
+          );
+        } else {
+          setMensajeError("");
+        }
       }
     }
-  }, [materias]);
+  }, [materias, cargando]);
 
   useEffect(() => {
     switch (usuario.cargo) {

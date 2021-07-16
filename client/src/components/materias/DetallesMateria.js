@@ -15,6 +15,7 @@ function DetallesMateria() {
   const [alumnos, setAlumnos] = useState();
   const { usuario } = useContext(UserContext);
   const [acciones, setAcciones] = useState("");
+  const [cargando, setCargando] = useState(false);
   const { id } = useParams();
 
   useEffect(() => {
@@ -78,12 +79,14 @@ function DetallesMateria() {
 
   useEffect(() => {
     const conseguirActividades = async () => {
+      setCargando(true);
       if (materia !== undefined) {
         const response = await axios.get(
           `${process.env.REACT_APP_SERVER_URL}/materias/${id}/actividades`
         );
         if (response.data.lista_actividades !== undefined) {
           setActividades(response.data.lista_actividades);
+          setCargando(false);
         }
       }
     };
@@ -107,6 +110,19 @@ function DetallesMateria() {
       );
     }
   }, [actividades]);
+
+  useEffect(() => {
+    if (cargando !== false) {
+      setAviso(
+        <div className="d-flex row justify-content-center my-3">
+          <div className="spinner-border text-warning" role="status">
+            <span className="visually-hidden">Cargando...</span>
+          </div>
+          <strong className="text-center text-warning">Cargando...</strong>
+        </div>
+      );
+    }
+  }, [cargando]);
 
   return (
     <div className="container-fluid p-0">

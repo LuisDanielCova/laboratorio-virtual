@@ -7,6 +7,7 @@ function NotasEstudiantes({ notas, cargando }) {
   const [tablas, setTablas] = useState([]);
   const [materiasSeparadas, setMateriasSeparadas] = useState([]);
   const [notasSeparadas, setNotasSeparadas] = useState([]);
+  const [mensajeError, setMensajeError] = useState("");
 
   const OrdenarMaterias = (a, b) => {
     const materiaA = a.actividad.materia.nombre.toUpperCase();
@@ -51,10 +52,15 @@ function NotasEstudiantes({ notas, cargando }) {
             <TablaNotasProfesores notas={notas} key={key} />,
           ])
         );
+        setMensajeError("");
       } else {
-        setTablas(
-          <p className="lead">Actualmente no hay notas en el sistema</p>
-        );
+        if (cargando !== true) {
+          setMensajeError(
+            <p className="lead">Actualmente no hay materias en el sistema</p>
+          );
+        } else {
+          setMensajeError("");
+        }
       }
     }
   }, [notasSeparadas]);
@@ -70,7 +76,12 @@ function NotasEstudiantes({ notas, cargando }) {
     );
   }
 
-  return <div>{tablas}</div>;
+  return (
+    <div>
+      {tablas}
+      <div className="container ms-3">{mensajeError}</div>
+    </div>
+  );
 }
 
 export default NotasEstudiantes;
