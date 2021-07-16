@@ -18,6 +18,16 @@ function DetallesMateria() {
   const { id } = useParams();
 
   useEffect(() => {
+    const conseguirMateria = async () => {
+      const response = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/materias/${id}`
+      );
+      setMateria(response.data.materia);
+    };
+    conseguirMateria();
+  }, [id]);
+
+  useEffect(() => {
     if (usuario.cargo === "Administrador") {
       setAcciones(
         <div className="card p-2 mt-1">
@@ -30,7 +40,7 @@ function DetallesMateria() {
           >
             <i className="bi bi-pencil"></i> Editar
           </button>
-          <BorrarMateria tarjeta={false} materia={materia} />
+          {materia && <BorrarMateria tarjeta={false} materia={materia} />}
         </div>
       );
     } else if (usuario.cargo === "Profesor") {
@@ -49,16 +59,6 @@ function DetallesMateria() {
       );
     }
   }, [usuario, history, id, materia]);
-
-  useEffect(() => {
-    const conseguirMateria = async () => {
-      const response = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/materias/${id}`
-      );
-      setMateria(response.data.materia);
-    };
-    conseguirMateria();
-  }, [id]);
 
   useEffect(() => {
     if (materia !== undefined) {
