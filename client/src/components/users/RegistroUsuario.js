@@ -10,6 +10,7 @@ function RegistroUsuario() {
   const { id } = useParams();
   const [errors, setErrors] = useState([]);
   const [campoAdmin, setCampoAdmin] = useState("");
+  const [button, setButton] = useState("");
   const [usuarioNuevo, setUsuario] = useState({
     cedula: "",
     nombre: "",
@@ -49,7 +50,37 @@ function RegistroUsuario() {
           </div>
         </div>
       );
+      setButton(
+        <button
+          className="btn btn-warning"
+          onClick={() => {
+            if (id) {
+              actualizarUsuario(usuarioNuevo);
+            } else {
+              agregarUsuario(usuarioNuevo, usuario.cargo);
+            }
+          }}
+        >
+          Registrar
+        </button>
+      );
+    } else {
+      setButton(
+        <button
+          className="btn btn-warning"
+          onClick={() => {
+            if (id) {
+              actualizarUsuario(usuarioNuevo);
+            } else {
+              agregarUsuario(usuarioNuevo);
+            }
+          }}
+        >
+          Registrarse
+        </button>
+      );
     }
+    //eslint-disable-next-line
   }, [usuario, errors, usuarioNuevo, id]);
 
   useEffect(() => {
@@ -64,15 +95,22 @@ function RegistroUsuario() {
     }
   }, [id]);
 
-  const agregarUsuario = async (usuario) => {
+  const agregarUsuario = async (usuario, cargo) => {
     try {
       let response = await Axios.post(
         `${process.env.REACT_APP_SERVER_URL}/usuarios/crear`,
         usuario
       );
       if (response.status === 200) {
-        alert(response.data.msg);
-        history.push("/login/");
+        if (cargo === "Administrador") {
+          alert(
+            "El usuario ha sido creado, se envio un mensaje al correo electronico para que confirme"
+          );
+          history.push("/usuarios/");
+        } else {
+          alert(response.data.msg);
+          history.push("/login/");
+        }
       } else {
         setErrors(response.data.errors_array.errors);
       }
@@ -288,18 +326,7 @@ function RegistroUsuario() {
               </div>
             )}
             {campoAdmin}
-            <button
-              className="btn btn-warning"
-              onClick={() => {
-                if (id) {
-                  actualizarUsuario(usuarioNuevo);
-                } else {
-                  agregarUsuario(usuarioNuevo);
-                }
-              }}
-            >
-              Registrarse
-            </button>
+            {button}
           </form>
         </div>
       </div>

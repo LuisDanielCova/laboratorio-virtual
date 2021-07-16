@@ -4,6 +4,7 @@ import TarjetasMaterias from "../cards/TarjetasMaterias";
 import Sidebar from "../complements/Sidebar";
 import { UserContext } from "../../Routes";
 import { withRouter } from "react-router-dom";
+import { MostrarMaterias } from "./MostrarMaterias";
 
 function LeerMaterias() {
   const { usuario } = useContext(UserContext);
@@ -48,6 +49,7 @@ function LeerMaterias() {
   useEffect(() => {
     if (materias !== undefined) {
       if (materias.length > 0) {
+        setListaMaterias([]);
         materias.map((val, key) => {
           return setListaMaterias((materiaAnterior) => [
             ...materiaAnterior,
@@ -58,7 +60,7 @@ function LeerMaterias() {
       } else {
         if (cargando !== true) {
           setMensajeError(
-            <p className="lead">Actualmente no hay materias en el sistema</p>
+            <p className="lead">Actualmente no hay notas en el sistema</p>
           );
         } else {
           setMensajeError("");
@@ -109,16 +111,11 @@ function LeerMaterias() {
         <div className="col py-3">
           {headerOne}
           {paragraph}
-          {cargando && (
-            <div className="d-flex row justify-content-center my-3">
-              <div className="spinner-border text-warning" role="status">
-                <span className="visually-hidden">Cargando...</span>
-              </div>
-              <strong className="text-center text-warning">Cargando...</strong>
-            </div>
-          )}
-          <div className="row m-2">{listaMaterias && listaMaterias}</div>
-          <div className="container ms-3">{mensajeError}</div>
+          <MostrarMaterias
+            cargando={cargando}
+            listaMaterias={listaMaterias}
+            mensajeError={mensajeError}
+          />
         </div>
       </div>
     </div>

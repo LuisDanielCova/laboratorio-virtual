@@ -58,7 +58,7 @@ const TablasUsuarios = ({ usuarios, cargando }) => {
                       className="btn btn-warning border-0"
                       style={{ backgroundColor: "#F59B18" }}
                       onClick={() => {
-                        history.push(`/usuarios/crear/${val._id}`);
+                        history.push(`/usuario/crear/${val._id}`);
                       }}
                     >
                       <i className="bi bi-pencil"></i> Actualizar

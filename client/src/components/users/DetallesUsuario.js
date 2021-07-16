@@ -73,6 +73,12 @@ function DetallesUsuario() {
         </div>
       );
     }
+    if (
+      usuario.cargo === "Administrador" &&
+      detallesUsuario.cargo === "Administrador"
+    ) {
+      setAccionesAdmin("");
+    }
     //eslint-disable-next-line
   }, [usuario, detallesUsuario]);
 

@@ -2,8 +2,10 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import ReactTooltip from "react-tooltip";
 import { UserContext } from "../../Routes";
+import { useHistory } from "react-router-dom";
 
 export const TarjetaInscribirMateria = ({ materia }) => {
+  const history = useHistory();
   const { usuario } = useContext(UserContext);
   const [button, setButton] = useState("");
 
@@ -11,7 +13,13 @@ export const TarjetaInscribirMateria = ({ materia }) => {
     const response = await axios.put(
       `${process.env.REACT_APP_SERVER_URL}/materias/inscribir/${materia._id}/${usuario.id}`
     );
-    console.log(response);
+    if (response.status === 200) {
+      alert(`Materia inscrita!`);
+      history.push(`/materias/`);
+    } else {
+      alert(`Error, intente nuevammente`);
+      history.go(0);
+    }
   };
 
   useEffect(() => {
