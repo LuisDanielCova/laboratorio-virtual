@@ -122,7 +122,9 @@ function DetallesActividad() {
             >
               <i className="bi bi-pencil"></i> Editar
             </button>
-            <BorrarActividad actividad={actividad} tarjeta={false} />
+            {actividad && (
+              <BorrarActividad actividad={actividad} tarjeta={false} />
+            )}
           </div>
         );
         break;

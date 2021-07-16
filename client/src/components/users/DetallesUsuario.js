@@ -67,7 +67,9 @@ function DetallesUsuario() {
           >
             <i className="bi bi-pencil"></i> Editar
           </button>
-          <BorrarUsuario usuario={detallesUsuario} tabla={false} />
+          {detallesUsuario && (
+            <BorrarUsuario usuario={detallesUsuario} tabla={false} />
+          )}
         </div>
       );
     }
