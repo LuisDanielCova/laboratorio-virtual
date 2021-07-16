@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 // import { TablaNotasEstudiantes } from "../tablas/TablaNotasEstudiantes";
 import { TablaNotasProfesores } from "../tablas/TablaNotasProfesores";
 
-function NotasEstudiantes({ notas }) {
+function NotasEstudiantes({ notas, cargando }) {
   const [notasOrdenadas, setNotasOrdenadas] = useState([]);
   const [tablas, setTablas] = useState([]);
   const [materiasSeparadas, setMateriasSeparadas] = useState([]);
@@ -44,14 +44,31 @@ function NotasEstudiantes({ notas }) {
 
   useEffect(() => {
     if (notasSeparadas !== undefined) {
-      notasSeparadas.map((notas, key) =>
-        setTablas((tablaAnterior) => [
-          ...tablaAnterior,
-          <TablaNotasProfesores notas={notas} key={key} />,
-        ])
-      );
+      if (notasSeparadas.length > 0) {
+        notasSeparadas.map((notas, key) =>
+          setTablas((tablaAnterior) => [
+            ...tablaAnterior,
+            <TablaNotasProfesores notas={notas} key={key} />,
+          ])
+        );
+      } else {
+        setTablas(
+          <p className="lead">Actualmente no hay notas en el sistema</p>
+        );
+      }
     }
   }, [notasSeparadas]);
+
+  if (cargando) {
+    return (
+      <div className="d-flex row justify-content-center my-3">
+        <div className="spinner-border text-warning" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+        <strong className="text-center text-warning">Cargando...</strong>
+      </div>
+    );
+  }
 
   return <div>{tablas}</div>;
 }

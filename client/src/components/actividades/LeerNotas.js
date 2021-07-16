@@ -9,9 +9,11 @@ function LeerNotas() {
   const [notasEstudiantes, setNotasEstudiantes] = useState([]);
   const [headerOne, setHeaderOne] = useState("");
   const [paragraph, setParagraph] = useState("");
+  const [cargando, setCargando] = useState(false);
 
   useEffect(() => {
     const conseguirNotas = async () => {
+      setCargando(true);
       if (usuario.cargo === "Administrador") {
         const response = await axios.get(
           `${process.env.REACT_APP_SERVER_URL}/notas/`
@@ -29,6 +31,7 @@ function LeerNotas() {
         );
         setNotasEstudiantes(response.data.lista_notas);
       }
+      setCargando(false);
     };
     conseguirNotas();
   }, [usuario]);
@@ -74,7 +77,7 @@ function LeerNotas() {
           {headerOne}
           {paragraph}
           <div>
-            <NotasEstudiantes notas={notasEstudiantes} />
+            <NotasEstudiantes notas={notasEstudiantes} cargando={cargando} />
           </div>
         </div>
       </div>

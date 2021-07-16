@@ -11,9 +11,12 @@ function LeerMaterias() {
   const [listaMaterias, setListaMaterias] = useState([]);
   const [headerOne, setHeaderOne] = useState("");
   const [paragraph, setParagraph] = useState("");
+  const [cargando, setCargando] = useState(false);
+  const [mensajeError, setMensajeError] = useState("");
 
   useEffect(() => {
     const conseguirMaterias = async (usuario) => {
+      setCargando(true);
       switch (usuario.cargo) {
         case "Administrador":
           const response = await axios.get(
@@ -36,19 +39,27 @@ function LeerMaterias() {
         default:
           break;
       }
+      setCargando(false);
     };
 
     conseguirMaterias(usuario);
   }, [usuario]);
 
   useEffect(() => {
-    if (materias.length > 0) {
-      materias.map((val, key) => {
-        return setListaMaterias((materiaAnterior) => [
-          ...materiaAnterior,
-          <TarjetasMaterias materia={val} key={key} />,
-        ]);
-      });
+    if (materias !== undefined) {
+      if (materias.length > 0) {
+        materias.map((val, key) => {
+          return setListaMaterias((materiaAnterior) => [
+            ...materiaAnterior,
+            <TarjetasMaterias materia={val} key={key} />,
+          ]);
+        });
+        setMensajeError("");
+      } else {
+        setMensajeError(
+          <p className="lead">Actualmente no hay materias en el sistema</p>
+        );
+      }
     }
   }, [materias]);
 
@@ -94,7 +105,16 @@ function LeerMaterias() {
         <div className="col py-3">
           {headerOne}
           {paragraph}
+          {cargando && (
+            <div className="d-flex row justify-content-center my-3">
+              <div className="spinner-border text-warning" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </div>
+              <strong className="text-center text-warning">Cargando...</strong>
+            </div>
+          )}
           <div className="row m-2">{listaMaterias && listaMaterias}</div>
+          <div className="container ms-3">{mensajeError}</div>
         </div>
       </div>
     </div>
