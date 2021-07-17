@@ -135,7 +135,12 @@ const Routes = () => {
 
           {/* RUTAS USUARIOS */}
 
-          <Route exact path="/login" component={Login} />
+          <ProtectedRoute
+            exact
+            path="/login"
+            component={Login}
+            cargo="Ninguno"
+          />
           <ProtectedRoute
             exact
             path="/recuperar"

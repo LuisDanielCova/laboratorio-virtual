@@ -2,17 +2,22 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Sidebar from "../complements/Sidebar";
 import { TarjetaInscribirMateria } from "../cards/TarjetaInscribirMateria";
+import { MostrarMateriasDisponibles } from "./MostrarMateriasDisponibles";
 
 function InscribirMateria() {
   const [materias, setMaterias] = useState("");
   const [listaMaterias, setListaMaterias] = useState("");
+  const [cargando, setCargando] = useState(false);
+  const [mensajeError, setMensajeError] = useState("");
 
   useEffect(() => {
     const conseguirMaterias = async () => {
+      setCargando(true);
       const response = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/materias/`
       );
       setMaterias(response.data);
+      setCargando(false);
     };
 
     conseguirMaterias();
@@ -26,7 +31,17 @@ function InscribirMateria() {
           <TarjetaInscribirMateria materia={val} key={key} />,
         ]);
       });
+      setMensajeError("");
+    } else {
+      if (cargando !== true) {
+        setMensajeError(
+          <p className="lead">Actualmente no hay notas en el sistema</p>
+        );
+      } else {
+        setMensajeError("");
+      }
     }
+    //eslint-disable-next-line
   }, [materias]);
 
   return (
@@ -39,7 +54,11 @@ function InscribirMateria() {
             Aqui puedes inscribir una materia al pulsar el boton en la tarjeta
             de la materia que quieras inscribir
           </p>
-          <div className="row m-2">{listaMaterias}</div>
+          <MostrarMateriasDisponibles
+            listaMaterias={listaMaterias}
+            cargando={cargando}
+            mensajeError={mensajeError}
+          />
         </div>
       </div>
     </div>

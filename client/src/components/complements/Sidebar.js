@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { UserContext } from "../../Routes";
 
 function Sidebar() {
@@ -18,60 +18,60 @@ function Sidebar() {
     if (usuario.cargo === "Administrador") {
       setLiMaterias(
         <li>
-          <a
-            href="#submenu1"
+          <Link
+            to="#submenu1"
             data-bs-toggle="collapse"
             className="nav-link px-0 align-middle link-warning"
           >
             <i className="fs-4 bi bi-book"></i>{" "}
             <span className="ms-1 d-none d-sm-inline">Materias</span>{" "}
-          </a>
+          </Link>
           <ul
             className="collapse nav flex-column ms-1"
             id="submenu1"
             data-bs-parent="#menu"
           >
             <li className="w-100">
-              <a href="/materia/crear" className="nav-link px-0 link-warning">
+              <Link to="/materia/crear" className="nav-link px-0 link-warning">
                 {" "}
                 <span className="d-none d-sm-inline">Crear Materia</span>{" "}
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/materias/" className="nav-link px-0 link-warning">
+              <Link to="/materias/" className="nav-link px-0 link-warning">
                 {" "}
                 <span className="d-none d-sm-inline">Lista de Materias</span>
-              </a>
+              </Link>
             </li>
           </ul>
         </li>
       );
       setLiUsuarios(
         <li>
-          <a
-            href="#submenu2"
+          <Link
+            to="#submenu2"
             data-bs-toggle="collapse"
             className="nav-link px-0 align-middle link-warning"
           >
             <i className="fs-4 bi-people"></i>{" "}
             <span className="ms-1 d-none d-sm-inline">Usuarios</span>{" "}
-          </a>
+          </Link>
           <ul
             className="collapse nav flex-column ms-1"
             id="submenu2"
             data-bs-parent="#menu"
           >
             <li className="w-100">
-              <a href="/usuario/crear" className="nav-link link-warning px-0">
+              <Link to="/usuario/crear" className="nav-link link-warning px-0">
                 {" "}
                 <span className="d-none d-sm-inline">Crear Usuario</span>
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/usuarios/" className="nav-link px-0 link-warning">
+              <Link to="/usuarios/" className="nav-link px-0 link-warning">
                 {" "}
                 <span className="d-none d-sm-inline">Lista de Usuarios</span>
-              </a>
+              </Link>
             </li>
           </ul>
         </li>
@@ -79,24 +79,24 @@ function Sidebar() {
     } else if (usuario.cargo === "Profesor") {
       setLiMaterias(
         <li>
-          <a
-            href="#submenu1"
+          <Link
+            to="#submenu1"
             data-bs-toggle="collapse"
             className="nav-link px-0 align-middle link-warning"
           >
             <i className="fs-4 bi bi-book"></i>{" "}
             <span className="ms-1 d-none d-sm-inline">Materias</span>{" "}
-          </a>
+          </Link>
           <ul
             className="collapse nav flex-column ms-1"
             id="submenu1"
             data-bs-parent="#menu"
           >
             <li className="w-100">
-              <a href={`/materias`} className="nav-link px-0 link-warning">
+              <Link to={`/materias`} className="nav-link px-0 link-warning">
                 {" "}
                 <span className="d-none d-sm-inline">Mis Materias</span>{" "}
-              </a>
+              </Link>
             </li>
           </ul>
         </li>
@@ -104,29 +104,29 @@ function Sidebar() {
     } else if (usuario.cargo === "Estudiante") {
       setLiMaterias(
         <li>
-          <a
-            href="#submenu1"
+          <Link
+            to="#submenu1"
             data-bs-toggle="collapse"
             className="nav-link px-0 align-middle link-warning"
           >
             <i className="fs-4 bi bi-book"></i>{" "}
             <span className="ms-1 d-none d-sm-inline">Materias</span>{" "}
-          </a>
+          </Link>
           <ul
             id="submenu1"
             className="collapse nav flex-colum ms-1"
             data-bs-parent="#menu"
           >
             <li className="w-100">
-              <a
-                href={`/materias/inscribir`}
+              <Link
+                to={`/materias/inscribir`}
                 className="nav-link px-0 link-warning"
               >
                 {" "}
                 <span className="d-none d-sm-inline">
                   Inscribir Materias
                 </span>{" "}
-              </a>
+              </Link>
             </li>
           </ul>
           <ul
@@ -135,24 +135,22 @@ function Sidebar() {
             data-bs-parent="#menu"
           >
             <li className="w-100">
-              <a href={`/materias/`} className="nav-link px-0 link-warning">
+              <Link to={`/materias/`} className="nav-link px-0 link-warning">
                 {" "}
                 <span className="d-none d-sm-inline">Mis Materias</span>{" "}
-              </a>
+              </Link>
             </li>
           </ul>
         </li>
       );
-    } else if (usuario.status === false) {
-      // Redirigir o algo asi cool
     }
   }, [usuario]);
 
   return (
     <div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
       <div className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100 sticky-top">
-        <a
-          href="/inicio"
+        <Link
+          to="/inicio"
           className="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none"
         >
           <img
@@ -163,46 +161,46 @@ function Sidebar() {
             alt="Logo de la Universidad"
           />
           <span className="fs-5 d-none d-sm-inline">Menu</span>
-        </a>
+        </Link>
         <ul
           className="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
           id="menu"
         >
           <li className="nav-item">
-            <a
-              href="/inicio"
+            <Link
+              to="/inicio"
               className="nav-link link-warning align-middle px-0"
             >
               <i className="fs-4 bi-house"></i>{" "}
               <span className="ms-1 d-none d-sm-inline">Inicio</span>
-            </a>
+            </Link>
           </li>
           {usuario.status && liMaterias}
           <li>
-            <a
-              href={`/notas/`}
+            <Link
+              to={`/notas/`}
               className="nav-link px-0 align-middle link-warning"
             >
               <i className="fs-4 bi bi-award"></i>{" "}
               <span className="ms-1 d-none d-sm-inline">Notas</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href={process.env.REACT_APP_IDE_URL}
+            <Link
+              to={process.env.REACT_APP_IDE_URL}
               data-bs-toggle="collapse"
               className="nav-link px-0 align-middle link-warning"
             >
               <i className="fs-4 bi bi-terminal"></i>{" "}
               <span className="ms-1 d-none d-sm-inline">Compilador</span>
-            </a>
+            </Link>
           </li>
           {usuario.status && liUsuarios}
         </ul>
         <hr />
         <div className="dropdown pb-4">
-          <a
-            href="/"
+          <Link
+            to="/"
             className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
             id="dropdownUser1"
             data-bs-toggle="dropdown"
@@ -216,16 +214,16 @@ function Sidebar() {
               className="rounded-circle"
             />
             <span className="d-none d-sm-inline mx-1">{usuario.usuario}</span>
-          </a>
+          </Link>
           <ul
             className="dropdown-menu dropdown-menu-dark text-small shadow"
             aria-labelledby="dropdownUser1"
           >
             <li>
-              <a className="dropdown-item" href={`/usuarios/${usuario.id}`}>
+              <Link className="dropdown-item" to={`/usuarios/${usuario.id}`}>
                 {" "}
                 Perfil
-              </a>
+              </Link>
             </li>
             <li>
               <hr className="dropdown-divider" />

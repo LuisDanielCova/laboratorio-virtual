@@ -14,7 +14,7 @@ const {
 
 // Mostrar todos los usuarios
 exports.conseguir_lista = (req, res, next) => {
-  Usuario.find()
+  Usuario.find({ cargo: { $ne: "Administrador" } })
     .select(["cedula", "nombre", "apellido", "correo", "cargo", "usuario"])
     .sort([["cedula", "ascending"]])
     .exec((err, lista_usuarios) => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 
 function Navbar(props) {
   const history = useHistory();
@@ -11,7 +11,7 @@ function Navbar(props) {
         style={{ backgroundColor: "#ffc107" }} //#ffc107 #ffcd39
       >
         <div className="container-fluid">
-          <a className="navbar-brand" href="http://localhost:3000">
+          <Link className="navbar-brand" to="/">
             <img
               src="https://seeklogo.com/images/U/UGMA-logo-2BA53AE2C9-seeklogo.com.png"
               width="30"
@@ -20,7 +20,7 @@ function Navbar(props) {
               alt="Logo de la Universidad"
             />
             UGMA
-          </a>
+          </Link>
           <button
             className="navbar-toggler"
             type="button"
@@ -34,12 +34,12 @@ function Navbar(props) {
           </button>
           <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div className="navbar-nav">
-              <a href="/" className="nav-link active">
+              <Link to="/" className="nav-link active">
                 Inicio
-              </a>
-              <a href="/contacto" className="nav-link active">
+              </Link>
+              <Link to="/contacto" className="nav-link active">
                 Contactenos
-              </a>
+              </Link>
               <nav className="nav-item dropdown">
                 <nav
                   className="nav-link dropdown-toggle"
@@ -55,12 +55,12 @@ function Navbar(props) {
                   className="dropdown-menu"
                   aria-labelledby="navbarDropdownMenuLink"
                 >
-                  <a className="dropdown-item" href="/registro">
+                  <Link className="dropdown-item" to="/registro">
                     Registro de Estudiante
-                  </a>
-                  <a className="dropdown-item" href="/recuperar">
+                  </Link>
+                  <Link className="dropdown-item" to="/recuperar">
                     Recuperar Contraseña
-                  </a>
+                  </Link>
                 </nav>
               </nav>
             </div>
