@@ -51,7 +51,7 @@ const Routes = () => {
 
   return (
     <UserContext.Provider value={{ usuario, setUsuario }}>
-      <BrowserRouter forceRefresh={true}>
+      <BrowserRouter>
         <Switch>
           {/* INICIO */}
 
@@ -141,6 +141,7 @@ const Routes = () => {
             component={Login}
             cargo="Ninguno"
           />
+
           <ProtectedRoute
             exact
             path="/recuperar"
