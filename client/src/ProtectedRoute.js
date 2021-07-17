@@ -16,7 +16,10 @@ function ProtectedRoute({ cargo, component: Component, ...rest }) {
               if (usuario.status) {
                 return (
                   <Redirect
-                    to={{ pathname: "inicio", state: { from: props.location } }}
+                    to={{
+                      pathname: "/inicio",
+                      state: { from: props.location },
+                    }}
                   />
                 );
               } else {
