@@ -51,7 +51,7 @@ const Routes = () => {
 
   return (
     <UserContext.Provider value={{ usuario, setUsuario }}>
-      <BrowserRouter>
+      <BrowserRouter forceRefresh={true}>
         <Switch>
           {/* INICIO */}
 
