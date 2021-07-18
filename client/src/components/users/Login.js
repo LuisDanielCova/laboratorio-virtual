@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import Navbar from "../complements/Navbar";
@@ -9,8 +9,24 @@ function Login() {
   const [loginUsuario, setLoginUsuario] = useState("");
   const [loginContrasena, setLoginContrasena] = useState("");
   const [errors, setErrors] = useState("");
+  const [cargando, setCargando] = useState(false);
+  const [circuloCarga, setCirculoCarga] = useState("");
+  const [inputType, setInputType] = useState(true);
+  const [eyeIcon, setEyeIcon] = useState(true);
+
+  const cambiarInput = () => {
+    if (inputType) {
+      setInputType(false);
+      setEyeIcon(false);
+    } else {
+      setInputType(true);
+      setEyeIcon(true);
+    }
+  };
 
   const login = async () => {
+    setCargando(true);
+    setErrors("");
     const response = await axios({
       method: "POST",
       data: {
@@ -20,6 +36,7 @@ function Login() {
       withCredentials: true,
       url: `${process.env.REACT_APP_SERVER_URL}/usuarios/login`,
     });
+    setCargando(false);
     if (response.status === 200) {
       localStorage.setItem("accessToken", response.data);
       history.push("/inicio");
@@ -29,6 +46,21 @@ function Login() {
       );
     }
   };
+
+  useEffect(() => {
+    if (cargando === true) {
+      setCirculoCarga(
+        <div className="d-flex row justify-content-center my-3">
+          <div className="spinner-border text-warning" role="status">
+            <span className="visually-hidden">Cargando...</span>
+          </div>
+          <strong className="text-center text-warning">Cargando...</strong>
+        </div>
+      );
+    } else {
+      setCirculoCarga("");
+    }
+  }, [cargando]);
 
   return (
     <div className="">
@@ -55,17 +87,27 @@ function Login() {
             <label htmlFor="contrasena" className="form-label">
               Contraseña:
             </label>
-            <input
-              type="password"
-              name="contrasena"
-              id="contrasena"
-              className="form-control"
-              onChange={(e) => {
-                const { value } = e.target;
-                setLoginContrasena(value);
-              }}
-            />
+            <div className="input-group">
+              <input
+                type={inputType ? "password" : "text"}
+                name="contrasena"
+                id="contrasena"
+                className="form-control"
+                onChange={(e) => {
+                  const { value } = e.target;
+                  setLoginContrasena(value);
+                }}
+              />
+              <button
+                className="btn btn-warning"
+                id="contrasenaBoton"
+                onClick={cambiarInput}
+              >
+                <i className={eyeIcon ? "bi bi-eye" : "bi bi-eye-slash"}></i>
+              </button>
+            </div>
           </div>
+          {circuloCarga}
           {errors}
           <div className="container-fluid">
             <button

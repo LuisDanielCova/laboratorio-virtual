@@ -5,7 +5,7 @@ import Footer from "../complements/Footer";
 
 function RecuperarContrasena() {
   const [usuario, setUsuario] = useState("");
-  const [alert, setAlert] = useState("");
+  const [alerta, setAlerta] = useState("");
 
   const solicitarTokenRecuperacion = async () => {
     const response = await axios.post(
@@ -13,11 +13,11 @@ function RecuperarContrasena() {
       { usuario: usuario }
     );
     if (response.status === 200) {
-      setAlert(
+      setAlerta(
         <div className="alert alert-warning">{response.data.mensaje}</div>
       );
     } else if (response.status === 206) {
-      setAlert(
+      setAlerta(
         <div className="alert alert-danger">{response.data.mensaje}</div>
       );
     }
@@ -54,7 +54,7 @@ function RecuperarContrasena() {
               </span>
             </div>
           </div>
-          {alert}
+          {alerta}
           <div className="container-fluid">
             <button
               className="btn btn-warning mx-auto mt-2 col-md-8"

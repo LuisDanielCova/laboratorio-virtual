@@ -34,12 +34,14 @@ function Sidebar() {
             <li className="w-100">
               <Link to="/materia/crear" className="nav-link px-0 link-warning">
                 {" "}
+                <i className="bi bi-plus-circle"> </i>
                 <span className="d-none d-sm-inline">Crear Materia</span>{" "}
               </Link>
             </li>
             <li>
               <Link to="/materias/" className="nav-link px-0 link-warning">
                 {" "}
+                <i className="bi bi-journal"> </i>
                 <span className="d-none d-sm-inline">Lista de Materias</span>
               </Link>
             </li>
@@ -64,12 +66,13 @@ function Sidebar() {
             <li className="w-100">
               <Link to="/usuario/crear" className="nav-link link-warning px-0">
                 {" "}
+                <i className="bi bi-person-plus"> </i>
                 <span className="d-none d-sm-inline">Crear Usuario</span>
               </Link>
             </li>
             <li>
-              <Link to="/usuarios/" className="nav-link px-0 link-warning">
-                {" "}
+              <Link to="/usuarios/" className="nav-link link-warning px-0">
+                <i className="bi bi-person"> </i>
                 <span className="d-none d-sm-inline">Lista de Usuarios</span>
               </Link>
             </li>
@@ -95,6 +98,7 @@ function Sidebar() {
             <li className="w-100">
               <Link to={`/materias`} className="nav-link px-0 link-warning">
                 {" "}
+                <i className="bi bi-journal"> </i>
                 <span className="d-none d-sm-inline">Mis Materias</span>{" "}
               </Link>
             </li>
@@ -122,7 +126,7 @@ function Sidebar() {
                 to={`/materias/inscribir`}
                 className="nav-link px-0 link-warning"
               >
-                {" "}
+                <i className="bi bi-pencil"> </i>
                 <span className="d-none d-sm-inline">
                   Inscribir Materias
                 </span>{" "}
@@ -137,6 +141,7 @@ function Sidebar() {
             <li className="w-100">
               <Link to={`/materias/`} className="nav-link px-0 link-warning">
                 {" "}
+                <i className="bi bi-journal"> </i>
                 <span className="d-none d-sm-inline">Mis Materias</span>{" "}
               </Link>
             </li>
@@ -186,14 +191,14 @@ function Sidebar() {
             </Link>
           </li>
           <li>
-            <Link
-              to={process.env.REACT_APP_IDE_URL}
+            <a
+              href={process.env.REACT_APP_IDE_URL}
               data-bs-toggle="collapse"
               className="nav-link px-0 align-middle link-warning"
             >
               <i className="fs-4 bi bi-terminal"></i>{" "}
               <span className="ms-1 d-none d-sm-inline">Compilador</span>
-            </Link>
+            </a>
           </li>
           {usuario.status && liUsuarios}
         </ul>

@@ -8,7 +8,7 @@ function Dashboard() {
       <div className="row flex-nowrap gx-0">
         <Sidebar />
         <div className="col py-3">
-          <div className="col-xxl-8 px-5 py-4 my-5 shadow-lg">
+          <div className="col-xxl-12 px-5 py-4 my-5 shadow-lg">
             <div className="row flex-lg-row-reverse align-items-center g-5 py-5">
               <div className="col-10 col-sm-8 col-lg-6">
                 <img

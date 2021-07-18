@@ -14,7 +14,7 @@ function RecuperarContrasenaPedir() {
     contrasenaConfirmar: "",
   });
 
-  const [alert, setAlert] = useState("");
+  const [alerta, setAlerta] = useState("");
 
   const [errors, setErrors] = useState([]);
 
@@ -45,7 +45,7 @@ function RecuperarContrasenaPedir() {
           },
         ]);
       } else if (response.status === 208) {
-        setAlert(
+        setAlerta(
           <div className="alert alert-danger mt-2">{response.data.mensaje}</div>
         );
       } else {
@@ -125,7 +125,7 @@ function RecuperarContrasenaPedir() {
             <button className="btn btn-warning" onClick={cambiarContrasena}>
               Cambiar Contraseña
             </button>
-            {alert}
+            {alerta}
           </form>
         </div>
       </div>
