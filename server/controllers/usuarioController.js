@@ -137,7 +137,9 @@ exports.crear_usuario = [
     .withMessage("Debe ingresar un correo valido")
     .bail()
     .custom(async (value) => {
-      const usuario = await Usuario.find({ correo: value });
+      const usuario = await Usuario.find({
+        correo: { $regex: new RegExp("^" + value, "i") },
+      });
       if (usuario.length > 0) {
         return Promise.reject("El correo ya esta en uso");
       }
@@ -152,7 +154,9 @@ exports.crear_usuario = [
     .withMessage("El usuario solo puede contener letras y numeros")
     .bail()
     .custom(async (value) => {
-      const usuario = await Usuario.find({ usuario: value });
+      const usuario = await Usuario.find({
+        usuario: { $regex: new RegExp("^" + value, "i") },
+      });
       if (usuario.length > 0) {
         return Promise.reject("El usuario ya esta en uso");
       }
@@ -337,7 +341,9 @@ exports.actualizar_usuario_put = [
     .withMessage("Debe ingresar un correo valido")
     .bail()
     .custom(async (value, { req }) => {
-      const usuario = await Usuario.find({ correo: value }).limit(1);
+      const usuario = await Usuario.find({
+        correo: { $regex: new RegExp("^" + value, "i") },
+      }).limit(1);
       if (usuario.length > 0 && usuario[0]._id != req.params.id) {
         return Promise.reject("El correo ya esta en uso");
       }

@@ -15,7 +15,9 @@ const { validateToken } = require("../middlewares/AuthMiddleware");
 router.post("/login", async (req, res, next) => {
   const { usuario, contrasena } = req.body;
 
-  const user = await Usuario.findOne({ usuario: usuario }).exec();
+  const user = await Usuario.findOne({
+    usuario: { $regex: new RegExp("^" + usuario, "i") },
+  }).exec();
 
   if (!user) return res.status(206).json({ error: "El usuario no existe" });
 
