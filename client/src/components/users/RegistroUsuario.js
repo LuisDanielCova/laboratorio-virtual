@@ -11,6 +11,7 @@ function RegistroUsuario() {
   const [errors, setErrors] = useState([]);
   const [campoAdmin, setCampoAdmin] = useState("");
   const [button, setButton] = useState("");
+  const [cargando, setCargando] = useState(false);
   const [usuarioNuevo, setUsuario] = useState({
     cedula: "",
     nombre: "",
@@ -53,6 +54,7 @@ function RegistroUsuario() {
       setButton(
         <button
           className="btn btn-warning"
+          disabled={cargando ? true : false}
           onClick={() => {
             if (id) {
               actualizarUsuario(usuarioNuevo);
@@ -68,6 +70,7 @@ function RegistroUsuario() {
       setButton(
         <button
           className="btn btn-warning"
+          disabled={cargando ? true : false}
           onClick={() => {
             if (id) {
               actualizarUsuario(usuarioNuevo);
@@ -81,7 +84,7 @@ function RegistroUsuario() {
       );
     }
     //eslint-disable-next-line
-  }, [usuario, errors, usuarioNuevo, id]);
+  }, [usuario, errors, usuarioNuevo, id, cargando]);
 
   useEffect(() => {
     const conseguirUsuario = async () => {
@@ -97,10 +100,12 @@ function RegistroUsuario() {
 
   const agregarUsuario = async (usuario, cargo) => {
     try {
+      setCargando(true);
       let response = await Axios.post(
         `${process.env.REACT_APP_SERVER_URL}/usuarios/crear`,
         usuario
       );
+      setCargando(false);
       if (response.status === 200) {
         if (cargo === "Administrador") {
           alert(
@@ -121,15 +126,18 @@ function RegistroUsuario() {
 
   const actualizarUsuario = async (usuario) => {
     try {
+      setCargando(true);
       let response = await Axios.put(
         `${process.env.REACT_APP_SERVER_URL}/usuarios/actualizar/${id}`,
         usuario
       );
+      setCargando(false);
       if (response.status === 200) {
         alert("Actualizacion Exitosa!");
         history.push(`/usuarios/${id}`);
       } else {
         setErrors(response.data.errors_array.errors);
+        setCargando(false);
       }
     } catch (err) {
       alert(`Ha ocurrido un error, intente nuevamente en unos minutos`);

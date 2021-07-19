@@ -7,6 +7,7 @@ import FormError from "../errors/FormError";
 function CrearMateria() {
   const { id } = useParams();
   const history = useHistory();
+  const [cargando, setCargando] = useState(false);
   const [materia, setMateria] = useState({
     nombre: "",
     descripcion: "",
@@ -30,9 +31,11 @@ function CrearMateria() {
     const conseguirMateria = async () => {
       try {
         if (id) {
+          setCargando(true);
           let response = await Axios.get(
             `${process.env.REACT_APP_SERVER_URL}/materias/crear/${id}`
           );
+          setCargando(false);
           setMateria(response.data);
         }
       } catch (error) {
@@ -44,11 +47,13 @@ function CrearMateria() {
 
   const agregarMateria = async (materia) => {
     try {
-      let response = await Axios.post(
+      setCargando(true);
+      const response = await Axios.post(
         `${process.env.REACT_APP_SERVER_URL}/materias/crear`,
         materia,
         { headers: { accessToken: localStorage.getItem("accessToken") } }
       );
+      setCargando(false);
       if (response.status === 200) {
         alert(`Materia Agregada`);
         history.push("/materias/");
@@ -64,10 +69,12 @@ function CrearMateria() {
 
   const actualizarMateria = async (materia) => {
     try {
-      let response = await Axios.put(
+      setCargando(true);
+      const response = await Axios.put(
         `${process.env.REACT_APP_SERVER_URL}/materias/crear/${id}`,
         materia
       );
+      setCargando(false);
       if (response.status === 200) {
         alert("Materia actualizada!");
         history.push("/materias/");
@@ -194,6 +201,7 @@ function CrearMateria() {
                 </div>
                 <button
                   className="btn btn-warning mx-auto col-md-2 mt-2 mb-1"
+                  disabled={cargando ? true : false}
                   onClick={() => {
                     if (id) {
                       actualizarMateria(materia);

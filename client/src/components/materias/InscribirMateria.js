@@ -35,7 +35,7 @@ function InscribirMateria() {
     } else {
       if (cargando !== true) {
         setMensajeError(
-          <p className="lead">Actualmente no hay notas en el sistema</p>
+          <p className="lead">Actualmente no hay materias en el sistema</p>
         );
       } else {
         setMensajeError("");

@@ -89,7 +89,6 @@ exports.crear_usuario = [
     .custom(async (value) => {
       const usuario = await Usuario.find({ cedula: value }).limit(1);
       if (usuario.length > 0) {
-        console.log(usuario);
         return Promise.reject("La cedula ya esta en uso");
       }
     })

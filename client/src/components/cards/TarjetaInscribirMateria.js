@@ -8,8 +8,10 @@ export const TarjetaInscribirMateria = ({ materia }) => {
   const history = useHistory();
   const { usuario } = useContext(UserContext);
   const [button, setButton] = useState("");
+  const [cargando, setCargando] = useState(false);
 
   const inscribirMateria = async () => {
+    setCargando(true);
     const response = await axios.put(
       `${process.env.REACT_APP_SERVER_URL}/materias/inscribir/${materia._id}/${usuario.id}`
     );
@@ -63,6 +65,7 @@ export const TarjetaInscribirMateria = ({ materia }) => {
         <div>
           <button
             className="btn btn-warning"
+            disabled={cargando ? true : false}
             onClick={() => {
               inscribirMateria(materia._id);
             }}

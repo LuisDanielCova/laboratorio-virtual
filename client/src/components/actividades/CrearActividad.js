@@ -10,6 +10,7 @@ function CrearActividad() {
   const { usuario } = useContext(UserContext);
   const history = useHistory();
   const { idMateria, id } = useParams();
+  const [cargando, setCargando] = useState(false);
   const [actividad, setActividad] = useState({
     nombre: "",
     descripcion: "",
@@ -22,9 +23,11 @@ function CrearActividad() {
   useEffect(() => {
     const conseguirActividad = async () => {
       if (id) {
+        setCargando(true);
         const response = await Axios.get(
           `${process.env.REACT_APP_SERVER_URL}/materias/${idMateria}/actividad/crear/${id}`
         );
+        setCargando(false);
         setActividad(response.data.results);
       }
     };
@@ -39,10 +42,12 @@ function CrearActividad() {
       data.append("fechaEntrega", actividad.fechaEntrega);
       data.append("nota", actividad.nota);
       data.append("file", file);
+      setCargando(true);
       const response = await Axios.post(
         `${process.env.REACT_APP_SERVER_URL}/materias/${idMateria}/actividad/crear/${usuario.id}`,
         data
       );
+      setCargando(false);
       if (response.status === 200) {
         alert(`Actividad Agregada`);
         history.push(`/materias/${idMateria}/`);
@@ -56,10 +61,12 @@ function CrearActividad() {
 
   const actualizarActividad = async (actividad) => {
     try {
+      setCargando(true);
       const response = await Axios.put(
         `${process.env.REACT_APP_SERVER_URL}/materias/${idMateria}/actividad/crear/${id}`,
         actividad
       );
+      setCargando(false);
       if (response.status === 200) {
         alert(`Actividad Editada`);
         history.push(`/materias/${idMateria}/`);
@@ -201,6 +208,7 @@ function CrearActividad() {
                 </div>
                 <button
                   className="btn btn-warning mx-auto col-md-2 mt-2 mb-1"
+                  disabled={cargando ? true : false}
                   onClick={() => {
                     if (id) {
                       actualizarActividad(actividad);

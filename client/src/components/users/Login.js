@@ -112,6 +112,7 @@ function Login() {
           <div className="container-fluid">
             <button
               className="btn btn-warning mx-auto col-md-6"
+              disabled={cargando ? true : false}
               onClick={login}
             >
               Login
