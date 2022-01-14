@@ -47,6 +47,24 @@ function Login() {
     }
   };
 
+  const demoLogin = async () => {
+    setCargando(true);
+    setErrors("");
+    const response = await axios({
+      method: "POST",
+      url: `${process.env.REACT_APP_SERVER_URL}/usuarios/demologin`,
+    });
+    setCargando(false);
+    if (response.status === 200) {
+      localStorage.setItem("accessToken", response.data);
+      history.push("/inicio");
+    } else {
+      setErrors(
+        <div className="alert alert-warning">{response.data.error}</div>
+      );
+    }
+  };
+
   useEffect(() => {
     if (cargando === true) {
       setCirculoCarga(
@@ -66,9 +84,9 @@ function Login() {
     <div className="">
       <Navbar login="true" />
       <div className="container text-center">
-        <div className="card p-5 m-5 mx-auto w-50">
+        <div className="card p-5 m-5 mx-auto col-md-4">
           <h1 className="display-5 fw-bold col-md-12">Iniciar Sesion</h1>
-          <div className="container-fluid mb-3">
+          <div className="container-fluid mb-3 col-md-8">
             <label htmlFor="usuario" className="form-label">
               Usuario:
             </label>
@@ -83,7 +101,7 @@ function Login() {
               }}
             />
           </div>
-          <div className="container-fluid mb-3">
+          <div className="container-fluid mb-3 col-md-8">
             <label htmlFor="contrasena" className="form-label">
               Contraseña:
             </label>
@@ -111,11 +129,20 @@ function Login() {
           {errors}
           <div className="container-fluid">
             <button
-              className="btn btn-warning mx-auto col-md-6"
+              className="btn btn-warning mx-auto col-md-5"
               disabled={cargando ? true : false}
               onClick={login}
             >
               Login
+            </button>
+          </div>
+          <div className="container-fluid mt-2">
+            <button
+              className="btn btn-warning mx-auto col-md-5"
+              disabled={cargando ? true : false}
+              onClick={demoLogin}
+            >
+              Demo User
             </button>
           </div>
           <div className="container-fluid mt-3">

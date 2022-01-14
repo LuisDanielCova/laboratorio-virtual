@@ -250,20 +250,23 @@ exports.actualizar_materia_put = [
     if (!errors.isEmpty()) {
       res.status(206).json({ mensaje: "Datos invalidos", errors: errors });
     } else {
-      const materia = new Materia({
-        nombre: req.body.nombre,
-        descripcion: req.body.descripcion,
-        seccion: req.body.seccion,
-        profesor: req.body.profesor,
-        _id: req.params.id,
-      });
       try {
-        await Materia.findByIdAndUpdate(req.params.id, materia, (err) => {
-          if (err) {
-            next(err);
+        await Materia.findByIdAndUpdate(
+          req.params.id,
+          {
+            nombre: req.body.nombre,
+            descripcion: req.body.descripcion,
+            seccion: req.body.seccion,
+            profesor: req.body.profesor,
+            _id: req.params.id,
+          },
+          (err) => {
+            if (err) {
+              next(err);
+            }
+            res.status(200).json({ mensaje: "Materia actualizada" });
           }
-          res.status(200).json({ mensaje: "Materia actualizada" });
-        });
+        );
       } catch (err) {
         next(err);
       }

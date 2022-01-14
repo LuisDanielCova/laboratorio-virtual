@@ -43,6 +43,21 @@ router.post("/login", async (req, res, next) => {
   res.json(accessToken);
 });
 
+router.post("/demologin", async (req, res, next) => {
+  const user = await Usuario.findOne({ usuario: "DemoUser" }).exec();
+
+  const accessToken = sign(
+    {
+      usuario: user.usuario,
+      cargo: user.cargo,
+      id: user._id,
+    },
+    process.env.ACCESS_SECRET
+  );
+
+  res.json(accessToken);
+});
+
 router.get("/auth", validateToken, (req, res, next) => {
   res.json(req.usuario);
 });

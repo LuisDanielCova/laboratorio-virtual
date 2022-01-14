@@ -315,6 +315,23 @@ function crearUsuarios(cb) {
           callback
         );
       },
+      function (callback) {
+        const contrasena = "DemoUser123*";
+        const hash = bcrypt.hashSync(contrasena, process.env.PASSWORD_SALT);
+        const fecha = new Date("1234-06-08T09:20:31-07:00");
+        createUsuario(
+          12345678,
+          "Demo",
+          "User",
+          fecha,
+          "04161234567",
+          "DemoUser@demo.com",
+          "DemoUser",
+          hash,
+          "Profesor",
+          callback
+        );
+      },
     ],
     cb
   );
