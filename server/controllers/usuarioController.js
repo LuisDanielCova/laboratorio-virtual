@@ -523,7 +523,7 @@ exports.actualizar_contrasena = [
       res.status(206).json({ mensaje: "Datos invalidos", errors });
     } else {
       const { contrasenaAnterior, contrasenaNueva } = req.body;
-      const usuario = Usuario.findById(req.params.id, (err) => {
+      const usuario = await Usuario.findById(req.params.id, (err) => {
         if (err) return next(err);
       });
       if (!usuario) {
