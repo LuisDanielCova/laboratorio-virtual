@@ -104,7 +104,7 @@ exports.inscribir_estudiante = async (req, res, next) => {
   try {
     const estudiante = await Usuario.findById(idEstudiante).exec();
 
-    await Materia.findByIdAndUpdate(
+    Materia.findByIdAndUpdate(
       idMateria,
       { $addToSet: { estudiantes: estudiante._id } },
       (err) => {
@@ -189,9 +189,9 @@ exports.crear_materia = [
 
 // Conseguir informacion para actualizar
 
-exports.actualizar_materia_get = async (req, res, next) => {
+exports.actualizar_materia_get = (req, res, next) => {
   try {
-    await Materia.findById(req.params.id, (err, results) => {
+    Materia.findById(req.params.id, (err, results) => {
       if (err) {
         return next(err);
       }
@@ -245,13 +245,13 @@ exports.actualizar_materia_put = [
     .notEmpty()
     .withMessage("Debe seleccionar un profesor")
     .escape(),
-  async (req, res, next) => {
+  (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(206).json({ mensaje: "Datos invalidos", errors: errors });
     } else {
       try {
-        await Materia.findByIdAndUpdate(
+        Materia.findByIdAndUpdate(
           req.params.id,
           {
             nombre: req.body.nombre,

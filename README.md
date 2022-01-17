@@ -18,11 +18,11 @@
 
 [![Virtual Lab Screen Shot][product-screenshot]](https://clever-kirch-3c5ec1.netlify.app/)
 
-- Español:  La universidad requiere de un servicio en línea para que los estudiantes puedan ingresar por medio de cualquier dispositivo que pueda conectarse al internet y realizar sus trabajos, de una forma que no genere un gran consumo de memoria de parte del usuario.
+- Español: La universidad requiere de un servicio en línea para que los estudiantes puedan ingresar por medio de cualquier dispositivo que pueda conectarse al internet y realizar sus trabajos, de una forma que no genere un gran consumo de memoria de parte del usuario.
   Atendiendo a lo anterior mencionado, esta aplicacion fue desarrollada con la finalidad de proponer el desarrollo de una interfaz de diseño integrado virtual para la universidad, de forma tal que permita a los alumnos tener un ambiente de trabajo más óptimo y accesible sin necesidad de poseer un ordenador de última generación.
 
-- English:  The college requires an online service where the students can log in from any device with an internet connection, so they can make their assignments, in a way that does not generate a large memory consumption on the part of the user.
-  In response to the aforementioned, this application was developed with the purpose of proposing the development of a virtual integrated design interface for the university, in such a way that it allows students to have a more optimal and accessible work environment without the need to have a computer. state-of-the-art computer.
+- English: The college requires an online service where the students can log in from any device with an internet connection, so they can make their assignments, in a way that does not generate a large memory consumption on the part of the user.
+  In response to the aforementioned, this application was developed with the purpose of proposing the development of a virtual integrated design interface for the university, in such a way that it allows students to have a more optimal and accessible work environment without the need to have a last generation computer.
 
 # Contenido / Content
 

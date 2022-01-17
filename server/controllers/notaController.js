@@ -2,7 +2,7 @@ const Nota = require("../models/Nota");
 const { validationResult, body } = require("express-validator");
 
 // Mostrar todas las notas
-exports.mostrar_notas = async (req, res, next) => {
+exports.mostrar_notas = (req, res, next) => {
   Nota.find()
     .populate("estudiante", ["nombre", "apellido"])
     .populate({
@@ -19,7 +19,7 @@ exports.mostrar_notas = async (req, res, next) => {
 };
 
 // Mostrar todas las notas de un estudiante
-exports.mostrar_notas_estudiante = async (req, res, next) => {
+exports.mostrar_notas_estudiante = (req, res, next) => {
   Nota.find({ estudiante: req.params.id })
     .populate("estudiante", ["nombre", "apellido"])
     .populate({
@@ -36,7 +36,7 @@ exports.mostrar_notas_estudiante = async (req, res, next) => {
 };
 
 // Mostrar todas las notas de un profesor
-exports.mostrar_notas_profesor = async (req, res, next) => {
+exports.mostrar_notas_profesor = (req, res, next) => {
   Nota.find()
     .populate("estudiante", ["nombre", "apellido"])
     .populate({

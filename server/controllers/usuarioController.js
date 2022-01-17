@@ -230,7 +230,6 @@ exports.crear_usuario = [
             }
           });
       } catch (err) {
-        console.log(err);
         next(err);
       }
     }
@@ -239,7 +238,7 @@ exports.crear_usuario = [
 
 exports.confirmar_cuenta = async (req, res, next) => {
   try {
-    await Usuario.findOne(
+    Usuario.findOne(
       { tokenConfirmacion: req.params.tokenConfirmacion },
       (err, usuario) => {
         if (!usuario) {
@@ -259,13 +258,13 @@ exports.confirmar_cuenta = async (req, res, next) => {
       }
     );
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 };
 
 // Enviar la informacion de un usuario para actualizarlo
-exports.actualizar_usuario_get = async (req, res, next) => {
-  await Usuario.findById(req.params.id, "-contrasena", (err, results) => {
+exports.actualizar_usuario_get = (req, res, next) => {
+  Usuario.findById(req.params.id, "-contrasena", (err, results) => {
     if (err) {
       return next(err);
     }
@@ -456,7 +455,7 @@ exports.recuperarContrasena = [
       const tokenResetContrasena = await Token.findOne({
         idUsuario: req.params.idUsuario,
       });
-      const usuario = await Usuario.findById(req.params.idUsuario, (err) => {
+      const usuario = Usuario.findById(req.params.idUsuario, (err) => {
         if (err) return next(err);
       });
       if (!usuario) {
@@ -524,7 +523,7 @@ exports.actualizar_contrasena = [
       res.status(206).json({ mensaje: "Datos invalidos", errors });
     } else {
       const { contrasenaAnterior, contrasenaNueva } = req.body;
-      const usuario = await Usuario.findById(req.params.id, (err) => {
+      const usuario = Usuario.findById(req.params.id, (err) => {
         if (err) return next(err);
       });
       if (!usuario) {

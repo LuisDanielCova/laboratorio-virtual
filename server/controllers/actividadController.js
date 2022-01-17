@@ -133,9 +133,9 @@ exports.crear_actividad = [
 
 // ACTUALIZAR UNA ACTIVIDAD - GET
 
-exports.actualizar_actividad_get = async (req, res, next) => {
+exports.actualizar_actividad_get = (req, res, next) => {
   try {
-    await Actividad.findById(req.params.id, (err, results) => {
+    Actividad.findById(req.params.id, (err, results) => {
       if (err) {
         return next(err);
       }
@@ -204,7 +204,7 @@ exports.actualizar_actividad_put = [
       });
     } else {
       try {
-        await Actividad.findByIdAndUpdate(
+        Actividad.findByIdAndUpdate(
           req.params.id,
           {
             $set: {
